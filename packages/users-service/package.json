@@ -25,7 +25,7 @@
     "faker": "^4.1.0",
     "got": "^9.6.0",
     "ilp-protocol-stream": "^2.0.2",
-    "knex": "^0.19.4",
+    "knex": "^0.19.5",
     "koa": "^2.8.1",
     "koa-bodyparser": "^4.2.1",
     "koa-joi-router": "^6.0.0",
