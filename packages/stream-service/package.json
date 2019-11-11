@@ -17,7 +17,7 @@
     "got": "^9.6.0",
     "ilp-protocol-spsp": "latest",
     "ilp-protocol-stream": "^2.1.0",
-    "knex": "^0.19.4",
+    "knex": "^0.19.5",
     "koa": "^2.8.1",
     "koa-bodyparser": "^4.2.1",
     "openid-client": "^3.7.4",
