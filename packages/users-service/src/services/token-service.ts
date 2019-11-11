@@ -1,5 +1,4 @@
 import { Client, Issuer, TokenSet } from 'openid-client'
-import { rejects } from 'assert'
 
 export type TokenServiceConfig = {
   issuerUrl: string;

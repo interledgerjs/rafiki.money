@@ -5,8 +5,6 @@ import cors from 'koa-cors'
 import { Server, createServer } from 'http'
 import { store as storeTransaction } from './controllers/agreementsTransactionController'
 import { log } from './winston'
-import { Agreement } from './models'
-import axios from 'axios'
 import * as IntentsController from './controllers/intentsController'
 import * as MandatesController from './controllers/mandatesController'
 import { AgreementBucketInterface } from './services/agreementBucket'
@@ -14,7 +12,6 @@ import * as IntentValidation from './route-validation/intents'
 import * as MandatesValidation from './route-validation/mandates'
 
 const logger = log.child({ component: 'App' })
-const TOKEN_INTROSPECTION_URL = process.env.TOKEN_INTROSPECTION_URL || 'http://localhost:9001/oauth2/introspect'
 
 export interface AppContext extends Context {
   agreementBucket: AgreementBucketInterface;
@@ -45,17 +42,6 @@ export class App {
     if (this._server) {
       this._server.close()
     }
-  }
-
-  async getAgreementFromAuthToken (authToken: string): Promise<Agreement | undefined> {
-    const data = await axios.post(TOKEN_INTROSPECTION_URL, {
-      token: authToken
-    }).then(resp => resp.data).catch(error => {
-      logger.error('error introspecting auth token')
-      throw error
-    })
-
-    return Agreement.query().findById(data.ext.agreementId)
   }
 
   private _setupRoutes (): void {
