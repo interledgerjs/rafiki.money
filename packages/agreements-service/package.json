@@ -42,7 +42,7 @@
     "ilp-protocol-stream": "^1.8.9",
     "ioredis": "^4.14.0",
     "iso8601-duration": "^1.2.0",
-    "knex": "^0.18.2",
+    "knex": "^0.19.5",
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
     "koa-cors": "0.0.16",
