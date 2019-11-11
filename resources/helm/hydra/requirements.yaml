@@ -1,0 +1,6 @@
+# requirements.yaml
+dependencies:
+- name: hydra
+  version: ~0.0.1
+  repository: "https://k8s.ory.sh/helm/charts"
+  condition: hydra.enabled

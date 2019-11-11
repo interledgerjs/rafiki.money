@@ -1,0 +1,8 @@
+.vscode
+*.tgz
+coverage/
+.nyc_output
+packages/scratch/*
+node_modules/
+/.idea/*
+.env

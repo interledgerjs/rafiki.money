@@ -1,0 +1,11 @@
+{
+  "docs": {
+    "Introduction": ["intro"],
+    "Guides": ["sending", "receiving" ,"checkout", "recurring"],
+    "Advanced Guides": ["send-local"],
+    "Contributing": ["contributing"]
+  },
+  "docs-other": {
+    "First Category": ["doc4", "doc5"]
+  }
+}
