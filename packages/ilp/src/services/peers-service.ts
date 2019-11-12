@@ -11,7 +11,7 @@ export class WalletPeersService extends InMemoryPeers {
   }
 
   async get (id: string): Promise<InMemoryPeer> {
-    const peerInfo: PeerInfo = id === this._uplinkId ? { id: this._uplinkId, relation: 'parent', url: this._uplinkUrl, authToken: this._uplinkAuthToken, maxPacketAmount: 40000n } : { id, relation: 'child', maxPacketAmount: 40000n }
+    const peerInfo: PeerInfo = id === this._uplinkId ? { id: this._uplinkId, relation: 'parent', url: this._uplinkUrl, authToken: this._uplinkAuthToken, maxPacketAmount: 40000n } : { id, relation: 'child', maxPacketAmount: 500000n }
     return new InMemoryPeer(peerInfo)
   }
 }
