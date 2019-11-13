@@ -1,6 +1,6 @@
 {
   "docs": {
-    "Introduction": ["intro"],
+    "Introduction": ["intro", "architecture"],
     "Guides": ["sending", "receiving" ,"checkout", "recurring"],
     "Advanced Guides": ["send-local"],
     "Contributing": ["contributing"]
