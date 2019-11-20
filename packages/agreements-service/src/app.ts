@@ -7,6 +7,7 @@ import { store as storeTransaction } from './controllers/agreementsTransactionCo
 import { log } from './winston'
 import * as IntentsController from './controllers/intentsController'
 import * as MandatesController from './controllers/mandatesController'
+import * as MandatesSpendController from './controllers/mandatesSpendController'
 import { AgreementBucketInterface } from './services/agreementBucket'
 import * as IntentValidation from './route-validation/intents'
 import * as MandatesValidation from './route-validation/mandates'
@@ -56,5 +57,7 @@ export class App {
     this._router.get('/mandates', MandatesController.index)
     this._router.patch('/mandates/:id', MandatesValidation.update, MandatesController.update)
     this._router.get('/mandates/:id', MandatesController.show)
+
+    this._router.post('/mandates/:id/spend', MandatesSpendController.store)
   }
 }

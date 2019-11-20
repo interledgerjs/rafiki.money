@@ -129,7 +129,7 @@ describe('Create mandate', () => {
     expect(mandate!.start).toEqual(1434412800000)
   })
 
-  test('defaults expiry to 1 hour from now', async () => {
+  test('defaults expiry null', async () => {
     const dateNowSpy = jest.spyOn(Date, 'now').mockImplementation(() => 1434412800000)
 
     const postData = {
@@ -144,12 +144,12 @@ describe('Create mandate', () => {
     const { status, data } = await axios.post('http://localhost:4000/mandates', postData)
 
     expect(status).toEqual(201)
-    expect(data.expiry).toEqual(1434412800000 + 3600 * 1000)
+    expect(data.expiry).toEqual(undefined)
 
     const mandate = await Agreement.query().where('id', data['id']).first()
     expect(mandate).toBeDefined()
     expect(mandate!.isMandate()).toBe(true)
-    expect(mandate!.expiry).toEqual(1434412800000 + 3600 * 1000)
+    expect(mandate!.expiry).toEqual(null)
     dateNowSpy.mockRestore()
   })
 

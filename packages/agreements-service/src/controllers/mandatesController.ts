@@ -50,7 +50,7 @@ export async function store (ctx: AppContext): Promise<void> {
   try {
     const { asset: { scale, code }, scope, amount, description, start, expiry, cycles, interval, cap, subject, userId, accountId } = ctx.request.body
     const startEpoch = start || new Date(Date.now()).getTime()
-    const expiryEpoch = expiry || new Date(Date.now() + 60 * 60 * 1000).getTime()
+    const expiryEpoch = expiry || null
 
     // TODO validate user owns account
 
