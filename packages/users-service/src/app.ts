@@ -7,6 +7,7 @@ import { Server } from 'http'
 import { hydra, TokenInfo } from './services/hydra'
 import * as UsersController from './controllers/userController'
 import * as LoginController from './controllers/loginController'
+import * as LogoutController from './controllers/logoutController'
 import * as ConsentController from './controllers/consentController'
 import * as PaymentPointerController from './controllers/payment-pointer'
 import * as Oauth2ClientController from './controllers/oauth2ClientController'
@@ -48,6 +49,8 @@ export class App {
 
     this._router.get('/login', LoginController.getValidation(), LoginController.show)
     this._router.post('/login', LoginController.createValidation(), LoginController.store)
+
+    this._router.post('/logout', LogoutController.store)
 
     this._router.get('/consent', ConsentController.getValidation(), ConsentController.show)
     this._router.post('/consent', ConsentController.storeValidation(), ConsentController.store)

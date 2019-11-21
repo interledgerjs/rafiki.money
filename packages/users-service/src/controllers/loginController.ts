@@ -14,7 +14,10 @@ export async function show (ctx: AppContext): Promise<void> {
   })
 
   if (loginRequest['skip']) {
-    const acceptLogin = await hydra.acceptLoginRequest(challenge, { subject: loginRequest['subject'], remember: false }).catch(error => {
+    const acceptLogin = await hydra.acceptLoginRequest(challenge, { subject: loginRequest['subject'],
+      remember: true,
+      remember_for: 604800 // 1 week
+    }).catch(error => {
       ctx.logger.error(error, 'error in accept login request')
       throw error
     })
@@ -24,7 +27,7 @@ export async function show (ctx: AppContext): Promise<void> {
   }
 
   ctx.status = 200
-  ctx.body = { redirectTo: '' }
+  ctx.body = { redirectTo: null }
 }
 export async function store (ctx: Context): Promise<void> {
   const { username, password } = ctx.request.body
@@ -36,7 +39,11 @@ export async function store (ctx: Context): Promise<void> {
 
   ctx.assert(await bcrypt.compare(password, user!.password), 401, 'Invalid username or password.')
 
-  const acceptLogin = await hydra.acceptLoginRequest(challenge, { subject: user!.id.toString(), remember: false }).catch(error => {
+  const acceptLogin = await hydra.acceptLoginRequest(challenge, {
+    subject: user!.id.toString(),
+    remember: true,
+    remember_for: 604800 // 1 week
+  }).catch(error => {
     ctx.logger.error(error, 'error in accept login request')
     throw error
   })

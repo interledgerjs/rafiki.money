@@ -14,6 +14,7 @@ import Callback from "./pages/callback"
 import { UsersService } from './services/users'
 import {UserSettings} from "./pages/user/settings"
 import OauthRegistration from './pages/oauth-registration'
+import Logout from './pages/logout'
 
 const HYDRA_LOGIN_GRANT_URL = process.env.REACT_APP_LOGIN_GRANT_URL || 'http://localhost:9000/oauth2/auth?client_id=wallet-gui-service&response_type=token&state=loginflow&scope=offline openid&redirect_uri=http://localhost:3000/callback'
 
@@ -80,8 +81,7 @@ const App: React.FC = () => {
   }
 
   function logout (): void {
-    deleteToken()
-    window.location.href = HYDRA_LOGIN_GRANT_URL
+    window.location.href = 'https://auth.rafiki.money/oauth2/sessions/logout'
   }
 
   return (
@@ -102,7 +102,7 @@ const App: React.FC = () => {
             <Route path="/signup" exact  render={(props) => <Signup  authenticate={authenticate} {...props}/>}/>
             <Route path="/login" exact  render={(props) => <Login authenticate={authenticate} {...props}/>}/>}/>
             <Route path="/consent" exact  render={(props) => <Consent authenticate={authenticate} {...props}/>}/>
-
+            <Route path="/logout" exact  render={(props) => <Logout {...props}/>}/>}/>
             <Route path="/payment-handler" exact render={(props) => <Checkout {...props}/>}/>
 
           </Switch>

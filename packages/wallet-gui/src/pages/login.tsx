@@ -24,6 +24,11 @@ const Login: React.FC<LoginProps> = (props) => {
     const urlChallenge = url.searchParams.get('login_challenge')
     if (!urlChallenge) {
       window.location.href = HYDRA_LOGIN_GRANT_URL
+    } else {
+      const login = await users.getLogin(urlChallenge)
+      if(login && login.redirectTo) {
+        window.location.href = login.redirectTo
+      }
     }
     setChallenge(urlChallenge)
   }
