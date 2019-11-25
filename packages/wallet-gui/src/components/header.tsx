@@ -29,7 +29,7 @@ const Header: React.FC<RouteComponentProps & { logout: () => void }> = ({ locati
           <button className={"my-auto mr-4 text-grey-dark text-lg hover:text-grey-darker"} onClick={() => history.push('/settings')}>
             Settings
           </button>
-          <button className={"my-auto mr-4 text-grey-dark text-lg hover:text-grey-darker"} onClick={() => logout()}>
+          <button className={"my-auto mr-4 text-grey-dark text-lg hover:text-grey-darker"} onClick={() => history.push('/logout')}>
             Logout
           </button>
         </div>

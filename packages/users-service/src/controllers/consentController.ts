@@ -83,7 +83,7 @@ export async function show (ctx: AppContext): Promise<void> {
   })
   ctx.logger.debug('Got hydra consent request', { consentRequest })
 
-  if (consentRequest['skip'] || consentRequest['client'].client_id === 'wallet-gui-service') {
+  if (consentRequest['skip'] || consentRequest['client'].client_id === 'frontend-client') {
     const acceptConsent = await hydra.acceptConsentRequest(challenge, {
       remember: true,
       remember_for: 0,
@@ -112,11 +112,14 @@ export async function show (ctx: AppContext): Promise<void> {
   const agreementUrl = getAgreementUrlFromScopes(grantScopes)
   ctx.logger.debug('grantScopes and agreementUrl', { grantScopes, agreementUrl })
 
-  const token = await ctx.tokenService.getAccessToken()
-  ctx.logger.debug('access token', { token })
+  let accountList = undefined
+  if(agreementUrl) {
+    const token = await ctx.tokenService.getAccessToken()
+    ctx.logger.debug('access token', { token })
 
-  const accountList = agreementUrl ? await accounts.getUserAccounts(consentRequest['subject'], token) : undefined
-  ctx.logger.debug('Got account list', { accountList })
+    const accountList = await accounts.getUserAccounts(consentRequest['subject'], token)
+    ctx.logger.debug('Got account list', { accountList })
+  }
 
   ctx.body = {
     requestedScopes: consentRequest['requested_scope'],

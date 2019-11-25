@@ -50,7 +50,7 @@ export function createValidation (): Config {
   return {
     validate: {
       type: 'json',
-      body: Joi.object({
+      body: Joi.object().keys({
         username: Joi.string().required(),
         password: Joi.string().required()
       })
