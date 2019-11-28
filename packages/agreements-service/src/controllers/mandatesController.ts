@@ -73,14 +73,20 @@ export async function update (ctx: AppContext): Promise<void> {
       ctx.response.status = 404
       ctx.response.message = 'No mandate found'
       return
-    }
+		}
+		if (mandate.cancelled) {
+      ctx.response.status = 400
+      ctx.response.message = 'Cancelled mandate'
+      return
+		}
 
     // TODO validate user owns account
-    const { userId, accountId, scope } = ctx.request.body
+    const { userId, accountId, scope, cancelled } = ctx.request.body
     const updatedData = {}
     if (userId) updatedData['userId'] = userId
     if (accountId) updatedData['accountId'] = accountId
-    if (scope) updatedData['scope'] = scope
+		if (scope) updatedData['scope'] = scope
+		if (cancelled) updatedData['cancelled'] = cancelled
 
     logger.debug('updating mandate', { updatedData })
     const updatedMandate = await mandate.$query().updateAndFetch(updatedData)

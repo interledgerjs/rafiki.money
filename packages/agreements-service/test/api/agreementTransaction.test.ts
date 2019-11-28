@@ -9,13 +9,16 @@ const agreementBucketMock = new AgreementBucketMock()
 describe('Agreement Transaction', () => {
   let app: App
   let agreement: Agreement
-  let db: Knex
+	let db: Knex
+	let cancelledAgreement: Agreement
+	let timestamp = new Date().getTime()
 
   beforeEach(async () => {
     db = await refreshDatabase()
     app = new App(agreementBucketMock)
     app.listen(4000)
-    agreement = await Agreement.query().insertAndFetch({ amount: '100', assetCode: 'USD', assetScale: 2, userId: 4, accountId: 3 })
+		agreement = await Agreement.query().insertAndFetch({ amount: '100', assetCode: 'USD', assetScale: 2, userId: 4, accountId: 3 })
+		cancelledAgreement = await Agreement.query().insertAndFetch({ amount: '100', assetCode: 'USD', assetScale: 2, userId: 4, accountId: 3, cancelled: timestamp })
   })
 
   afterEach(async () => {
@@ -44,5 +47,19 @@ describe('Agreement Transaction', () => {
     }
 
     expect(false).toBe(true)
-  })
+	})
+	
+	test('Posting a transaction that is cancelled returns 403', async () => {
+    try {
+      const { status } = await axios.post(`http://localhost:4000/agreements/${cancelledAgreement.id}/transactions`, {
+        amount: 10
+      })
+    } catch (error) {
+      const { status } = error.response
+      expect(status).toEqual(403)
+      return
+    }
+
+    expect(false).toBe(true)
+	})
 })

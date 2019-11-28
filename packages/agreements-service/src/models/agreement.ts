@@ -23,7 +23,8 @@ export class Agreement extends BaseModel {
   secretSalt!: string
   scope!: string
   callback!: string
-  type!: string
+	type!: string
+	cancelled!: number
 
   isMandate (): boolean {
     return this.type === 'mandate'
@@ -57,7 +58,8 @@ export class Agreement extends BaseModel {
       secretSalt: this.secretSalt || undefined,
       secretHash: this.secretHash || undefined,
       scope: this.scope || undefined,
-      callback: this.callback || undefined
+			callback: this.callback || undefined,
+			cancelled: this.cancelled || undefined
     }
   }
 }

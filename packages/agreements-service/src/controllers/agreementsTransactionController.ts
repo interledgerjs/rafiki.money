@@ -15,14 +15,15 @@ export async function store (ctx: AppContext): Promise<void> {
   const { amount } = ctx.request.body
   try {
     const agreement = await Agreement.query().where('id', agreementId).first()
-    if (!agreement) throw new Error('agreement not found')
+		if (!agreement) throw new Error('agreement not found')
+		if (agreement.cancelled) throw new Error('cancelled agreement')
 
     // Attempt to take from agreement bucket
     await ctx.agreementBucket.take(agreement, amount)
 
     ctx.response.status = 201
   } catch (error) {
-    logger.error(error.message)
+		logger.error(error.message)
     ctx.response.status = 403
   }
 }

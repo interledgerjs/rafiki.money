@@ -29,7 +29,8 @@ export const update: Config = {
     body: {
       userId: Joi.number().integer().optional(),
       accountId: Joi.number().integer().optional(),
-      scope: Joi.string().optional()
+			scope: Joi.string().optional(),			
+      cancelled: Joi.number().integer().greater(1284901492000).optional()
     }
   }
 }
