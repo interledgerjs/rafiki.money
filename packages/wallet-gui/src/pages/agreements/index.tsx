@@ -17,7 +17,8 @@ export interface Agreement {
   description: string
   balance: number
   interval: string
-  cycles: number
+	cycles: number
+	cancelled: number
 }
 
 const formatCurrency = (value: number, scale: number) => {
@@ -32,6 +33,7 @@ export const Agreements: React.FC = () => {
         <TabList>
           <Tab>Active</Tab>
           <Tab>Expired</Tab>
+          <Tab>Cancelled</Tab>
           <Tab>All</Tab>
         </TabList>
 
@@ -40,6 +42,9 @@ export const Agreements: React.FC = () => {
         </TabPanel>
         <TabPanel>
           <AgreementTable state={'expired'}/>
+        </TabPanel>
+        <TabPanel>
+          <AgreementTable state={'cancelled'}/>
         </TabPanel>
         <TabPanel>
           <AgreementTable />

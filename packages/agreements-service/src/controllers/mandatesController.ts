@@ -15,11 +15,15 @@ export async function index (ctx: AppContext): Promise<void> {
   if (state) {
     switch (state) {
       case ('active'):
-        query.where('expiry', '>', now)
+				query.where('expiry', '>', now)
+				.whereNull('cancelled')
         break
       case ('expired'):
         query.where('expiry', '<=', now)
-        break
+				break
+			case ('cancelled'):
+				query.where('cancelled', '<=', now)
+				break
       default:
         throw new Error('Unknown state')
     }
