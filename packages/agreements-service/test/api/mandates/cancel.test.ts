@@ -100,41 +100,41 @@ describe('retrieve agreements by state', () => {
   let app: App
   let normalMandate: Agreement
   let expiredMandate: Agreement
-	let cancelledMandate: Agreement
-	let timestamp = new Date().getTime()
-	let testUserId = 5
+  let cancelledMandate: Agreement
+  let timestamp = new Date().getTime()
+  let testUserId = 5
 
   beforeEach(async () => {
     db = await refreshDatabase()
     app = new App(agreementBucket)
     app.listen(4000)
-		// functional
+    // functional
     normalMandate = await Agreement.query().insertAndFetch({
       amount: '100',
       assetCode: 'USD',
       assetScale: 2,
       userId: testUserId,
-			type: 'mandate',
-			expiry: timestamp + 1000000
+      type: 'mandate',
+      expiry: timestamp + 1000000
     })
-		// expired
+    // expired
     expiredMandate = await Agreement.query().insertAndFetch({
       amount: '100',
       assetCode: 'USD',
       assetScale: 2,
       userId: testUserId,
       type: 'mandate',
-			expiry: timestamp - 1000
+      expiry: timestamp - 1000
     })
-		// cancelled
+    // cancelled
     cancelledMandate = await Agreement.query().insertAndFetch({
       amount: '100',
       assetCode: 'USD',
       assetScale: 2,
       userId: testUserId,
-			type: 'mandate',
-			cancelled: timestamp,
-			expiry: timestamp + 1000000
+      type: 'mandate',
+      cancelled: timestamp,
+      expiry: timestamp + 1000000
     })
   })
 
@@ -144,39 +144,42 @@ describe('retrieve agreements by state', () => {
     await db.destroy()
   })
 
-	test('retirieving valid agreement should have matching ids and return 200', async () => {
+  test('retirieving valid agreement should have matching ids and return 200', async () => {
     const { status, data } = await axios.get(
       `http://localhost:4000/mandates/?userId=${testUserId}&state=active`
     )
 
-		console.log(`http://localhost:4000/mandates/?userId=${testUserId}&state=active`,data, normalMandate)
+    console.log(
+      `http://localhost:4000/mandates/?userId=${testUserId}&state=active`,
+      data,
+      normalMandate
+    )
 
-		expect(status).toEqual(200)
-		expect(data.length).toEqual(1)
+    expect(status).toEqual(200)
+    expect(data.length).toEqual(1)
     expect(data[0].id).toEqual(normalMandate.id)
   })
 
-	test('retirieving expired agreement should have matching ids and return 200', async () => {
+  test('retirieving expired agreement should have matching ids and return 200', async () => {
     const { status, data } = await axios.get(
       `http://localhost:4000/mandates/?userId=${testUserId}&state=expired`
     )
 
-		console.log(data)
+    console.log(data)
 
-		expect(status).toEqual(200)
-		expect(data.length).toEqual(1)
+    expect(status).toEqual(200)
+    expect(data.length).toEqual(1)
     expect(data[0].id).toEqual(expiredMandate.id)
-	})
+  })
 
-	test('retirieving cancelled agreement should have matching ids and return 200', async () => {
+  test('retirieving cancelled agreement should have matching ids and return 200', async () => {
     const { status, data } = await axios.get(
       `http://localhost:4000/mandates/?userId=${testUserId}&state=cancelled`
     )
 
-		console.log(data)
-		expect(status).toEqual(200)
-		expect(data.length).toEqual(1)
+    console.log(data)
+    expect(status).toEqual(200)
+    expect(data.length).toEqual(1)
     expect(data[0].id).toEqual(cancelledMandate.id)
-	})
-
+  })
 })
