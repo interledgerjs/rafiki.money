@@ -34,6 +34,9 @@ export class TokenService {
   }
 
   async getAccessToken (): Promise<string> {
+    if(!this._client) {
+      await this.setup()
+    }
     return new Promise<string>((resolve) => {
       if (!this._token || this._token.expired()) {
         this._client.grant({
