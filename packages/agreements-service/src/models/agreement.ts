@@ -24,7 +24,7 @@ export class Agreement extends BaseModel {
   scope!: string
   callback!: string
   type!: string
-  cancelled!: number
+  cancelledAt!: number
 
   isMandate(): boolean {
     return this.type === 'mandate'
@@ -61,7 +61,7 @@ export class Agreement extends BaseModel {
       secretHash: this.secretHash || undefined,
       scope: this.scope || undefined,
       callback: this.callback || undefined,
-      cancelled: this.cancelled || undefined
+      cancelledAt: this.cancelledAt || undefined
     }
   }
 }

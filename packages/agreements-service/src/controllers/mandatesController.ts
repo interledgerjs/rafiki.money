@@ -18,13 +18,13 @@ export async function index(ctx: AppContext): Promise<void> {
   if (state) {
     switch (state) {
       case 'active':
-        query.where('expiry', '>', now).whereNull('cancelled')
+        query.where('expiry', '>', now).whereNull('cancelledAt')
         break
       case 'expired':
         query.where('expiry', '<=', now)
         break
       case 'cancelled':
-        query.where('cancelled', '<=', now)
+        query.where('cancelledAt', '<=', now)
         break
       default:
         throw new Error('Unknown state')
@@ -135,19 +135,19 @@ export async function update(ctx: AppContext): Promise<void> {
       ctx.response.message = 'No mandate found'
       return
     }
-    if (mandate.cancelled) {
+    if (mandate.cancelledAt) {
       ctx.response.status = 400
       ctx.response.message = 'Cancelled mandate'
       return
     }
 
     // TODO validate user owns account
-    const { userId, accountId, scope, cancelled } = ctx.request.body
+    const { userId, accountId, scope, cancelledAt } = ctx.request.body
     const updatedData = {}
     if (userId) updatedData['userId'] = userId
     if (accountId) updatedData['accountId'] = accountId
     if (scope) updatedData['scope'] = scope
-    if (cancelled) updatedData['cancelled'] = cancelled
+    if (cancelledAt) updatedData['cancelledAt'] = cancelledAt
 
     logger.debug('updating mandate', { updatedData })
     const updatedMandate = await mandate.$query().updateAndFetch(updatedData)

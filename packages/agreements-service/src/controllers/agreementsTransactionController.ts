@@ -21,7 +21,7 @@ export async function store(ctx: AppContext): Promise<void> {
       .where('id', agreementId)
       .first()
     if (!agreement) throw new Error('agreement not found')
-    if (agreement.cancelled) throw new Error('cancelled agreement')
+    if (agreement.cancelledAt) throw new Error('cancelled agreement')
 
     // Attempt to take from agreement bucket
     await ctx.agreementBucket.take(agreement, amount)

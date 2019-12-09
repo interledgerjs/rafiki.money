@@ -38,12 +38,12 @@ describe('Cancel mandate', () => {
     const { status, data } = await axios.patch(
       'http://localhost:4000/mandates/' + mandate.id,
       {
-        cancelled: timestamp
+        cancelledAt: timestamp
       }
     )
 
     expect(status).toEqual(200)
-    expect(data.cancelled).toEqual(timestamp)
+    expect(data.cancelledAt).toEqual(timestamp)
     const editedMandate = await mandate.$query()
     expect(editedMandate.isMandate()).toBe(true)
     expect(editedMandate.accountId).toBeNull()
@@ -57,7 +57,7 @@ describe('Cancel mandate', () => {
 
     try {
       await axios.patch('http://localhost:4000/mandates/123', {
-        cancelled: timestamp
+        cancelledAt: timestamp
       })
     } catch (error) {
       const { status } = error.response
@@ -75,14 +75,14 @@ describe('Cancel mandate', () => {
       assetCode: 'USD',
       assetScale: 2,
       type: 'mandate',
-      cancelled: timestamp
+      cancelledAt: timestamp
     })
 
     try {
       await axios.patch(
         'http://localhost:4000/mandates/' + cancelledmandate.id,
         {
-          cancelled: timestamp
+          cancelledAt: timestamp
         }
       )
     } catch (error) {
@@ -133,7 +133,7 @@ describe('retrieve agreements by state', () => {
       assetScale: 2,
       userId: testUserId,
       type: 'mandate',
-      cancelled: timestamp,
+      cancelledAt: timestamp,
       expiry: timestamp + 1000000
     })
   })

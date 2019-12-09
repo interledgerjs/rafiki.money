@@ -53,7 +53,7 @@ export const update: Config = {
         .integer()
         .optional(),
       scope: Joi.string().optional(),
-      cancelled: Joi.number()
+      cancelledAt: Joi.number()
         .integer()
         .greater(1284901492000)
         .optional()

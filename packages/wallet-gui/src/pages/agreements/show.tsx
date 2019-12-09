@@ -66,7 +66,7 @@ export const ShowAgreement: React.FC<RouteComponentProps<{ id: string }>> = ({ m
     if (agreement) {
       ishara.getMandate(match.params.id).then(agreement => {
         setPolledBalance(agreement.balance)
-        setCancelStatus(agreement.cancelled)
+        setCancelStatus(agreement.cancelledAt)
       })
     }
   }, delay)

@@ -30,7 +30,7 @@ describe('Agreement Transaction', () => {
       assetScale: 2,
       userId: 4,
       accountId: 3,
-      cancelled: timestamp
+      cancelledAt: timestamp
     })
   })
 

@@ -1,11 +1,11 @@
 exports.up = function(knex) {
   return knex.schema.table('agreements', function(table) {
-    table.integer('cancelled')
+    table.integer('cancelledAt')
   })
 }
 
 exports.down = function(knex) {
   return knex.schema.table('agreements', function(table) {
-    table.dropColumn('cancelled')
+    table.dropColumn('cancelledAt')
   })
 }
