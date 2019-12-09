@@ -23,9 +23,15 @@ export async function store (ctx: AppContext): Promise<void> {
       ctx.response.message = 'No mandate found'
       return
     }
+    if(!mandate.cancelledAt) {
+      ctx.response.status = 402
+      ctx.response.message = 'Mandate has been cancelled by user'
+      return
+    }
 
     const spspDetails = await queryPaymentPointer(paymentPointer)
 
+    // TODO, should this be sync or async
     try {
       await Pay(mandateId, amount, authToken, spspDetails.destinationAccount, spspDetails.sharedSecret)
     } catch(error) {
