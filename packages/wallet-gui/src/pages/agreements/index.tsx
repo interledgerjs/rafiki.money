@@ -18,10 +18,11 @@ export interface Agreement {
   balance: number
   interval: string
   cycles: number
+  cancelled: number
 }
 
 const formatCurrency = (value: number, scale: number) => {
-  return (value*10**(-scale)).toFixed(scale)
+  return (value * 10 ** (-scale)).toFixed(scale)
 }
 
 export const Agreements: React.FC = () => {
@@ -32,14 +33,18 @@ export const Agreements: React.FC = () => {
         <TabList>
           <Tab>Active</Tab>
           <Tab>Expired</Tab>
+          <Tab>Cancelled</Tab>
           <Tab>All</Tab>
         </TabList>
 
         <TabPanel>
-          <AgreementTable state={'active'}/>
+          <AgreementTable state={'active'} />
         </TabPanel>
         <TabPanel>
-          <AgreementTable state={'expired'}/>
+          <AgreementTable state={'expired'} />
+        </TabPanel>
+        <TabPanel>
+          <AgreementTable state={'cancelled'} />
         </TabPanel>
         <TabPanel>
           <AgreementTable />
@@ -63,7 +68,7 @@ const AgreementTable: React.FC<AgreementTableProps> = ({ state }) => {
     let isMounted = true
     getUser().then(({ id }) => {
       ishara.getMandates(id, state).then(agreements => {
-        if(isMounted) {
+        if (isMounted) {
           setAgreements(agreements)
           setLoading(false)
         }
@@ -72,7 +77,7 @@ const AgreementTable: React.FC<AgreementTableProps> = ({ state }) => {
     return () => { isMounted = false }
   }, [token])
 
-  if(!loading && agreements.length === 0 ) {
+  if (!loading && agreements.length === 0) {
     return (
       <div className="py-2 text-grey-darker text-lg">
         You have no {state} agreements
@@ -83,48 +88,48 @@ const AgreementTable: React.FC<AgreementTableProps> = ({ state }) => {
   return loading ? <div></div> : (
     <table className='text-left w-full mt-4 mb-8'>
       <thead>
-      <tr className='font-bold uppercase text-md text-grey-darkest border-b border-grey-light'>
-        <th className='text-center'>Currency</th>
-        <th className='text-center'>Amount</th>
-        <th className='text-center'>Balance</th>
-        <th className='text-center hidden md:table-cell'>Start</th>
-        <th className='text-center hidden md:table-cell'>Expiry</th>
-      </tr>
+        <tr className='font-bold uppercase text-md text-grey-darkest border-b border-grey-light'>
+          <th className='text-center'>Currency</th>
+          <th className='text-center'>Amount</th>
+          <th className='text-center'>Balance</th>
+          <th className='text-center hidden md:table-cell'>Start</th>
+          <th className='text-center hidden md:table-cell'>Expiry</th>
+        </tr>
       </thead>
       <tbody>
-      { agreements.map(agreement => <AgreementRow key={'agreement' + agreement.id} {...agreement} />) }
+        {agreements.map(agreement => <AgreementRow key={'agreement' + agreement.id} {...agreement} />)}
       </tbody>
     </table>
   )
 }
 
-const AgreementRow: React.FC<Agreement> = ({id, amount, balance, start, expiry, asset: {code, scale} }) => {
+const AgreementRow: React.FC<Agreement> = ({ id, amount, balance, start, expiry, asset: { code, scale } }) => {
   return (
     <tr className='border-b border-grey-light cursor-pointer hover:bg-grey-lighter'>
       <td className='text-center py-3 text-grey-darker font-semibold'>
-        <Link to={`/agreements/${id}`} className="w-full inline-block" style={{ color: 'inherit', textDecoration: 'inherit'}}>
+        <Link to={`/agreements/${id}`} className="w-full inline-block" style={{ color: 'inherit', textDecoration: 'inherit' }}>
           {code}
         </Link>
       </td>
       <td className='text-center py-3 text-grey-darker font-semibold'>
-      <Link to={`/agreements/${id}`} className="w-full inline-block" style={{ color: 'inherit', textDecoration: 'inherit'}}>
-        {formatCurrency(parseInt(amount), scale)}
-      </Link>
+        <Link to={`/agreements/${id}`} className="w-full inline-block" style={{ color: 'inherit', textDecoration: 'inherit' }}>
+          {formatCurrency(parseInt(amount), scale)}
+        </Link>
       </td>
       <td className='text-center py-3 text-grey-darkest font-semibold'>
-      <Link to={`/agreements/${id}`} className="w-full inline-block" style={{ color: 'inherit', textDecoration: 'inherit'}}>
-        {formatCurrency(balance, scale)}
-      </Link>
+        <Link to={`/agreements/${id}`} className="w-full inline-block" style={{ color: 'inherit', textDecoration: 'inherit' }}>
+          {formatCurrency(balance, scale)}
+        </Link>
       </td>
       <td className='text-center py-3 text-grey hidden md:table-cell'>
-      <Link to={`/agreements/${id}`} className="w-full inline-block" style={{ color: 'inherit', textDecoration: 'inherit'}}>
-        {(new Date(start)).toLocaleString()}
-      </Link>
+        <Link to={`/agreements/${id}`} className="w-full inline-block" style={{ color: 'inherit', textDecoration: 'inherit' }}>
+          {(new Date(start)).toLocaleString()}
+        </Link>
       </td>
       <td className='text-center py-3 text-grey hidden md:table-cell'>
-      <Link to={`/agreements/${id}`} className="w-full inline-block" style={{ color: 'inherit', textDecoration: 'inherit'}}>
-        {(new Date(expiry)).toLocaleString()}
-      </Link>
+        <Link to={`/agreements/${id}`} className="w-full inline-block" style={{ color: 'inherit', textDecoration: 'inherit' }}>
+          {(new Date(expiry)).toLocaleString()}
+        </Link>
       </td>
     </tr>
   )

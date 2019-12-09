@@ -3,7 +3,7 @@ import { Pojo } from 'objection'
 import { createHmac } from 'crypto'
 
 export class Agreement extends BaseModel {
-  static get tableName (): string {
+  static get tableName(): string {
     return 'agreements'
   }
 
@@ -24,20 +24,23 @@ export class Agreement extends BaseModel {
   scope!: string
   callback!: string
   type!: string
+  cancelledAt!: number
 
-  isMandate (): boolean {
+  isMandate(): boolean {
     return this.type === 'mandate'
   }
 
-  get secretHash (): string | undefined {
+  get secretHash(): string | undefined {
     if (this.secret && this.secretSalt) {
-      return createHmac('SHA256', this.secretSalt).update(this.secret).digest('base64')
+      return createHmac('SHA256', this.secretSalt)
+        .update(this.secret)
+        .digest('base64')
     }
 
     return undefined
   }
 
-  $formatJson (): Pojo {
+  $formatJson(): Pojo {
     return {
       id: this.id,
       asset: {
@@ -57,7 +60,8 @@ export class Agreement extends BaseModel {
       secretSalt: this.secretSalt || undefined,
       secretHash: this.secretHash || undefined,
       scope: this.scope || undefined,
-      callback: this.callback || undefined
+      callback: this.callback || undefined,
+      cancelledAt: this.cancelledAt || undefined
     }
   }
 }
