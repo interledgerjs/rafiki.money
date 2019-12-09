@@ -31,8 +31,17 @@ const dummyConsent: ConsentRequest = {
     redirect_uris: [],
     client_name: 'Merchant'
   },
+  agreementUrl: '123',
   requestedScopes: [
     'intents', 'offline', 'openid'
+  ],
+  accounts: [
+    {
+      id: 1, name: 'Main Account',
+    },
+    {
+      id: 2, name: 'Savings Account',
+    }
   ]
 }
 

@@ -25,6 +25,13 @@ type Agreement = {
   cycles?: number
 }
 
+const dummyAgreement: Agreement = {
+  asset: {code: 'USD', scale: 2},
+  scope: '$rafiki.money/p/test',
+  start: 0,
+  amount: '100'
+}
+
 const humanizeInterval = (interval: string): string => {
   return humanize(toSeconds( parse(interval))*1000)
 }
@@ -145,9 +152,13 @@ const AgreementConsent: React.FC<AgreementConsentProps> = ({consentRequest, chal
   return agreement ?
     (
       <div className="w-full max-w-sm mx-auto mt-16 bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <div className='w-full flex justify-center align-center mb-4'>
-          <img src={merchantLogoSrc} className='w-12 h-12 text-center' alt="Merchant Logo"/>
-        </div>
+        {
+          merchantLogoSrc ?
+            <div className='w-full flex justify-center align-center mb-4'>
+              <img src={merchantLogoSrc} className='w-12 h-12 text-center' alt="Merchant Logo"/>
+            </div>
+            : null
+        }
         <div className="text-center my-4">
           Authorize <strong className="text-gray-800 font-bold whitespace-no-wrap">{merchantName}</strong> to access your ILP Wallet Account
         </div>
@@ -162,15 +173,18 @@ const AgreementConsent: React.FC<AgreementConsentProps> = ({consentRequest, chal
         <div className="text-gray-600 font-semibold text-md mb-2 mt-4">
           Wallet
         </div>
-        <div className='inline-block relative w-full'>
+        <div className="relative">
           <select
             className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-            id="grid-state" onChange={e => setChosenAccountId(Number(e.currentTarget.value))}>
+            id="grid-state"
+            onChange={e => setChosenAccountId(Number(e.currentTarget.value))}
+          >
             <option value={0} key={`default`}>Select account</option>
+
             {consentRequest.accounts!.map(account => <option value={account.id}
                                                              key={`account_${account.id}`}>{account.name}</option>)}
           </select>
-          <div className="pointer-events-none absolute pin-y pin-r flex items-center px-2 text-gray-800">
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
             <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
               <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
             </svg>
