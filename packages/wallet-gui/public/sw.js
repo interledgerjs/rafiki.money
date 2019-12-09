@@ -35,60 +35,53 @@ self.addEventListener('canmakepayment', async (e) => {
 self.addEventListener('paymentrequest', async function(e) {
   console.log(e)
 
-  e.respondWith({
-    methodName: 'https://rafiki.money',
-    details: {
-      token: '1234567890',
-    },
-  });
+  paymentRequest = new PaymentRequestPromise()
+  e.respondWith(paymentRequest.promise)
 
-  // paymentRequest = new PaymentRequestPromise()
-  // e.respondWith(paymentRequest.promise)
-  //
-  // const methodData = getMethodData(e, 'interledger')
-  // // TODO - Get data for 'https://paywithpurse.com/'
-  //
-  // // TODO - Handle `methodData` is undefined
-  // // TODO - Validate `methodData`
-  //
-  // /**
-  //  * Convert PaymentRequest data into URI params for Pay with Purse
-  //  * {
-  //  *   paymentRequest?: {
-  //  *     id: string,
-  //  *     origin: string,
-  //  *     instrumentKey: string,
-  //  *     total:
-  //  *   },
-  //  *   mandate?: {
-  //  *     amount: string,
-  //  *     assetCode: string,
-  //  *     assetScale: int
-  //  *   }
-  //  * }
-  //  */
-  //
-  // const requestData = {
-  //   paymentRequest: {
-  //     id: e.paymentRequestId,
-  //     origin: e.paymentRequestOrigin,
-  //     topOrigin: e.topOrigin,
-  //     instrumentKey: e.instrumentKey,
-  //     total: e.total,
-  //   },
-  //   mandate: methodData.mandate,
-  //   merchantInfo: methodData.merchantInfo
-  // }
-  //
-  // try {
-  //   const client = await e.openWindow(`/payment-handler?request=${encodeURI(JSON.stringify(requestData))}`)
-  //   if(!client) {
-  //     paymentRequest.reject('Failed to open window');
-  //   }
-  //   // TODO - Catch window close before we get the response
-  // } catch (e) {
-  //   paymentRequest.reject(e);
-  // }
+  const methodData = getMethodData(e, 'interledger')
+  // TODO - Get data for 'https://paywithpurse.com/'
+
+  // TODO - Handle `methodData` is undefined
+  // TODO - Validate `methodData`
+
+  /**
+   * Convert PaymentRequest data into URI params for Pay with Purse
+   * {
+   *   paymentRequest?: {
+   *     id: string,
+   *     origin: string,
+   *     instrumentKey: string,
+   *     total:
+   *   },
+   *   mandate?: {
+   *     amount: string,
+   *     assetCode: string,
+   *     assetScale: int
+   *   }
+   * }
+   */
+
+  const requestData = {
+    paymentRequest: {
+      id: e.paymentRequestId,
+      origin: e.paymentRequestOrigin,
+      topOrigin: e.topOrigin,
+      instrumentKey: e.instrumentKey,
+      total: e.total,
+    },
+    mandate: methodData.mandate,
+    merchantInfo: methodData.merchantInfo
+  }
+
+  try {
+    const client = await e.openWindow(`/payment-handler?request=${encodeURI(JSON.stringify(requestData))}`)
+    if(!client) {
+      paymentRequest.reject('Failed to open window');
+    }
+    // TODO - Catch window close before we get the response
+  } catch (e) {
+    paymentRequest.reject(e);
+  }
 
 })
 
