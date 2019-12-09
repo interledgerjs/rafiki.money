@@ -23,7 +23,7 @@ export async function store (ctx: AppContext): Promise<void> {
       ctx.response.message = 'No mandate found'
       return
     }
-    if(!mandate.cancelledAt) {
+    if(mandate.cancelledAt) {
       ctx.response.status = 402
       ctx.response.message = 'Mandate has been cancelled by user'
       return

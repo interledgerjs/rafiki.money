@@ -1,5 +1,5 @@
+
 hydra:
-  enabled: true
   # Number of ORY Hydra members
   replicaCount: 1
 
@@ -25,9 +25,14 @@ hydra:
       # En-/disable the service
       enabled: true
       # The service type
-      type: NodePort
+      type: ClusterIP
       # The service port
       port: 4444
+      # If you do want to specify annotations, uncomment the following
+      # lines, adjust them as necessary, and remove the curly braces after 'annotations:'.
+      annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
     # Configures the Kubernetes service for the api port.
     admin:
       # En-/disable the service
@@ -36,18 +41,23 @@ hydra:
       type: ClusterIP
       # The service port
       port: 4445
+      # If you do want to specify annotations, uncomment the following
+      # lines, adjust them as necessary, and remove the curly braces after 'annotations:'.
+      annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
 
   # Configure ingress
   ingress:
     # Configure ingress for the proxy port.
     public:
       # En-/Disable the proxy ingress.
-      enabled: false
-      annotations: {}
-      #     kubernetes.io/ingress.class: nginx
+      enabled: enable
+      annotations:
+         kubernetes.io/ingress.class: nginx
       #     kubernetes.io/tls-acme: "true"
       hosts:
-        - host: public.hydra.localhost
+        - host: auth.rafiki.local
           paths: ["/"]
     #    tls: []
     #        hosts:
@@ -56,16 +66,13 @@ hydra:
 
     admin:
       # En-/Disable the api ingress.
-      enabled: false
+      enabled: true
 
-      annotations: {}
-      #      If you do want to specify annotations, uncomment the following
-      #      lines, adjust them as necessary, and remove the curly braces after 'annotations:'.
-      #      kubernetes.io/ingress.class: nginx
-      #      kubernetes.io/tls-acme: "true"
+      annotations:
+            kubernetes.io/ingress.class: nginx
       hosts:
-        - host: admin.hydra.localhost
-          paths: ["/"]
+        - host: auth.rafiki.local
+          paths: ["/admin"]
   #    tls: []
   #      hosts:
   #        - api.hydra.local
@@ -77,6 +84,7 @@ hydra:
     # The ORY Hydra configuration. For a full list of available settings, check:
     #   https://github.com/ory/hydra/blob/master/docs/config.yaml
     config:
+      dsn: memory
       serve:
         public:
           port: 4444
@@ -84,41 +92,21 @@ hydra:
           port: 4445
         tls:
           allow_termination_from:
-            - 127.0.0.1/32
             - 10.0.0.0/8
             - 172.16.0.0/12
             - 192.168.0.0/16
       secrets: {}
       urls:
+        login: http://rafiki.local/login
+        consent: http://rafiki.local/consent
+        logout: http://rafiki.local/logout
         self:
-          issuer: https://auth.rafiki.money
-        login: https://rafiki.money/login
-        consent: https://rafiki.money/consent
+          issuer: http://auth.rafiki.local
 
-    autoMigrate: true
-    dangerousForceHttp: false
+    autoMigrate: false
+    dangerousForceHttp: true
     dangerousAllowInsecureRedirectUrls: false
 
-  resources: {}
-  #  We usually recommend not to specify default resources and to leave this as a conscious
-  #  choice for the user. This also increases chances charts run on environments with little
-  #  resources, such as Minikube. If you do want to specify resources, uncomment the following
-  #  lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  #  limits:
-  #    cpu: 100m
-  #    memory: 128Mi
-  #  requests:
-  #    cpu: 100m
-  #  memory: 128Mi
-
-  # Node labels for pod assignment.
-  nodeSelector: {}
-  # If you do want to specify node labels, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'annotations:'.
-  #   foo: bar
-
-  # Configure node tolerations.
-  tolerations: []
-
-  # Configure node affinity
-  affinity: {}
+  # Configures controller setup
+  maester:
+    enabled: false
