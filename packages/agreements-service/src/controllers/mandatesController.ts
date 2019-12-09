@@ -142,12 +142,11 @@ export async function update(ctx: AppContext): Promise<void> {
     }
 
     // TODO validate user owns account
-    const { userId, accountId, scope, cancelledAt } = ctx.request.body
+    const { userId, accountId, scope } = ctx.request.body
     const updatedData = {}
     if (userId) updatedData['userId'] = userId
     if (accountId) updatedData['accountId'] = accountId
     if (scope) updatedData['scope'] = scope
-    if (cancelledAt) updatedData['cancelledAt'] = cancelledAt
 
     logger.debug('updating mandate', { updatedData })
     const updatedMandate = await mandate.$query().updateAndFetch(updatedData)

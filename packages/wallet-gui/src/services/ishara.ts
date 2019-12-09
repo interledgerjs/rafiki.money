@@ -35,8 +35,7 @@ export const ishara = {
       .then(response => response.data)
   },
   cancelAgreement: async (agreementId: string) => {
-    let timestamp = new Date().getTime()
-    const url = new URL(`mandates/${agreementId}`, ISHARA_API_URL)
-    return axios.patch(url.toString(), { cancelledAt: timestamp })
+    const url = new URL(`mandates/${agreementId}/cancel`, ISHARA_API_URL)
+    return axios.post(url.toString(), {})
   }
 }

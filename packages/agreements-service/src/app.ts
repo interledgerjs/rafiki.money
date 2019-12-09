@@ -4,6 +4,7 @@ import bodyParser from 'koa-bodyparser'
 import cors from 'koa-cors'
 import { Server, createServer } from 'http'
 import { store as storeTransaction } from './controllers/agreementsTransactionController'
+import { cancelAgreement } from './controllers/cancelAgreementsController'
 import { log } from './winston'
 import * as IntentsController from './controllers/intentsController'
 import * as MandatesController from './controllers/mandatesController'
@@ -47,6 +48,7 @@ export class App {
 
   private _setupRoutes (): void {
     this._router.post('/agreements/:id/transactions', storeTransaction)
+    this._router.post('/agreements/:id/cancel',cancelAgreement )
     this._router.get('/', (ctx: Context) => { ctx.status = 200 })
 
     this._router.get('/intents', IntentsController.index)

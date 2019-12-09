@@ -35,15 +35,12 @@ describe('Cancel mandate', () => {
   test('cancel a valid mandate should return 200', async () => {
     let timestamp = new Date().getTime()
 
-    const { status, data } = await axios.patch(
-      'http://localhost:4000/mandates/' + mandate.id,
-      {
-        cancelledAt: timestamp
-      }
+    const { status, data } = await axios.post(
+      `http://localhost:4000/agreements/${mandate.id}/cancel`, {}
     )
 
     expect(status).toEqual(200)
-    expect(data.cancelledAt).toEqual(timestamp)
+    expect(data.cancelledAt).toBeDefined()
     const editedMandate = await mandate.$query()
     expect(editedMandate.isMandate()).toBe(true)
     expect(editedMandate.accountId).toBeNull()
@@ -56,9 +53,9 @@ describe('Cancel mandate', () => {
     let timestamp = new Date().getTime()
 
     try {
-      await axios.patch('http://localhost:4000/mandates/123', {
-        cancelledAt: timestamp
-      })
+      await axios.post(
+        `http://localhost:4000/agreements/123/cancel`, {}
+      )
     } catch (error) {
       const { status } = error.response
       expect(status).toEqual(404)
@@ -79,11 +76,8 @@ describe('Cancel mandate', () => {
     })
 
     try {
-      await axios.patch(
-        'http://localhost:4000/mandates/' + cancelledmandate.id,
-        {
-          cancelledAt: timestamp
-        }
+      await axios.post(
+        `http://localhost:4000/agreements/${cancelledmandate.id}/cancel`, {}
       )
     } catch (error) {
       const { status } = error.response
