@@ -35,7 +35,7 @@ export const ishara = {
       .then(response => response.data)
   },
   cancelAgreement: async (agreementId: string) => {
-    const url = new URL(`mandates/${agreementId}/cancel`, ISHARA_API_URL)
+    const url = new URL(`agreements/${agreementId}/cancel`, ISHARA_API_URL)
     return axios.post(url.toString(), {})
   }
 }
