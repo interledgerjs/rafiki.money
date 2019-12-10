@@ -4,14 +4,37 @@ import { Config, Joi } from 'koa-joi-router'
 import { User } from '../models/user'
 import { hydra } from '../../src/services/hydra'
 import { AppContext } from '../app'
+import { SignupSession } from '../models/signupSession'
 
 export async function show (ctx: AppContext): Promise<void> {
   const challenge = ctx.request.query.login_challenge
+
   ctx.logger.debug('Get login request', { challenge })
   const loginRequest = await hydra.getLoginRequest(challenge).catch(error => {
     ctx.logger.error(error, 'error in login request')
     throw error
   })
+
+  const requestUrl = new URL(loginRequest['request_url'])
+  const signupSessionId = requestUrl.searchParams.get('signupSessionId')
+
+  const session = signupSessionId ? await SignupSession.query().where('id', signupSessionId).first() : null
+  // Auto login users if they just signed up
+  if (session) {
+    const now = Date.now()
+    if(session.expiresAt > now) {
+      const acceptLogin = await hydra.acceptLoginRequest(challenge, { subject: session.userId,
+        remember: true,
+        remember_for: 604800 // 1 week
+      }).catch(error => {
+        ctx.logger.error(error, 'error in accept login request')
+        throw error
+      })
+      ctx.status = 200
+      ctx.body = { redirectTo: acceptLogin['redirect_to'] }
+      return
+    }
+  }
 
   if (loginRequest['skip']) {
     const acceptLogin = await hydra.acceptLoginRequest(challenge, { subject: loginRequest['subject'],
@@ -29,6 +52,7 @@ export async function show (ctx: AppContext): Promise<void> {
   ctx.status = 200
   ctx.body = { redirectTo: null }
 }
+
 export async function store (ctx: Context): Promise<void> {
   const { username, password } = ctx.request.body
   const challenge = ctx.request.query.login_challenge

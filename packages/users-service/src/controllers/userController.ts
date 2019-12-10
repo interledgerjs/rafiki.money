@@ -3,6 +3,7 @@ import { Context } from 'koa'
 import { User } from '../models/user'
 import { Config, Joi } from 'koa-joi-router'
 import { AppContext } from '../app'
+import { SignupSession } from '../models/signupSession'
 
 export async function show (ctx: AppContext): Promise<void> {
   ctx.logger.debug('Get me request')
@@ -24,7 +25,12 @@ export async function store (ctx: AppContext): Promise<void> {
   ctx.assert(usersWithUsername.length === 0, 400, 'Username is already taken.')
 
   const user = await User.query().insertAndFetch({ username, password: hashedPassword })
-  ctx.body = user.$formatJson()
+  const expiresAt = (new Date(Date.now() + 1000*30)).getTime()
+  const signupSession = await SignupSession.query().insertAndFetch({userId: user.id, expiresAt})
+  ctx.body = {
+    ...user.$formatJson(),
+    signupSessionId: signupSession.id
+  }
 }
 
 export async function update (ctx: Context): Promise<void> {

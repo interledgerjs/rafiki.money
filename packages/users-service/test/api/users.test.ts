@@ -7,6 +7,7 @@ import { App } from '../../src/app'
 import { hydra } from '../../src/services/hydra'
 import { TokenService } from '../../src/services/token-service'
 import Knex = require('knex')
+import { SignupSession } from '../../src/models/signupSession'
 
 describe('Users Service', function () {
   let knex: Knex
@@ -32,6 +33,14 @@ describe('Users Service', function () {
       expect(retrievedUser!.username).toEqual('alice')
 
       expect(data.username).toEqual('alice')
+    })
+
+    test('creating a user adds a signup session', async () => {
+      const { data } = await axios.post('http://localhost:3000/users', { username: 'alice', password: 'test' })
+
+      const session = await SignupSession.query().where('id', data.signupSessionId).first()
+
+      expect(session!.userId).toBe(data.id.toString())
     })
 
     test('does not return password', async () => {

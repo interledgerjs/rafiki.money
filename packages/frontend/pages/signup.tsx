@@ -11,8 +11,8 @@ const Signup: NextPage = () => {
   const usersService = UsersService()
 
   const onSubmit = async data => {
-    await usersService.signup(data.username, data.password).then(() => {
-      window.location.href = '/login'
+    await usersService.signup(data.username, data.password).then((data) => {
+      window.location.href = `/login?signupSessionId=${data.signupSessionId}`
     })
     // setError('password', "password", "Incorrect password")
   }

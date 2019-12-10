@@ -74,11 +74,11 @@ const Login: NextPage<Props> = ({login_challenge}) => {
 }
 
 Login.getInitialProps = async ({query, res}) => {
-  const { login_challenge } = query
+  const { login_challenge, signupSessionId } = query
 
   if(!login_challenge) {
     res.writeHead(302, {
-      Location: HYDRA_LOGIN_GRANT_URL
+      Location: signupSessionId ? HYDRA_LOGIN_GRANT_URL + `&signupSessionId=${signupSessionId}` : HYDRA_LOGIN_GRANT_URL
     })
     res.end()
     return
