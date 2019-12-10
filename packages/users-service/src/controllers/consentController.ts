@@ -117,7 +117,7 @@ export async function show (ctx: AppContext): Promise<void> {
     const token = await ctx.tokenService.getAccessToken()
     ctx.logger.debug('access token', { token })
 
-    const accountList = await accounts.getUserAccounts(consentRequest['subject'], token)
+    accountList = await accounts.getUserAccounts(consentRequest['subject'], token)
     ctx.logger.debug('Got account list', { accountList })
   }
 

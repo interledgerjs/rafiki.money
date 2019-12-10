@@ -95,7 +95,7 @@ export const ShowAgreement: React.FC<RouteComponentProps<{ id: string }>> = ({ m
         </div>
         <div>
           <p>Balance</p>
-          <p className="text-2xl text-center pt-2">{polledBalance ? formatCurrency(polledBalance, agreement.asset.scale) : null}</p>
+          <p className="text-2xl text-center pt-2">{typeof polledBalance !== 'undefined' ? formatCurrency(polledBalance, agreement.asset.scale) : null}</p>
         </div>
       </div>
       <table className='text-left w-full border-collapse mt-16 mx-auto shadow'>
