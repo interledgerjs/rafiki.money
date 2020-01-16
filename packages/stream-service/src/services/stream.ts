@@ -2,8 +2,10 @@ import got from 'got'
 import { HttpPlugin } from '../utils/http-plugin'
 import { createConnection } from 'ilp-protocol-stream'
 import { TokenService } from './token-service'
+import createLogger from 'pino'
 
 const ILP_UPLINK_URL = process.env.ILP_UPLINK_URL || 'https://localhost:3001'
+const logger = createLogger()
 
 export type SPSPResponse = {
   destinationAccount: string;
@@ -36,6 +38,7 @@ export class StreamService implements StreamServiceInterface {
       await stream.sendTotal(amount)
       await stream.end()
     } catch (e) {
+      logger.error('Error sending STREAM payment', {error: e})
       throw new Error('')
     }
   }
