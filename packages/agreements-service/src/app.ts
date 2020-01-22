@@ -9,9 +9,11 @@ import { log } from './winston'
 import * as IntentsController from './controllers/intentsController'
 import * as MandatesController from './controllers/mandatesController'
 import * as MandatesSpendController from './controllers/mandatesSpendController'
+import * as InvoicesController from './controllers/invoicesController'
 import { AgreementBucketInterface } from './services/agreementBucket'
 import * as IntentValidation from './route-validation/intents'
 import * as MandatesValidation from './route-validation/mandates'
+import * as InvoicesValidation from './route-validation/invoices'
 
 const logger = log.child({ component: 'App' })
 
@@ -61,5 +63,10 @@ export class App {
     this._router.get('/mandates/:id', MandatesController.show)
 
     this._router.post('/mandates/:id/spend', MandatesSpendController.store)
+
+    this._router.post('/invoices',InvoicesValidation.store, InvoicesController.store)
+    this._router.get('/invoices', InvoicesController.index)
+    this._router.get('/invoices/:id', InvoicesController.show)
+    this._router.delete('/invoices/:id', InvoicesController.remove)
   }
 }
