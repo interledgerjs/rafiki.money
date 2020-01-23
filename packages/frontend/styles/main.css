@@ -56,6 +56,7 @@
 @tailwind utilities;
 
 @import url('https://fonts.googleapis.com/css?family=Rubik:400,500&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
 
 html {
   @apply font-body
@@ -133,4 +134,156 @@ html {
   @apply text-overline;
   @apply uppercase;
   letter-spacing: 0.09375em;
+}
+
+/* component definitions */
+
+.label {
+  /* ✏️ Assistive text */
+  position: absolute;
+  height: 16px;
+  left: 16px;
+  right: 200px;
+  top: 59px;
+
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 16px;
+  /* identical to box height, or 133% */
+
+  letter-spacing: 0.4px;
+
+  /* light/primary */
+  color: #FF8A65;
+}
+
+.inputText {
+/* ✏️ Input text */
+position: absolute;
+height: 24px;
+left: 16px;
+right: 239px;
+top: 16px;
+
+/* Subtitle 1 */
+font-family: Roboto;
+font-style: normal;
+font-weight: normal;
+font-size: 16px;
+line-height: 24px;
+/* identical to box height, or 150% */
+
+letter-spacing: 0.15px;
+
+/* 00. On Surface / High Emphasis */
+color: rgba(0, 0, 0, 0.87);
+}
+
+.assistiveText {
+  /* ✏️ Assistive text */
+  position: absolute;
+  height: 16px;
+  left: 16px;
+  right: 200px;
+  top: 59px;
+
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 16px;
+  /* identical to box height, or 133% */
+
+  letter-spacing: 0.4px;
+
+  /* light/primary */
+  color: #FF8A65;
+}
+
+.topBorder {
+  position: absolute;
+  width: 1006px;
+  height: 2px;
+  left: 50px;
+  top: 0px;
+}
+
+.textFieldOutline {
+  position: absolute;
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 22.22%;
+}
+
+.topBorderMask {
+  position: absolute;
+  height: 16px;
+  left: 13px;
+  right: 9px;
+  top: -9px;
+}
+
+.label {
+  /* label */
+  position: absolute;
+  height: 2px;
+  left: 13px;
+  right: 11px;
+  top: 0px;
+
+  /* 01. Primary/200 */
+  /* background: #BB86FC; */
+}
+
+.surface {
+  /* surface */
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  top: 2px;
+  bottom: 18px;
+
+  /* 01. Primary/200 */
+  /* background: #BB86FC; */
+  border-radius: 2px;
+}
+
+.border{
+  /* border */
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+  bottom: 16px;
+
+  /* 01. Primary/200 */
+  /* background: #BB86FC; */
+  border-radius: 4px;
+}
+
+.labeltest{
+/* ✏️ Label */
+
+
+position: absolute;
+/* width: 31px; */
+height: 16px;
+left: 16px;
+top: -8px;
+
+font-family: Roboto;
+font-style: normal;
+font-weight: normal;
+font-size: 12px;
+line-height: 16px;
+/* identical to box height, or 133% */
+
+letter-spacing: 0.4px;
+
+/* light/primary */
+
+color: #FF8A65;
 }
