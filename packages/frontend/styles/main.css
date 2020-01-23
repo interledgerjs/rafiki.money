@@ -32,6 +32,15 @@
     --color-secondary-400: #3AD7C8;
     --color-secondary-500: #00CBB9;
     --color-surface: #121212;
+    --color-surface-elevation-1: #1E1E1E;
+    --color-surface-elevation-2: #232323;
+    --color-surface-elevation-3: #252525;
+    --color-surface-elevation-4: #272727;
+    --color-surface-elevation-6: #2C2C2C;
+    --color-surface-elevation-8: #2E2E2E;
+    --color-surface-elevation-12: #333333;
+    --color-surface-elevation-16: #363636;
+    --color-surface-elevation-24: #383838;
     --color-error: #CF6679;
     --color-red: #F39B9B;
     --color-orange: #F7C192;

@@ -55,7 +55,19 @@ module.exports = {
           '400': 'var(--color-secondary-400)',
           '500': 'var(--color-secondary-500)',
         },
-        surface: 'var(--color-surface)',
+        surface: {
+          default: 'var(--color-surface)',
+          // Note: elevations only available in dark mode.
+          'elevation-1': 'var(--color-surface-elevation-1)',
+          'elevation-2': 'var(--color-surface-elevation-2)',
+          'elevation-3': 'var(--color-surface-elevation-3)',
+          'elevation-4': 'var(--color-surface-elevation-4)',
+          'elevation-6': 'var(--color-surface-elevation-6)',
+          'elevation-8': 'var(--color-surface-elevation-8)',
+          'elevation-12': 'var(--color-surface-elevation-12)',
+          'elevation-16': 'var(--color-surface-elevation-16)',
+          'elevation-24': 'var(--color-surface-elevation-24)'
+        },
         error: 'var(--color-error)',
         red: 'var(--color-red)',
         orange: 'var(--color-orange)',
