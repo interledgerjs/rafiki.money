@@ -18,6 +18,7 @@
   --color-green: #2FAE60;
   --color-blue: #2F80ED;
   --color-purple: #9B51E0;
+  --logo-blend: multiply;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -50,6 +51,7 @@
     --color-green: #8AE5B1;
     --color-blue: #77ACF3;
     --color-purple: #C193EC;
+    --logo-blend: screen;
   }
 }
 
@@ -136,4 +138,15 @@ html {
   @apply text-overline;
   @apply uppercase;
   letter-spacing: 0.09375em;
+}
+
+
+.logo>svg>g>rect{
+  mix-blend-mode: var(--logo-blend);
+  fill: var(--color-secondary);
+}
+
+.logo>svg>g>circle{
+  mix-blend-mode: var(--logo-blend);
+  fill: var(--color-primary);
 }
