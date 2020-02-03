@@ -9,6 +9,7 @@
   --color-secondary: #21D2BF;
   --color-secondary-400: #00C6b0;
   --color-secondary-500: #00B9A0;
+  --color-on-surface: #000000;
   --color-surface: #FFFFFF;
   --color-error: #B00020;
   --color-red: #EB5757;
@@ -31,6 +32,7 @@
     --color-secondary: #7AE4D9;
     --color-secondary-400: #3AD7C8;
     --color-secondary-500: #00CBB9;
+    --color-on-surface: #FFFFFF;
     --color-surface: #121212;
     --color-surface-elevation-1: #1E1E1E;
     --color-surface-elevation-2: #232323;
@@ -178,7 +180,6 @@ line-height: 24px;
 letter-spacing: 0.15px;
 
 /* 00. On Surface / High Emphasis */
-color: rgba(0, 0, 0, 0.87);
 }
 
 .assistiveText {
@@ -197,9 +198,6 @@ color: rgba(0, 0, 0, 0.87);
   /* identical to box height, or 133% */
 
   letter-spacing: 0.4px;
-
-  /* light/primary */
-  color: #FF8A65;
 }
 
 .topBorder {

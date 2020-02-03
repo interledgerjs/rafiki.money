@@ -1,34 +1,47 @@
 import * as React from 'react'
 
 type props = {
-  // type: string
-  style: any
-  textColour?: string
-  borderCoulour?: string
-  disabled?: boolean
-  hint?: string
-  label?: string
-  defaultText?: string
+  style?: any;
+  textColour?: string;
+  borderColour?: string;
+  bgColour?: string;
+  disabled?: boolean;
+  hint?: string;
+  label?: string;
+  defaultText?: string;
+  maxWidth?: string;
   onKeyPress?: (event: any) => void
 }
 
-const TextInput: React.FC<props> = (props) => {
-  let className: string = ''
+export const TextInput: React.FC<props> = (props) => {
+  const textColour = props.textColour? props.textColour : 'on-surface'
+  const borderColour = props.borderColour? props.borderColour : 'primary'
+  const bgColour = props.bgColour? props.bgColour : 'surface'
+  const maxWidth = props.maxWidth? props.maxWidth : 'xs'
+
   return (
-    <div style={props.style} className="bg-surface">
-      <div className="topBorder"></div>
-      <div className="topBorderMask"></div>
-      <div className="textFieldOutline border-2 border-primary rounded">
-        <div className="label"></div>
-        <div className="surface"></div>
-        <div className=""></div>
+    <div style={props.style} className={`bg-${bgColour} max-w-${maxWidth}`}>
+      <div className={`textFieldOutline border-2 border-${borderColour} rounded`}>
       </div>
-      <label className="labeltest border-l-2 border-r-2 border-surface bg-surface
-      ">{props.label? props.label: ''}</label>
-      <input type="text" className="inputText focus:outline-none bg-surface"></input>
-      <p className="assistiveText">{ props.hint }</p>
+      <label className={props.label? `labeltest border-l-2 border-r-2 border-${bgColour} bg-${bgColour}`: `invisible`}>{props.label? props.label: ''}</label>
+      <input type='text' className={`inputText focus:outline-none bg-${bgColour} text-${textColour}`} onKeyPress={props.onKeyPress? props.onKeyPress : () => {}}></input>
+      <p className={props.hint? `assistiveText text-${textColour} w-full` : `invisible`}>{ props.hint }</p>
     </div>
   )
 }
 
-export default TextInput
+export const PasswordInput: React.FC<props> = (props) => {
+  const textColour = props.textColour? props.textColour : 'on-surface'
+  const borderColour = props.borderColour? props.borderColour : 'on-surface'
+  const bgColour = props.bgColour? props.bgColour : 'surface'
+  const maxWidth = props.maxWidth? props.maxWidth : 'xs'
+
+  return (
+    <div style={props.style} className={`bg-${bgColour} max-w-${maxWidth}`}>
+      <div className={`textFieldOutline border border-${borderColour} opacity-12 rounded`}>
+      </div>
+      <input type='password' className={`inputText focus:outline-none bg-${bgColour} text-${textColour}`} onKeyPress={props.onKeyPress? props.onKeyPress : () => {}} placeholder={props.label}></input>
+      <p className={`assistiveText text-${textColour} opacity-60 w-full`}>{ props.hint }</p>
+    </div>
+  )
+}
