@@ -10,10 +10,10 @@ const Logo: React.FC<props> = (props) => {
     <div className="logo">
       <svg width={props.height} height={props.height} viewBox="0 0 1080 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g>
-          <rect x="284" y="540.132" width="300" height="300" transform="rotate(-45 284 540.132)"/>
+          <rect x="273" y="491" width="270" height="270" transform="rotate(-30 273 491)"/>
         </g>
         <g>
-          <circle cx="646.132" cy="540.132" r="150"/>
+          <circle cx="657" cy="540" r="150"/>
         </g>
       </svg>
     </div>
