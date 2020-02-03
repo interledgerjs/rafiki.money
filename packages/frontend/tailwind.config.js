@@ -34,6 +34,9 @@ module.exports = {
       screens: {
         'dark-mode': {'raw': '(prefers-color-scheme: dark)'},
       },
+      width: {
+        card: '344px'
+      },
       opacity: {
         '12': '.12',
         '38': '.38',
