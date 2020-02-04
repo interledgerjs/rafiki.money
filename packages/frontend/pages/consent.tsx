@@ -2,8 +2,8 @@ import React from 'react'
 import { NextPage } from "next"
 
 import { UsersService } from '../services/users'
-import NormalConsent from '../components/normal-consent'
-import AgreementConsent from '../components/agreement-consent'
+
+import { NormalConsent, AgreementConsent } from '../components'
 
 const usersService = UsersService()
 
