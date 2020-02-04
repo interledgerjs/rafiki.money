@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { NextPage } from "next"
 import useForm from 'react-hook-form'
 import { TextInput, Button} from '../components'
@@ -7,22 +7,23 @@ import { UsersService } from '../services/users'
 
 
 const Signup: NextPage = () => {
-  const {register, handleSubmit, errors, setError, setValue} = useForm()
+  const {register, handleSubmit, errors, setError} = useForm()
+  const formRef = useRef<HTMLFormElement>(null)
 
   const usersService = UsersService()
 
   const onSubmit = async data => {
-    await usersService.signup(data.username, data.password).then((data) => {
-      window.location.href = `/login?signupSessionId=${data.signupSessionId}`
-    })
-    // setError('password', "password", "Incorrect password")
+    // await usersService.signup(data.username, data.password).then((data) => {
+    //   window.location.href = `/login?signupSessionId=${data.signupSessionId}`
+    // })
+    setError('password', "password", "Incorrect password")
   }
 
   return (
     <div className = 'w-full h-full bg-surface'>
       <div className='w-full h-screen max-w-xs mx-auto bg-surface flex items-center'>
         
-        <form className='w-full max-w-xs' onSubmit={handleSubmit(onSubmit)}>
+        <form ref={formRef} className='w-full max-w-xs' onSubmit={handleSubmit(onSubmit)}>
           <h2 className={`headline-4 text-on-surface text-center mb-12`}>Sign up</h2>
           
           <div className=''>
@@ -35,9 +36,9 @@ const Signup: NextPage = () => {
 
           <div className='text-center mt-12'>
             <a href='/' className='mr-4'>
-              <Button onTap={() => {}} bgColour='primary' to='/login' type='text'>GO BACK</Button>
+              <Button onTap={() => { window.location.href = 'landing' }} bgColour="primary" type='text'>GO BACK</Button>
             </a>
-            <Button onTap={() => {}} bgColour='primary' to='/login' type='solid' buttonType='submit'>SIGN UP</Button>
+            <Button onTap={() => { formRef.current!.dispatchEvent(new Event('submit')) }} disabled={Object.keys(errors).length > 0} bgColour="primary" type='solid'>SIGN UP</Button>
           </div>
 
         </form>

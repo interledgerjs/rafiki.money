@@ -8,17 +8,14 @@ enum type {
 
 type props = {
   type: string
-  to: string
   bgColour?: string
   textColour?: string
   disabled?: boolean
-  buttonType?: 'button'|'submit'|'reset'
   onTap: (event: any) => void
 }
 
 const Button: React.FC<props> = (props) => {
-  const buttonType = props.buttonType? props.buttonType : 'button'
-  let className: string = 'button min-w-96 py-2 px-4 rounded focus:outline-none '
+  let className: string = 'button min-w-64 py-2 px-4 rounded focus:outline-none '
   if (props.type === type.solid) {
     className += props.disabled ? `text-surface bg-on-surface opacity-38` : `bg-${props.bgColour || 'primary'} text-${props.textColour || 'on-surface'} elevation-2 hover:elevation-3 active:elevation-6`
   } else if (props.type === type.outline) {
@@ -29,7 +26,7 @@ const Button: React.FC<props> = (props) => {
     throw new Error('Not a supported button type.')
   }
   return (
-    <button onClick={props.disabled ? () => {} : props.onTap } className={className} type={buttonType}>
+    <button onClick={props.disabled ? () => {} : props.onTap } className={className}>
       { props.children }
     </button>
   )

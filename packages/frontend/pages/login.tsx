@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { NextPage } from "next"
 import useForm from 'react-hook-form'
 import { UsersService } from '../services/users'
@@ -14,7 +14,7 @@ type Props = {
 
 const Login: NextPage<Props> = ({login_challenge}) => {
   const {register, handleSubmit, errors, setError} = useForm()
-
+  const formRef = useRef<HTMLFormElement>(null)
 
   const onSubmit = async data => {
     const login = await usersService.login(data.username, data.password, login_challenge).then(resp => {
@@ -30,7 +30,7 @@ const Login: NextPage<Props> = ({login_challenge}) => {
     <div className = 'w-full h-full bg-surface'>
       <div className='w-full h-screen max-w-xs mx-auto flex items-center'>
         
-        <form className='w-full max-w-xs' onSubmit={handleSubmit(onSubmit)}>
+        <form ref={formRef} className='w-full max-w-xs' onSubmit={handleSubmit(onSubmit)}>
           <h2 className={`headline-4 text-on-surface text-center mb-12`}>Login</h2>
 
           <div className=''>
@@ -43,9 +43,9 @@ const Login: NextPage<Props> = ({login_challenge}) => {
 
           <div className='text-center mt-12'>
             <a href='/' className='mr-4'>
-              <Button onTap={() => {}} bgColour='primary' to='/login' type='text'>GO BACK</Button>
+              <Button onTap={() => { window.location.href = 'landing' }} bgColour='primary' type='text'>GO BACK</Button>
             </a>
-            <Button onTap={() => {}} bgColour='primary' to='/login' type='solid' buttonType='submit'>LOGIN</Button>
+            <Button onTap={() => { formRef.current!.dispatchEvent(new Event('submit')) }} disabled={Object.keys(errors).length > 0} bgColour='primary' type='solid'>LOGIN</Button>
           </div>
 
         </form>
