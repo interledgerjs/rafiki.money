@@ -61,6 +61,7 @@
 
 @import url('https://fonts.googleapis.com/css?family=Rubik:400,500&display=swap');
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
 
 html {
   @apply font-body
@@ -149,4 +150,65 @@ html {
 .logo>svg>g>circle{
   mix-blend-mode: var(--logo-blend);
   fill: var(--color-primary);
+/* component definitions */
+}
+
+.inputText {
+/* ✏️ Input text */
+position: absolute;
+height: 24px;
+left: 16px;
+right: 239px;
+top: 16px;
+
+/* Subtitle 1 */
+font-family: Roboto;
+font-style: normal;
+font-weight: normal;
+font-size: 16px;
+line-height: 24px;
+/* identical to box height, or 150% */
+
+letter-spacing: 0.15px;
+
+/* 00. On Surface / High Emphasis */
+}
+
+.assistiveText {
+  position: absolute;
+  height: 16px;
+  left: 16px;
+  right: 200px;
+  top: 59px;
+
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 16px;
+
+  letter-spacing: 0.4px;
+}
+
+.textFieldOutline {
+  position: absolute;
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 22.22%;
+}
+
+.inputLabel{
+position: absolute;
+height: 16px;
+left: 16px;
+top: -8px;
+
+font-family: Roboto;
+font-style: normal;
+font-weight: normal;
+font-size: 12px;
+line-height: 16px;
+
+letter-spacing: 0.4px;
 }
