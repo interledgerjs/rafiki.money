@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import { NextPage } from "next"
-import Navigation from '../components/navigation'
-import Content from '../components/content'
-import Card from '../components/card'
+import { Card, Content, Navigation } from '../components'
 
 const Account: NextPage = () => {
   return (
