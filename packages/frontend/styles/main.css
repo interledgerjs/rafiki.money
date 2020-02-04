@@ -10,6 +10,7 @@
   --color-secondary-400: #00C6b0;
   --color-secondary-500: #00B9A0;
   --color-on-surface: #000000;
+  --color-on-surface-trans: #00000099;
   --color-surface: #FFFFFF;
   --color-error: #B00020;
   --color-red: #EB5757;
@@ -34,6 +35,7 @@
     --color-secondary-400: #3AD7C8;
     --color-secondary-500: #00CBB9;
     --color-on-surface: #FFFFFF;
+    --color-on-surface-trans: #FFFFFF99;
     --color-surface: #121212;
     --color-surface-elevation-1: #1E1E1E;
     --color-surface-elevation-2: #232323;
@@ -154,24 +156,11 @@ html {
 }
 
 .inputText {
-/* ✏️ Input text */
-position: absolute;
-height: 24px;
-left: 16px;
-right: 239px;
-top: 16px;
-
-/* Subtitle 1 */
-font-family: Roboto;
-font-style: normal;
-font-weight: normal;
-font-size: 16px;
-line-height: 24px;
-/* identical to box height, or 150% */
-
-letter-spacing: 0.15px;
-
-/* 00. On Surface / High Emphasis */
+  @apply absolute;
+  height: 24px;
+  left: 16px;
+  top: 16px;
+  @apply subtitle-1;
 }
 
 .assistiveText {
@@ -191,7 +180,7 @@ letter-spacing: 0.15px;
 }
 
 .textFieldOutline {
-  position: absolute;
+  @apply absolute;
   left: 0%;
   right: 0%;
   top: 0%;

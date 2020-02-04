@@ -2,8 +2,7 @@ import React from 'react'
 import { NextPage } from "next"
 import useForm from 'react-hook-form'
 import { UsersService } from '../services/users'
-import Button from '../components/button'
-import { TextInput, PasswordInput } from '../components/textInput'
+import { Button, TextInput } from '../components'
 
 const usersService = UsersService()
 
@@ -32,19 +31,23 @@ const Login: NextPage<Props> = ({login_challenge}) => {
       <div className='w-full h-screen max-w-xs mx-auto flex items-center'>
         
         <form className='w-full max-w-xs' onSubmit={handleSubmit(onSubmit)}>
-          <h2 className='font-rubik text-4xl text-center text-on-surface'>Login</h2>
+          <h2 className={`headline-4 text-on-surface text-center mb-12`}>Login</h2>
+
           <div className=''>
             <TextInput inputRef={(register({required: true}))} name='username' label='email' hint={errors.username ? (errors.username.message) as string : undefined} style={{position:'relative',height:'72px',marginTop:'20px',marginBottom:'20px'}}></TextInput>
           </div>
+
           <div>
-            <PasswordInput inputRef={(register({required: true}))} name='password' label='Password' hint={errors.password ? (errors.password.message) as string : ""} style={{position:'relative',height:'72px',marginTop:'20px',marginBottom:'20px'}}></PasswordInput>
+            <TextInput inputType='password' inputRef={(register({required: true}))} name='password' placeHolder='Password' hint={errors.password ? (errors.password.message) as string : undefined} style={{position:'relative',height:'72px',marginTop:'20px',marginBottom:'20px'}}></TextInput>
           </div>
-          <div className='text-center my-3'>
-            <a href='/'>
+
+          <div className='text-center mt-12'>
+            <a href='/' className='mr-4'>
               <Button onTap={() => {}} bgColour='primary' to='/login' type='text'>GO BACK</Button>
             </a>
             <Button onTap={() => {}} bgColour='primary' to='/login' type='solid' buttonType='submit'>LOGIN</Button>
           </div>
+
         </form>
       </div>
     </div>
