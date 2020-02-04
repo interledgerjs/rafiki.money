@@ -1,6 +1,8 @@
 import * as React from 'react'
 
 type props = {
+  inputRef?: any;
+  name: string;
   style?: any;
   textColour?: string;
   borderColour?: string;
@@ -23,8 +25,8 @@ export const TextInput: React.FC<props> = (props) => {
     <div style={props.style} className={`bg-${bgColour} max-w-${maxWidth}`}>
       <div className={`textFieldOutline border-2 border-${borderColour} rounded`}>
       </div>
-      <label className={props.label? `labeltest border-l-2 border-r-2 border-${bgColour} bg-${bgColour}`: `invisible`}>{props.label? props.label: ''}</label>
-      <input type='text' className={`inputText focus:outline-none bg-${bgColour} text-${textColour}`} onKeyPress={props.onKeyPress? props.onKeyPress : () => {}}></input>
+      <label className={props.label? `inputLabel text-${borderColour} border-l-2 border-r-2 border-${bgColour} bg-${bgColour}`: `invisible`}>{props.label? props.label: ''}</label>
+      <input ref={props.inputRef? props.inputRef: undefined} name={props.name} type='text' className={`inputText focus:outline-none bg-${bgColour} text-${textColour} max-w-${maxWidth} w-5/6`} onKeyPress={props.onKeyPress? props.onKeyPress : () => {}}></input>
       <p className={props.hint? `assistiveText text-${textColour} w-full` : `invisible`}>{ props.hint }</p>
     </div>
   )
@@ -40,7 +42,7 @@ export const PasswordInput: React.FC<props> = (props) => {
     <div style={props.style} className={`bg-${bgColour} max-w-${maxWidth}`}>
       <div className={`textFieldOutline border border-${borderColour} opacity-12 rounded`}>
       </div>
-      <input type='password' className={`inputText focus:outline-none bg-${bgColour} text-${textColour}`} onKeyPress={props.onKeyPress? props.onKeyPress : () => {}} placeholder={props.label}></input>
+      <input ref={props.inputRef? props.inputRef: undefined} name={props.name} type='password' className={`inputText focus:outline-none bg-${bgColour} text-${textColour} max-w-${maxWidth} w-5/6`} onKeyPress={props.onKeyPress? props.onKeyPress : () => {}} placeholder={props.label}></input>
       <p className={`assistiveText text-${textColour} opacity-60 w-full`}>{ props.hint }</p>
     </div>
   )

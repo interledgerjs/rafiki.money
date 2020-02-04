@@ -12,10 +12,12 @@ type props = {
   bgColour?: string
   textColour?: string
   disabled?: boolean
+  buttonType?: 'button'|'submit'|'reset'
   onTap: (event: any) => void
 }
 
 const Button: React.FC<props> = (props) => {
+  const buttonType = props.buttonType? props.buttonType : 'button'
   let className: string = 'button min-w-64 py-2 px-4 rounded focus:outline-none '
   if (props.type === type.solid) {
     className += props.disabled ? `text-surface bg-on-surface opacity-38` : `bg-${props.bgColour || 'primary'} text-${props.textColour || 'on-surface'} elevation-2 hover:elevation-3 active:elevation-6`
@@ -27,7 +29,7 @@ const Button: React.FC<props> = (props) => {
     throw new Error('Not a supported button type.')
   }
   return (
-    <button onClick={props.disabled ? () => {} : props.onTap } className={className}>
+    <button onClick={props.disabled ? () => {} : props.onTap } className={className} type={buttonType}>
       { props.children }
     </button>
   )

@@ -183,7 +183,6 @@ letter-spacing: 0.15px;
 }
 
 .assistiveText {
-  /* ✏️ Assistive text */
   position: absolute;
   height: 16px;
   left: 16px;
@@ -195,17 +194,8 @@ letter-spacing: 0.15px;
   font-weight: normal;
   font-size: 12px;
   line-height: 16px;
-  /* identical to box height, or 133% */
 
   letter-spacing: 0.4px;
-}
-
-.topBorder {
-  position: absolute;
-  width: 1006px;
-  height: 2px;
-  left: 50px;
-  top: 0px;
 }
 
 .textFieldOutline {
@@ -216,58 +206,8 @@ letter-spacing: 0.15px;
   bottom: 22.22%;
 }
 
-.topBorderMask {
-  position: absolute;
-  height: 16px;
-  left: 13px;
-  right: 9px;
-  top: -9px;
-}
-
-.label {
-  /* label */
-  position: absolute;
-  height: 2px;
-  left: 13px;
-  right: 11px;
-  top: 0px;
-
-  /* 01. Primary/200 */
-  /* background: #BB86FC; */
-}
-
-.surface {
-  /* surface */
-  position: absolute;
-  left: 2px;
-  right: 2px;
-  top: 2px;
-  bottom: 18px;
-
-  /* 01. Primary/200 */
-  /* background: #BB86FC; */
-  border-radius: 2px;
-}
-
-.border{
-  /* border */
-  position: absolute;
-  left: 0px;
-  right: 0px;
-  top: 0px;
-  bottom: 16px;
-
-  /* 01. Primary/200 */
-  /* background: #BB86FC; */
-  border-radius: 4px;
-}
-
-.labeltest{
-/* ✏️ Label */
-
-
+.inputLabel{
 position: absolute;
-/* width: 31px; */
 height: 16px;
 left: 16px;
 top: -8px;
@@ -277,11 +217,6 @@ font-style: normal;
 font-weight: normal;
 font-size: 12px;
 line-height: 16px;
-/* identical to box height, or 133% */
 
 letter-spacing: 0.4px;
-
-/* light/primary */
-
-color: #FF8A65;
 }
