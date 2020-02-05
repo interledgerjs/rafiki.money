@@ -201,3 +201,23 @@ line-height: 16px;
 
 letter-spacing: 0.4px;
 }
+
+@keyframes toLabel {
+  from {@apply inputText;}
+  to {@apply inputLabel;}
+}
+
+@keyframes toPlaceHolder {
+  from {@apply inputLabel;}
+  to {@apply inputText;}
+}
+
+.toLabel{
+  animation-name: toLabel;
+  animation-duration: 0.1s;
+}
+
+.toPlaceHolder{
+  animation-name: toPlaceHolder;
+  animation-duration: 0.1s;
+}

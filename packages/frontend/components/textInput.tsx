@@ -1,7 +1,6 @@
 import * as React from 'react'
 
 type props = {
-  placeHolder?: string;
   inputType?: 'text'|'password'|'email';
   inputRef?: any;
   name: string;
@@ -29,19 +28,18 @@ const TextInput: React.FC<props> = (props) => {
 
   return (
     <div style={props.style} className={`bg-${bgColour} max-w-${maxWidth}`}>
-    
+
       <div 
         className={`textFieldOutline border${focussed? '-2': ''} border-${focussed? focusColour: textColour + ' opacity-12'} rounded`}>
       </div>
 
       <label 
-        className={props.label? `inputLabel text-${focussed? focusColour: blurColour} border-l-2 border-r-2 border-${bgColour} bg-${bgColour}`: `invisible`}>
+        className={props.label? `${focussed? 'toLabel inputLabel': 'toPlaceHolder inputText'} text-${focussed? focusColour: blurColour} border-l-2 border-r-2 border-${bgColour} bg-${bgColour}`: `invisible `}>
         {props.label? props.label: ''}
       </label>
 
       <input 
-        onFocus={() => {setFocussed(true)}} onBlur={() => {setFocussed(false)}} ref={props.inputRef? props.inputRef: undefined} name={props.name} type={inputType} className={`inputText focus:outline-none bg-${bgColour} text-${textColour} max-w-${maxWidth} w-5/6 focus:`} onKeyPress={props.onKeyPress? props.onKeyPress : () => {}}
-        placeholder={props.placeHolder}>
+        onFocus={() => {setFocussed(true)}} onBlur={() => {setFocussed(false)}} ref={props.inputRef? props.inputRef: undefined} name={props.name} type={inputType} className={`inputText focus:outline-none bg-transparent text-${textColour} max-w-${maxWidth} w-5/6 focus:`} onKeyPress={props.onKeyPress? props.onKeyPress : () => {}}>
       </input>
 
       <p 

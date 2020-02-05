@@ -31,17 +31,17 @@ const Login: NextPage<Props> = ({login_challenge}) => {
       <div className='w-full h-screen max-w-xs mx-auto flex items-center'>
         
         <form className='w-full max-w-xs' onSubmit={handleSubmit(onSubmit)}>
-          <h2 className={`headline-4 text-on-surface text-center mb-12`}>Login</h2>
+          <h2 className={`headline-4 text-on-surface text-center my-12`}>Login</h2>
 
           <div className=''>
             <TextInput inputRef={(register({required: true}))} name='username' label='email' hint={errors.username ? (errors.username.message) as string : undefined} style={{position:'relative',height:'72px',marginTop:'20px',marginBottom:'20px'}}></TextInput>
           </div>
 
           <div>
-            <TextInput inputType='password' inputRef={(register({required: true}))} name='password' placeHolder='Password' hint={errors.password ? (errors.password.message) as string : undefined} style={{position:'relative',height:'72px',marginTop:'20px',marginBottom:'20px'}}></TextInput>
+            <TextInput inputType='password' inputRef={(register({required: true}))} name='password' label='Password' hint={errors.password ? (errors.password.message) as string : undefined} style={{position:'relative',height:'72px',marginTop:'20px',marginBottom:'20px'}}></TextInput>
           </div>
 
-          <div className='text-center mt-12'>
+          <div className='text-center my-12'>
             <a href='/' className='mr-4'>
               <Button onTap={() => {}} bgColour='primary' to='/login' type='text'>GO BACK</Button>
             </a>
