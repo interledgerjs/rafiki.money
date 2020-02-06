@@ -8,7 +8,8 @@ module.exports = {
       body: 'Rubik, sans-serif'
     },
     minWidth: {
-      '64': '64px'
+      '64': '64px',
+      '96': '96px',
     },
     colors: {
       transparent: 'transparent',
@@ -59,6 +60,7 @@ module.exports = {
           '500': 'var(--color-secondary-500)',
         },
         'on-surface': 'var(--color-on-surface)',
+        'on-surface-trans': 'var(--color-on-surface-trans)',
         surface: {
           default: 'var(--color-surface)',
           // Note: elevations only available in dark mode. https://material.io/design/color/dark-theme.html#properties

@@ -10,6 +10,7 @@
   --color-secondary-400: #00C6b0;
   --color-secondary-500: #00B9A0;
   --color-on-surface: #000000;
+  --color-on-surface-trans: #00000099;
   --color-surface: #FFFFFF;
   --color-error: #B00020;
   --color-red: #EB5757;
@@ -34,6 +35,7 @@
     --color-secondary-400: #3AD7C8;
     --color-secondary-500: #00CBB9;
     --color-on-surface: #FFFFFF;
+    --color-on-surface-trans: #FFFFFF99;
     --color-surface: #121212;
     --color-surface-elevation-1: #1E1E1E;
     --color-surface-elevation-2: #232323;
@@ -61,6 +63,7 @@
 
 @import url('https://fonts.googleapis.com/css?family=Rubik:400,500&display=swap');
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
 
 html {
   @apply font-body
@@ -149,4 +152,72 @@ html {
 .logo>svg>g>circle{
   mix-blend-mode: var(--logo-blend);
   fill: var(--color-primary);
+/* component definitions */
+}
+
+.inputText {
+  @apply absolute;
+  height: 24px;
+  left: 16px;
+  top: 16px;
+  @apply subtitle-1;
+}
+
+.assistiveText {
+  position: absolute;
+  height: 16px;
+  left: 16px;
+  right: 200px;
+  top: 59px;
+
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 16px;
+
+  letter-spacing: 0.4px;
+}
+
+.textFieldOutline {
+  @apply absolute;
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 22.22%;
+}
+
+.inputLabel{
+position: absolute;
+height: 16px;
+left: 16px;
+top: -8px;
+
+font-family: Roboto;
+font-style: normal;
+font-weight: normal;
+font-size: 12px;
+line-height: 16px;
+
+letter-spacing: 0.4px;
+}
+
+@keyframes toLabel {
+  from {@apply inputText;}
+  to {@apply inputLabel;}
+}
+
+@keyframes toPlaceHolder {
+  from {@apply inputLabel;}
+  to {@apply inputText;}
+}
+
+.toLabel{
+  animation-name: toLabel;
+  animation-duration: 0.1s;
+}
+
+.toPlaceHolder{
+  animation-name: toPlaceHolder;
+  animation-duration: 0.1s;
 }

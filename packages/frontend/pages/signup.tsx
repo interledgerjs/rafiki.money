@@ -1,12 +1,14 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { NextPage } from "next"
 import useForm from 'react-hook-form'
+import { TextInput, Button} from '../components'
 import Link from 'next/link'
 import { UsersService } from '../services/users'
 
 
 const Signup: NextPage = () => {
-  const {register, handleSubmit, errors, setError} = useForm()
+  const {register, handleSubmit, errors, setError, clearError} = useForm()
+  const formRef = useRef<HTMLFormElement>(null)
 
   const usersService = UsersService()
 
@@ -14,55 +16,57 @@ const Signup: NextPage = () => {
     await usersService.signup(data.username, data.password).then((data) => {
       window.location.href = `/login?signupSessionId=${data.signupSessionId}`
     })
-    // setError('password', "password", "Incorrect password")
+  }
+
+  const validateEmail = e => {
+    const emailRegex = RegExp(/(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/)
+    if (!emailRegex.test(e.target.value)) {
+      setError("username", "invalidEmail", "Please submit a valid email address")
+    } else if (errors.username) {
+      clearError('username')
+    }
+  }
+
+  const validatePassword = e => {
+    let errorMessage = ''
+    if (!/^(?=.*[a-z])/.test(e.target.value)) errorMessage += '(1 lowercase)'
+    if (!/^(?=.*[A-Z])/.test(e.target.value)) errorMessage += '(1 uppercase)'
+    if (!/^(?=.*[0-9])/.test(e.target.value)) errorMessage += '(1 number)'
+    if (!/^(?=.{8,})/.test(e.target.value)) errorMessage += '(8 characters)'
+    if (errorMessage.length > 0) {
+      errorMessage = 'Required: ' + errorMessage
+      setError("password", "invalidPassword", errorMessage)
+    } else if (errors.password) {
+      clearError('password')
+    }
   }
 
   return (
-    <div className="w-full max-w-xs mx-auto md:mt-32">
-      <div className="flex flex-col mb-6">
-        <img className="mx-auto h-32" src={'/logo_transparent.png'}/>
-        <div className="text-center text-gray-800 text-lg font-light">
-          Create an Account!
-        </div>
+    <div className = 'w-full h-full bg-surface'>
+      <div className='w-full h-screen max-w-xs mx-auto bg-surface flex items-center'>
+        <form ref={formRef} className='w-full max-w-xs' onSubmit={handleSubmit(onSubmit)}>
+          <h2 className={`headline-4 text-on-surface text-center my-12`}>Sign up</h2>
+          
+          <div className=''>
+            <TextInput  errorState={errors.username != undefined} validationFunction={validateEmail} inputRef={(register({required: true}))} name='username' label='email' hint={errors.username ? errors.username.type==='required'?'Email required':(errors.username.message) as string : undefined} style={{position:'relative',height:'72px',marginTop:'20px',marginBottom:'20px'}}></TextInput>
+          </div>
+
+          <div>
+            <TextInput  errorState={errors.password != undefined} validationFunction={validatePassword} inputType='password' inputRef={(register({required: true}))} name='password' label='Password' hint={errors.password ? errors.password.type==='required'?'Password required':(errors.password.message) as string : undefined} style={{position:'relative',height:'72px',marginTop:'20px',marginBottom:'20px'}}></TextInput>
+          </div>
+
+          <div className='text-center my-12'>
+            <a href='/' className='mr-4'>
+              <Button onTap={() => { window.location.href = 'landing' }} bgColour="primary" type='text'>GO BACK</Button>
+            </a>
+            <Button disabled={Object.keys(errors).length > 0} bgColour="primary" type='solid' buttonType='submit'>SIGN UP</Button>
+          </div>
+
+        </form>
       </div>
-      <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit(onSubmit)}>
-        <div className="mb-3">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Username</label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            name="username" ref={(register({required: true}))}
-            autoComplete="username"
-            id="username" type="text" placeholder="Username"/>
-          <p className="ml-1 h-2 text-xs text-red-600">{errors.username ? errors.username.message : ""}</p>
-        </div>
-        <div className="mb-6">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Password</label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            name="password" ref={(register({required: true}))}
-            autoComplete="current-password"
-            id="password" type="password" placeholder="******************"/>
-          <p className="ml-1 h-2 text-xs text-red-600">{errors.password ? errors.password.message : ""}</p>
-        </div>
-        <button
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          type="submit">
-          Signup
-        </button>
-      </form>
-      <div className="text-center mt-2 text-gray-600 text-light text-sm">
-        Have an account already?
-      </div>
-      <a href="/login">
-        <button
-          className="shadow-md border-2 border-gray-500 text-gray-600 hover:bg-gray-500 hover:text-white w-full font-bold py-2 px-4 my-4 rounded"
-          type="button">
-          Login
-        </button>
-      </a>
-      <p className="text-center text-gray-500 text-xs">©2019 Rafiki Money. All rights reserved.</p>
     </div>
   )
+
 }
 
 Signup.getInitialProps = async ({}) => {

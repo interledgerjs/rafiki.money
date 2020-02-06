@@ -8,11 +8,12 @@ enum type {
 
 type props = {
   type: string
-  to: string
   bgColour?: string
   textColour?: string
   disabled?: boolean
-  onTap: (event: any) => void
+  buttonType?: 'button' | 'submit' | 'reset'
+  onTap?: (event: any) => void
+
 }
 
 const Button: React.FC<props> = (props) => {
@@ -27,7 +28,7 @@ const Button: React.FC<props> = (props) => {
     throw new Error('Not a supported button type.')
   }
   return (
-    <button onClick={props.disabled ? () => {} : props.onTap } className={className}>
+    <button type={props.buttonType? props.buttonType : 'button'} onClick={props.disabled || !props.onTap? () => {} : props.onTap } className={className}>
       { props.children }
     </button>
   )
