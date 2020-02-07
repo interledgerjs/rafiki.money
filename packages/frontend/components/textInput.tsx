@@ -46,7 +46,7 @@ const TextInput: React.FC<props> = (props) => {
       </label>
 
       <input 
-        onFocus={() => {setFocussed(true)}} onBlur={() => {setFocussed(false)}} ref={props.inputRef? props.inputRef: undefined} name={props.name} type={inputType} className={`inputText focus:outline-none bg-transparent text-${textColour} max-w-${maxWidth} w-5/6 focus:`} onKeyPress={props.onKeyPress? e => props.onKeyPress(e) : () => {}} onChange={e => {setValue(e.target.value);if (props.validationFunction) props.validationFunction(e)}}>
+        onFocus={() => {setFocussed(true)}}  ref={props.inputRef? props.inputRef: undefined} name={props.name} type={inputType} className={`inputText focus:outline-none bg-transparent text-${textColour} max-w-${maxWidth} w-5/6 focus:`} onKeyPress={props.onKeyPress? e => props.onKeyPress(e) : () => {}} onChange={e => {setValue(e.target.value);if (props.validationFunction) props.validationFunction(e)}}>
       </input>
 
       <p 
