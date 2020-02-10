@@ -6,5 +6,6 @@ packages/scratch/*
 node_modules/
 /.idea/*
 .env
+/logs
 
 packages/frontend/pages/sandbox.tsx
