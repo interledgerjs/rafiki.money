@@ -1,6 +1,6 @@
 import Koa, { Context } from 'koa'
 import { Logger } from 'pino'
-import createRouter, { Router } from 'koa-joi-router'
+import Router, { RouterParamContext } from '@koa/router'
 import bodyParser from 'koa-bodyparser'
 import cors from '@koa/cors'
 import { Server } from 'http'
@@ -11,25 +11,34 @@ import * as LogoutController from './controllers/logoutController'
 import * as ConsentController from './controllers/consentController'
 import * as PaymentPointerController from './controllers/payment-pointer'
 import * as Oauth2ClientController from './controllers/oauth2ClientController'
+import * as AccountsController from './controllers/accounts'
 import { createAuthMiddleware } from './middleware/auth'
 import { TokenService } from './services/token-service'
+import * as FaucetController from './controllers/faucet'
 
-export type AppContext<T = any> = Koa.ParameterizedContext<T, { logger: Logger; tokenService: TokenService }>
+export interface AppContext extends Context {
+  logger: Logger;
+}
 
 export class App {
-  private _koa: Koa
-  private _router: Router
-  private _server: Server
+  private _koa: Koa<any, AppContext>
+  private _publicRouter: Router<any, AppContext>
+  private _privateRouter: Router<any, AppContext>
+  private _server: Server | undefined
 
   constructor (logger: Logger, tokenService: TokenService) {
     this._koa = new Koa<any, AppContext>()
     this._koa.context.tokenService = tokenService
     this._koa.context.logger = logger
-    this._router = createRouter()
+    this._privateRouter = new Router<any, AppContext>()
+    this._publicRouter = new Router<any, AppContext>()
     this._koa.use(cors())
+
     this._setupRoutes()
+
     this._koa.use(bodyParser())
-    this._koa.use(this._router.middleware())
+    this._koa.use(this._publicRouter.middleware())
+    this._koa.use(this._privateRouter.middleware())
   }
 
   public listen (port: number | string): void {
@@ -42,21 +51,35 @@ export class App {
     }
   }
 
+  public getPort (): number {
+    // @ts-ignore
+    return this._server.address().port
+  }
+
   private _setupRoutes (): void {
-    this._router.post('/users', UsersController.createValidation(), UsersController.store)
-    this._router.patch('/users/:id', UsersController.update)
-    this._router.get('/users/me', [createAuthMiddleware(hydra), UsersController.show])
 
-    this._router.get('/login', LoginController.getValidation(), LoginController.show)
-    this._router.post('/login', LoginController.createValidation(), LoginController.store)
+    this._privateRouter.use(createAuthMiddleware(hydra))
 
-    this._router.post('/logout', LogoutController.store)
+    this._privateRouter.post('/users', UsersController.store)
+    this._privateRouter.patch('/users/:id', UsersController.update)
+    this._privateRouter.get('/users/me',  UsersController.show)
 
-    this._router.get('/consent', ConsentController.getValidation(), ConsentController.show)
-    this._router.post('/consent', ConsentController.storeValidation(), ConsentController.store)
+    this._publicRouter.get('/login', LoginController.show)
+    this._publicRouter.post('/login', LoginController.store)
+    this._publicRouter.get('/consent', ConsentController.show)
+    this._publicRouter.post('/consent', ConsentController.store)
 
-    this._router.get('/p/:username', PaymentPointerController.show)
+    this._privateRouter.post('/logout', LogoutController.store)
 
-    this._router.post('/oauth2/clients', Oauth2ClientController.createValidation(), Oauth2ClientController.store)
+    this._publicRouter.get('/p/:username', PaymentPointerController.show)
+
+    this._privateRouter.post('/oauth2/clients', Oauth2ClientController.store)
+
+    this._privateRouter.get('/accounts/:id', AccountsController.show)
+    this._privateRouter.get('/accounts', AccountsController.index)
+    this._privateRouter.post('/accounts', AccountsController.create)
+    this._privateRouter.patch('/accounts/:id', AccountsController.update)
+
+    this._privateRouter.post('/faucet', FaucetController.create)
   }
 }

@@ -1,9 +1,14 @@
 module.exports = {
   testing: {
-    client: 'sqlite3',
-    useNullAsDefault: true,
+    client: 'postgresql',
     connection: {
-      filename: ':memory:'
+      user: 'postgres',
+      password: 'password',
+      database: 'testing'
+    },
+    pool: {
+      min: 2,
+      max: 10
     }
   },
   development: {

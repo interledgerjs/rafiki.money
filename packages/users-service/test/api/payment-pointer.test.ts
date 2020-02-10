@@ -1,31 +1,32 @@
 import axios from 'axios'
-import createLogger from 'pino'
 import { User } from '../../src/models/user'
-import { refreshDatabase } from '../helpers/db'
-import { App } from '../../src/app'
-import { TokenService } from '../../src/services/token-service'
-import Knex = require('knex')
+import { createTestApp, TestAppContainer } from '../helpers/app'
 
 describe('Payment pointer', function () {
-  let knex: Knex
-  const logger = createLogger()
-  const app = new App(logger, {} as TokenService)
+  let appContainer: TestAppContainer
+
+  beforeAll(async () => {
+    appContainer = createTestApp()
+  })
 
   beforeEach(async () => {
-    knex = await refreshDatabase()
-    await app.listen(3000)
+    await appContainer.knex.migrate.latest()
   })
 
   afterEach(async () => {
-    await app.shutdown()
-    await knex.destroy()
+    await appContainer.knex.migrate.rollback()
+  })
+
+  afterAll(() => {
+    appContainer.app.shutdown()
+    appContainer.knex.destroy()
   })
 
   describe('Get', function () {
     test('returns the oauth server meta data and users default account id', async () => {
       const user = await User.query().insertAndFetch({ username: 'alice' })
 
-      const { data, status } = await axios.get(`http://localhost:3000/p/${user.username}`)
+      const { data, status } = await axios.get(`http://localhost:${appContainer.port}/p/${user.username}`)
 
       expect(status).toEqual(200)
       expect(data).toEqual({
@@ -40,7 +41,7 @@ describe('Payment pointer', function () {
 
     test('returns 404 for invalid username', async () => {
       try {
-        await axios.get('http://localhost:3000/p/drew')
+        await axios.get(`http://localhost:${appContainer.port}/p/drew`)
       } catch (error) {
         expect(error.response.status).toEqual(404)
         return

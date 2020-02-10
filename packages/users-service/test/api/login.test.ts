@@ -1,26 +1,28 @@
 import Knex from 'knex'
 import axios from 'axios'
 import bcrypt from 'bcrypt'
-import createLogger from 'pino'
-import { App } from '../../src/app'
-import { refreshDatabase } from '../helpers/db'
 import { hydra } from '../../src/services/hydra'
 import { User } from '../../src/models/user'
-import { TokenService } from '../../src/services/token-service'
+import { createTestApp, TestAppContainer } from '../helpers/app'
 
 describe('Login', function () {
-  let knex: Knex
-  const logger = createLogger()
-  const app = new App(logger, {} as TokenService)
+  let appContainer: TestAppContainer
+
+  beforeAll(async () => {
+    appContainer = createTestApp()
+  })
 
   beforeEach(async () => {
-    knex = await refreshDatabase()
-    await app.listen(3000)
+    await appContainer.knex.migrate.latest()
   })
 
   afterEach(async () => {
-    await app.shutdown()
-    await knex.destroy()
+    await appContainer.knex.migrate.rollback()
+  })
+
+  afterAll(() => {
+    appContainer.app.shutdown()
+    appContainer.knex.destroy()
   })
 
   describe('Get login request', function () {
@@ -28,7 +30,7 @@ describe('Login', function () {
       hydra.getLoginRequest = jest.fn().mockResolvedValue({ skip: false })
       hydra.acceptLoginRequest = jest.fn()
 
-      const { status } = await axios.get('http://localhost:3000/login?login_challenge=test')
+      const { status } = await axios.get(`http://localhost:${appContainer.port}/login?login_challenge=test`)
 
       expect(status).toEqual(200)
       expect(hydra.getLoginRequest).toBeCalledWith('test')
@@ -44,16 +46,16 @@ describe('Login', function () {
         redirect_to: 'http://localhost:3000/redirect'
       })
 
-      const { status, data } = await axios.get('http://localhost:3000/login?login_challenge=test')
+      const { status, data } = await axios.get(`http://localhost:${appContainer.port}/login?login_challenge=test`)
 
       expect(hydra.acceptLoginRequest).toHaveBeenCalledWith('test', { subject: '2', remember: false })
-      expect(data.redirectTo).toEqual('http://localhost:3000/redirect')
+      expect(data.redirectTo).toEqual(`http://localhost:3000/redirect`)
       expect(status).toEqual(200)
     })
 
     test('login_challenge query parameter is required', async () => {
       try {
-        await axios.get('http://localhost:3000/login')
+        await axios.get(`http://localhost:${appContainer.port}/login`)
       } catch (error) {
         expect(error.response.status).toEqual(400)
         expect(error.response.data).toEqual('login_challenge is required.')
@@ -66,7 +68,7 @@ describe('Login', function () {
   describe('Post login', function () {
     test('returns 401 if username does not exist', async () => {
       try {
-        await axios.post('http://localhost:3000/login?login_challenge=testChallenge', { username: 'alice', password: 'test' })
+        await axios.post(`http://localhost:${appContainer.port}/login?login_challenge=testChallenge`, { username: 'alice', password: 'test' })
       } catch (error) {
         expect(error.response.status).toEqual(401)
         return
@@ -78,7 +80,7 @@ describe('Login', function () {
       await User.query().insert({ username: 'alice', password: await bcrypt.hash('test', await bcrypt.genSalt()) })
 
       try {
-        await axios.post('http://localhost:3000/login?login_challenge=testChallenge', { username: 'alice', password: 'asd' })
+        await axios.post(`http://localhost:${appContainer.port}/login?login_challenge=testChallenge`, { username: 'alice', password: 'asd' })
       } catch (error) {
         expect(error.response.status).toEqual(401)
         return
@@ -89,7 +91,7 @@ describe('Login', function () {
 
     test('login_challenge query parameter is required', async () => {
       try {
-        await axios.post('http://localhost:3000/login', { username: 'alice', password: 'test' })
+        await axios.post(`http://localhost:${appContainer.port}/login`, { username: 'alice', password: 'test' })
       } catch (error) {
         expect(error.response.status).toEqual(400)
         expect(error.response.data).toEqual('login_challenge is required.')
@@ -105,7 +107,7 @@ describe('Login', function () {
         })
         const user = await User.query().insert({ username: 'alice', password: await bcrypt.hash('test', await bcrypt.genSalt()) })
 
-        await axios.post('http://localhost:3000/login?login_challenge=testChallenge', { username: 'alice', password: 'test' })
+        await axios.post(`http://localhost:${appContainer.port}/login?login_challenge=testChallenge`, { username: 'alice', password: 'test' })
 
         expect(hydra.acceptLoginRequest).toHaveBeenCalledWith('testChallenge', { subject: user.id.toString(), remember: false })
       })

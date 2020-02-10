@@ -1,32 +1,33 @@
 import axios from 'axios'
 import bcrypt from 'bcrypt'
-import createLogger from 'pino'
 import { User } from '../../src/models/user'
-import { refreshDatabase } from '../helpers/db'
-import { App } from '../../src/app'
 import { hydra } from '../../src/services/hydra'
-import { TokenService } from '../../src/services/token-service'
-import Knex = require('knex')
 import { SignupSession } from '../../src/models/signupSession'
+import { createTestApp, TestAppContainer } from '../helpers/app'
 
 describe('Users Service', function () {
-  let knex: Knex
-  const logger = createLogger()
-  const app = new App(logger, {} as TokenService)
+  let appContainer: TestAppContainer
+
+  beforeAll(async () => {
+    appContainer = createTestApp()
+  })
 
   beforeEach(async () => {
-    knex = await refreshDatabase()
-    await app.listen(3000)
+    await appContainer.knex.migrate.latest()
   })
 
   afterEach(async () => {
-    await app.shutdown()
-    await knex.destroy()
+    await appContainer.knex.migrate.rollback()
+  })
+
+  afterAll(() => {
+    appContainer.app.shutdown()
+    appContainer.knex.destroy()
   })
 
   describe('create', function () {
     test('creates a user', async () => {
-      const { data } = await axios.post<User>('http://localhost:3000/users', { username: 'alice', password: 'test' })
+      const { data } = await axios.post<User>(`http://localhost:${appContainer.port}/users`, { username: 'alice', password: 'test' })
 
       const retrievedUser = await User.query().where('userName', 'alice').first()
       expect(retrievedUser).toBeInstanceOf(User)
@@ -36,7 +37,7 @@ describe('Users Service', function () {
     })
 
     test('creating a user adds a signup session', async () => {
-      const { data } = await axios.post('http://localhost:3000/users', { username: 'alice', password: 'test' })
+      const { data } = await axios.post(`http://localhost:${appContainer.port}/users`, { username: 'alice', password: 'test' })
 
       const session = await SignupSession.query().where('id', data.signupSessionId).first()
 
@@ -44,20 +45,20 @@ describe('Users Service', function () {
     })
 
     test('does not return password', async () => {
-      const { data } = await axios.post<User>('http://localhost:3000/users', { username: 'alice', password: 'test' })
+      const { data } = await axios.post<User>(`http://localhost:${appContainer.port}/users`, { username: 'alice', password: 'test' })
 
       expect(data.password).toBeUndefined()
     })
 
     test('hashes the password', async () => {
-      const { data } = await axios.post<User>('http://localhost:3000/users', { username: 'alice', password: 'test' })
+      const { data } = await axios.post<User>(`http://localhost:${appContainer.port}/users`, { username: 'alice', password: 'test' })
 
       expect(data.password).not.toEqual('test')
     })
 
     test('userName is required', async () => {
       try {
-        await axios.post<User>('http://localhost:3000/users', { password: 'test' })
+        await axios.post<User>(`http://localhost:${appContainer.port}/users`, { password: 'test' })
       } catch (error) {
         expect(error.response.status).toEqual(400)
         expect(error.response.data).toEqual('child "username" fails because ["username" is required]')
@@ -69,7 +70,7 @@ describe('Users Service', function () {
 
     test('password is required', async () => {
       try {
-        await axios.post<User>('http://localhost:3000/users', { username: 'bob' })
+        await axios.post<User>(`http://localhost:${appContainer.port}/users`, { username: 'bob' })
       } catch (error) {
         expect(error.response.status).toEqual(400)
         expect(error.response.data).toEqual('child "password" fails because ["password" is required]')
@@ -83,7 +84,7 @@ describe('Users Service', function () {
       await User.query().insert({ username: 'alice' })
 
       try {
-        await axios.post<User>('http://localhost:3000/users', { username: 'alice', password: 'test' })
+        await axios.post<User>(`http://localhost:${appContainer.port}/users`, { username: 'alice', password: 'test' })
       } catch (error) {
         expect(error.response.status).toEqual(400)
         expect(error.response.data).toEqual('Username is already taken.')
@@ -98,7 +99,7 @@ describe('Users Service', function () {
     test('hashes the new password', async () => {
       const user = await User.query().insertAndFetch({ username: 'alice', password: 'oldPassword' })
 
-      await axios.patch(`http://localhost:3000/users/${user.id}`, { password: 'newPassword' })
+      await axios.patch(`http://localhost:${appContainer.port}/users/${user.id}`, { password: 'newPassword' })
 
       const updatedUser = await user.$query()
       expect(updatedUser.password).not.toEqual('oldPassword')
@@ -109,7 +110,7 @@ describe('Users Service', function () {
     test('can set the default account id', async () => {
       const user = await User.query().insertAndFetch({ username: 'alice', password: 'oldPassword' })
 
-      await axios.patch(`http://localhost:3000/users/${user.id}`, { defaultAccountId: '1' })
+      await axios.patch(`http://localhost:${appContainer.port}/users/${user.id}`, { defaultAccountId: '1' })
 
       const updatedUser = await user.$query()
       expect(updatedUser.defaultAccountId).toEqual('1')
@@ -135,7 +136,7 @@ describe('Users Service', function () {
         }
       })
 
-      const { data } = await axios.get('http://localhost:3000/users/me', { headers: { authorization: 'Bearer validToken' } })
+      const { data } = await axios.get(`http://localhost:${appContainer.port}/users/me`, { headers: { authorization: 'Bearer validToken' } })
 
       expect(data).toEqual(user.$formatJson())
       expect(data.password).toBeUndefined()
@@ -158,7 +159,7 @@ describe('Users Service', function () {
       })
 
       try {
-        await axios.get('http://localhost:3000/users/me')
+        await axios.get(`http://localhost:${appContainer.port}/users/me`)
       } catch (error) {
         expect(error.response.status).toEqual(401)
         return
@@ -184,7 +185,7 @@ describe('Users Service', function () {
       })
 
       try {
-        await axios.get('http://localhost:3000/users/me', { headers: { authorization: 'Bearer invalidToken' } })
+        await axios.get(`http://localhost:${appContainer.port}/users/me`, { headers: { authorization: 'Bearer invalidToken' } })
       } catch (error) {
         expect(error.response.status).toEqual(401)
         return
