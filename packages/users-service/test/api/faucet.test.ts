@@ -72,7 +72,12 @@ describe('Faucet API Test', () => {
       })
 
       const acc = await Account.query().findById(account.id)
+      const transactions = await acc.$relatedQuery('transactions')
+      const transaction = transactions[0]
       expect(acc!.balance).toEqual(100000000n)
+      expect(transactions.length).toEqual(1)
+      expect(transaction.accountId).toEqual(acc.id)
+      expect(transaction.amount).toEqual(100000000n)
     })
 
     it('User cant add a transaction for an account not theirs', async () => {

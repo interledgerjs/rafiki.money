@@ -1,5 +1,6 @@
 import { AppContext } from '../app'
 import { Account } from '../models/account'
+import { TransactionInfo } from '../models/transaction'
 
 const enforce = (subject: string, account: Account): boolean => {
   return account.userId.toString() === subject
@@ -36,6 +37,11 @@ export async function create (ctx: AppContext): Promise<void> {
 
       await Account.query(trx).findById(trxAccount.id).patch({
         balance: newBalance
+      })
+
+      await trxAccount.$relatedQuery('transactions', trx).insert({
+        amount: FAUCET_AMOUNT,
+        description: 'Faucet money'
       })
 
       // await trx<Transaction>('transactions').insert({

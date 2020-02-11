@@ -1,4 +1,5 @@
 import { Model } from 'objection'
+import { Transaction } from './transaction'
 
 export type AccountInfo = {
   id: number;
@@ -15,13 +16,26 @@ export class Account extends Model {
     return 'accounts'
   }
 
-  id !: number
+  static relationMappings = {
+    transactions: {
+      relation: Model.HasManyRelation,
+      modelClass: Transaction,
+      join: {
+        from: 'accounts.id',
+        to: 'transactions.accountId'
+      }
+    }
+  };
+
+  readonly id: number
   userId !: number
   name !: string
   assetCode! : string
   assetScale! : number
   balance !: bigint
   limit !: bigint
+
+  transactions: Array<Transaction>
 
   $formatJson (): Partial<AccountInfo> {
     return {
