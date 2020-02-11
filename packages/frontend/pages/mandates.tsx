@@ -5,7 +5,7 @@ import { Card, Content, Navigation } from '../components'
 const Account: NextPage = () => {
   return (
     <div className="flex">
-      <Navigation active="account"></Navigation>
+      <Navigation active="mandates"></Navigation>
       <Content navigation>
         <Card>
           $ 123 456 789.0
