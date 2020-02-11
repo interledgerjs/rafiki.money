@@ -1,5 +1,5 @@
 {
-  "name": "users-service",
+  "name": "backend",
   "version": "1.0.0",
   "description": "",
   "main": "build/index.js",
