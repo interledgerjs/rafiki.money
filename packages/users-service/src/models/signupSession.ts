@@ -8,7 +8,7 @@ export class SignupSession extends Model {
 
   id !: string
   userId !: number
-  expiresAt !: number
+  expiresAt !: bigint
 
   $beforeInsert (): void {
     this.id = v4()

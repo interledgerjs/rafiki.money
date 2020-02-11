@@ -5,8 +5,8 @@ exports.up = function (knex, Promise) {
       table.increments('id').unsigned().primary()
       table.string('username').unique()
       table.string('password')
-      table.integer('createdAt').notNullable()
-      table.integer('updatedAt')
+      table.timestamp('createdAt').defaultTo(knex.fn.now());
+      table.timestamp('updatedAt').defaultTo(knex.fn.now());
     })
 }
 

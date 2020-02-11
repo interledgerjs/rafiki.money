@@ -1,36 +1,15 @@
 import axios from 'axios'
 import { createTestApp, TestAppContainer } from '../helpers/app'
-import { hydra } from '../../src/services/hydra'
 import { Account } from '../../src/models/account'
+import { mockAuth } from '../helpers/auth'
+import { User } from '../../src/models/user'
 
 describe('Accounts API Test', () => {
   let appContainer: TestAppContainer
+  mockAuth()
 
   beforeAll(async () => {
     appContainer = createTestApp()
-    hydra.introspectToken = jest.fn().mockImplementation(async (token: string) => {
-      if (token === 'user1token') {
-        return {
-          active: true,
-          scope: 'offline openid',
-          sub: '1',
-          token_type: 'access_token'
-        }
-      }
-
-      if (token === 'user2token') {
-        return {
-          active: true,
-          scope: 'offline openid',
-          sub: '2',
-          token_type: 'access_token'
-        }
-      }
-
-      return {
-        active: false
-      }
-    })
   })
 
   beforeEach(async () => {
@@ -48,11 +27,14 @@ describe('Accounts API Test', () => {
 
   describe('Creating Account', () => {
     test('Can create an account if valid user', async () => {
+      const user = await User.query().insert({
+        username: 'alice1'
+      })
       const response = await axios.post(`http://localhost:${appContainer.port}/accounts`, {
         name: 'test'
       }, {
         headers: {
-          authorization: 'Bearer user1token'
+          authorization: `Bearer user_${user.id}`
         }
       }).then(resp => {
         return resp.data
@@ -79,9 +61,14 @@ describe('Accounts API Test', () => {
 
   describe('Updating Account', () => {
     let account: Account
+    let user: User
+
     beforeEach(async () => {
+      user = await User.query().insert({
+        username: 'alice'
+      })
       account = await Account.query().insertAndFetch({
-        userId: 1,
+        userId: user.id,
         name: 'Test',
         assetCode: 'USD',
         assetScale: 6,
@@ -95,7 +82,7 @@ describe('Accounts API Test', () => {
         name: 'new test'
       }, {
         headers: {
-          authorization: 'Bearer user1token'
+          authorization: `Bearer user_${user.id}`
         }
       }).then(resp => {
         return resp.data
@@ -107,11 +94,14 @@ describe('Accounts API Test', () => {
     })
 
     it('User cant update another users account', async () => {
+      const bob = await User.query().insert({
+        username: 'bob'
+      })
       const response = axios.patch(`http://localhost:${appContainer.port}/accounts/${account.id}`, {
         name: 'new test'
       }, {
         headers: {
-          authorization: 'Bearer user2token'
+          authorization: `Bearer user_${bob.id}`
         }
       }).then(resp => {
         return resp.data
@@ -123,9 +113,14 @@ describe('Accounts API Test', () => {
 
   describe('Getting an Account', () => {
     let account: Account
+    let user: User
+
     beforeEach(async () => {
+      user = await User.query().insert({
+        username: 'alice'
+      })
       account = await Account.query().insertAndFetch({
-        userId: 1,
+        userId: user.id,
         name: 'Test',
         assetCode: 'USD',
         assetScale: 6,
@@ -137,7 +132,7 @@ describe('Accounts API Test', () => {
     it('User can get their own account', async () => {
       const response = await axios.get(`http://localhost:${appContainer.port}/accounts/${account.id}`, {
         headers: {
-          authorization: 'Bearer user1token'
+          authorization: `Bearer user_${user.id}`
         }
       }).then(resp => {
         return resp.data
@@ -147,9 +142,12 @@ describe('Accounts API Test', () => {
     })
 
     it('User cant get someone elses account', async () => {
+      const bob = await User.query().insert({
+        username: 'bob'
+      })
       const response = axios.get(`http://localhost:${appContainer.port}/accounts/${account.id}`, {
         headers: {
-          authorization: 'Bearer user2token'
+          authorization: `Bearer user_${bob.id}`
         }
       }).then(resp => {
         return resp.data
@@ -160,9 +158,14 @@ describe('Accounts API Test', () => {
   })
 
   describe('Getting all user accounts', () => {
+    let user: User
+
     beforeEach(async () => {
+      user = await User.query().insert({
+        username: 'alice'
+      })
       await Account.query().insertAndFetch({
-        userId: 1,
+        userId: user.id,
         name: 'Test',
         assetCode: 'USD',
         assetScale: 6,
@@ -170,7 +173,7 @@ describe('Accounts API Test', () => {
         balance: 0n
       })
       await Account.query().insertAndFetch({
-        userId: 1,
+        userId: user.id,
         name: 'Test 2',
         assetCode: 'USD',
         assetScale: 6,
@@ -182,7 +185,7 @@ describe('Accounts API Test', () => {
     it('User can get their own accounts', async () => {
       const response = await axios.get(`http://localhost:${appContainer.port}/accounts?userId=1`, {
         headers: {
-          authorization: 'Bearer user1token'
+          authorization: `Bearer user_${user.id}`
         }
       }).then(resp => {
         return resp.data
@@ -195,9 +198,12 @@ describe('Accounts API Test', () => {
     })
 
     it('User cant get someone elses account', async () => {
+      const bob = await User.query().insert({
+        username: 'bob'
+      })
       const response = axios.get(`http://localhost:${appContainer.port}/accounts?userId=1`, {
         headers: {
-          authorization: 'Bearer user2token'
+          authorization: `Bearer user_${bob.id}`
         }
       }).then(resp => {
         return resp.data

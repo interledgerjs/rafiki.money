@@ -46,7 +46,7 @@ const base64url = (buffer: Buffer) => {
 
 export async function show (ctx: AppContext): Promise<void> {
   ctx.logger.debug('Payment pointer request', { path: ctx.request.path })
-  const username = ctx.request.params.username
+  const username = ctx.params.username
   const user = await User.query().where('username', username).first()
   ctx.assert(user, 404, 'No user found.')
 

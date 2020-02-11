@@ -4,7 +4,7 @@ exports.up = function (knex, Promise) {
         .createTable('signupSessions', function (table) {
             table.string('id').unique().primary().notNullable()
             table.string('userId').unique().notNullable()
-            table.integer('expiresAt').notNullable()
+            table.bigInteger('expiresAt').notNullable()
         })
 }
 

@@ -48,7 +48,7 @@ describe('Login', function () {
 
       const { status, data } = await axios.get(`http://localhost:${appContainer.port}/login?login_challenge=test`)
 
-      expect(hydra.acceptLoginRequest).toHaveBeenCalledWith('test', { subject: '2', remember: false })
+      expect(hydra.acceptLoginRequest).toHaveBeenCalledWith('test', { subject: '2', remember: true, remember_for: 604800 })
       expect(data.redirectTo).toEqual(`http://localhost:3000/redirect`)
       expect(status).toEqual(200)
     })
@@ -57,9 +57,11 @@ describe('Login', function () {
       try {
         await axios.get(`http://localhost:${appContainer.port}/login`)
       } catch (error) {
-        expect(error.response.status).toEqual(400)
-        expect(error.response.data).toEqual('login_challenge is required.')
-        return
+        const { data } = error.response
+        expect(error.response.status).toEqual(422)
+        expect(data.errors[0].field).toBe('login_challenge')
+        expect(data.errors[0].message).toBe('login_challenge is required')
+        return error
       }
       fail()
     })
@@ -70,8 +72,11 @@ describe('Login', function () {
       try {
         await axios.post(`http://localhost:${appContainer.port}/login?login_challenge=testChallenge`, { username: 'alice', password: 'test' })
       } catch (error) {
-        expect(error.response.status).toEqual(401)
-        return
+        const { data } = error.response
+        expect(error.response.status).toEqual(422)
+        expect(data.errors[0].field).toBe('username')
+        expect(data.errors[0].message).toBe('username does not exist')
+        return error
       }
       fail()
     })
@@ -82,8 +87,11 @@ describe('Login', function () {
       try {
         await axios.post(`http://localhost:${appContainer.port}/login?login_challenge=testChallenge`, { username: 'alice', password: 'asd' })
       } catch (error) {
-        expect(error.response.status).toEqual(401)
-        return
+        const { data } = error.response
+        expect(error.response.status).toEqual(422)
+        expect(data.errors[0].field).toBe('password')
+        expect(data.errors[0].message).toBe('invalid password')
+        return error
       }
 
       fail()
@@ -93,9 +101,11 @@ describe('Login', function () {
       try {
         await axios.post(`http://localhost:${appContainer.port}/login`, { username: 'alice', password: 'test' })
       } catch (error) {
-        expect(error.response.status).toEqual(400)
-        expect(error.response.data).toEqual('login_challenge is required.')
-        return
+        const { data } = error.response
+        expect(error.response.status).toEqual(422)
+        expect(data.errors[0].field).toBe('login_challenge')
+        expect(data.errors[0].message).toBe('login_challenge is required')
+        return error
       }
       fail()
     })
@@ -109,7 +119,7 @@ describe('Login', function () {
 
         await axios.post(`http://localhost:${appContainer.port}/login?login_challenge=testChallenge`, { username: 'alice', password: 'test' })
 
-        expect(hydra.acceptLoginRequest).toHaveBeenCalledWith('testChallenge', { subject: user.id.toString(), remember: false })
+        expect(hydra.acceptLoginRequest).toHaveBeenCalledWith('testChallenge', { subject: user.id.toString(), remember: true, remember_for: 604800 })
       })
     })
   })

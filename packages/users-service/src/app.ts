@@ -1,10 +1,10 @@
 import Koa, { Context } from 'koa'
 import { Logger } from 'pino'
-import Router, { RouterParamContext } from '@koa/router'
+import Router from '@koa/router'
 import bodyParser from 'koa-bodyparser'
 import cors from '@koa/cors'
 import { Server } from 'http'
-import { hydra, TokenInfo } from './services/hydra'
+import { hydra } from './services/hydra'
 import * as UsersController from './controllers/userController'
 import * as LoginController from './controllers/loginController'
 import * as LogoutController from './controllers/logoutController'
@@ -60,7 +60,7 @@ export class App {
 
     this._privateRouter.use(createAuthMiddleware(hydra))
 
-    this._privateRouter.post('/users', UsersController.store)
+    this._publicRouter.post('/users', UsersController.store)
     this._privateRouter.patch('/users/:id', UsersController.update)
     this._privateRouter.get('/users/me',  UsersController.show)
 

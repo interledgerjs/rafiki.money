@@ -37,6 +37,8 @@ export class Account extends Model {
 
   transactions: Array<Transaction>
 
+
+
   $formatJson (): Partial<AccountInfo> {
     return {
       id: this.id,
