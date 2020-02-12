@@ -13,10 +13,12 @@ import * as PaymentPointerController from './controllers/payment-pointer'
 import * as Oauth2ClientController from './controllers/oauth2ClientController'
 import * as AccountsController from './controllers/accounts'
 import * as MandatesController from './controllers/mandatesController'
+import * as InvoicesController from './controllers/invoicesController'
 import * as CancelMandatesController from './controllers/cancelMandatesController'
 import { createAuthMiddleware } from './middleware/auth'
 import { TokenService } from './services/token-service'
 import * as FaucetController from './controllers/faucet'
+import { createAttemptAuthMiddleware } from './middleware/attemptAuth'
 
 export interface AppContext extends Context {
   logger: Logger;
@@ -61,6 +63,7 @@ export class App {
   private _setupRoutes (): void {
 
     this._privateRouter.use(createAuthMiddleware(hydra))
+    this._publicRouter.use(createAttemptAuthMiddleware(hydra))
 
     this._publicRouter.post('/users', UsersController.store)
     this._privateRouter.patch('/users/:id', UsersController.update)
@@ -88,5 +91,8 @@ export class App {
     this._privateRouter.get('/mandates', MandatesController.index)
     this._privateRouter.get('/mandates/:id', MandatesController.show)
     this._privateRouter.put('/mandates/:id/cancel', CancelMandatesController.store)
+
+    this._privateRouter.post('/invoices', InvoicesController.store)
+    this._publicRouter.get('/invoices/:id', InvoicesController.show)
   }
 }

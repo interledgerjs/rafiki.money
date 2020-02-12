@@ -239,7 +239,6 @@ describe('Get mandate', () => {
   })
 })
 
-
 describe('Cancel mandate', () => {
   let appContainer: TestAppContainer
   let mandate: Mandate
