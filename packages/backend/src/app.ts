@@ -12,6 +12,8 @@ import * as ConsentController from './controllers/consentController'
 import * as PaymentPointerController from './controllers/payment-pointer'
 import * as Oauth2ClientController from './controllers/oauth2ClientController'
 import * as AccountsController from './controllers/accounts'
+import * as MandatesController from './controllers/mandatesController'
+import * as CancelMandatesController from './controllers/cancelMandatesController'
 import { createAuthMiddleware } from './middleware/auth'
 import { TokenService } from './services/token-service'
 import * as FaucetController from './controllers/faucet'
@@ -81,5 +83,8 @@ export class App {
     this._privateRouter.patch('/accounts/:id', AccountsController.update)
 
     this._privateRouter.post('/faucet', FaucetController.create)
+
+    this._publicRouter.post('/mandates', MandatesController.store)
+    this._privateRouter.put('/mandates/:id/cancel', CancelMandatesController.store)
   }
 }
