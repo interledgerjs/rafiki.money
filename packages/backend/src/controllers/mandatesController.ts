@@ -1,77 +1,68 @@
 import { AppContext } from '../app'
 import { Mandate } from '../models/mandate'
 
-// export async function index(ctx: AppContext): Promise<void> {
-//   const userId = ctx.request.query['userId']
-//   const state = ctx.request.query['state']
-//
-//   const query = Agreement.query()
-//     .where('userId', userId)
-//     .andWhere('type', 'mandate')
-//     .orderBy('createdAt', 'desc')
-//
-//   const now = new Date(Date.now()).getTime()
-//
-//   if (state) {
-//     switch (state) {
-//       case 'active':
-//         query.where('expiry', '>', now).whereNull('cancelledAt')
-//         break
-//       case 'expired':
-//         query.where('expiry', '<=', now)
-//         break
-//       case 'cancelled':
-//         query.where('cancelledAt', '<=', now)
-//         break
-//       default:
-//         throw new Error('Unknown state')
-//     }
-//   }
-//
-//   const agreements = await query
-//
-//   ctx.body = await Promise.all(
-//     agreements.map(async agreement =>
-//       Object.assign(agreement.$toJson(), {
-//         balance:
-//           Number(agreement.amount) -
-//           (await ctx.agreementBucket.getFillLevel(agreement))
-//       })
-//     )
-//   )
-// }
+export async function index(ctx: AppContext): Promise<void> {
+  const { logger } = ctx
+  const userId = ctx.state.user.sub
+  const state = ctx.query.state
 
-// export async function show(ctx: AppContext): Promise<void> {
-//   logger.debug('Show agreement request', {
-//     path: ctx.request.path,
-//     body: ctx.request.body,
-//     headers: ctx.request.headers
-//   })
-//   const mandateId = ctx.request.params['id']
-//   const mandate = await Agreement.query()
-//     .where('id', mandateId)
-//     .andWhere('type', 'mandate')
-//     .first()
-//
-//   if (!mandate) {
-//     ctx.response.status = 404
-//     ctx.response.message = 'No mandate found'
-//     return
-//   }
-//
-//   ctx.body = Object.assign(mandate.$toJson(), {
-//     balance:
-//       Number(mandate.amount) - (await ctx.agreementBucket.getFillLevel(mandate))
-//   })
-// }
+  const query = Mandate.query()
+    .where('userId', userId)
+    .orderBy('createdAt', 'desc')
+
+  const now = new Date(Date.now())
+
+  if (state) {
+    switch (state) {
+      case 'active':
+        query.where((q) => {
+          q.where('expireAt', '>', now).orWhereNull('expireAt')
+        }).whereNull('cancelledAt')
+        break
+      case 'expired':
+        query.where('expireAt', '<=', now).whereNull('cancelledAt')
+        break
+      case 'cancelled':
+        query.whereNotNull('cancelledAt')
+        break
+      default:
+        throw new Error('Unknown state')
+    }
+  }
+
+  const mandates = await query
+
+  ctx.body = mandates.map(mandate => {
+    return mandate.toJSON()
+  })
+}
+
+export async function show(ctx: AppContext): Promise<void> {
+  const { logger } = ctx
+  const mandateId = ctx.params.id
+  const user = ctx.state.user
+
+  logger.info('Get Mandate', {
+    mandateId,
+    userId: user.id
+  })
+
+  const mandate = await Mandate.query().where({
+    userId: user.sub,
+    id: mandateId
+  }).first()
+
+  if(!mandate) {
+    return
+  }
+
+  ctx.body = mandate.toJSON()
+}
 
 export async function store(ctx: AppContext): Promise<void> {
   const { logger } = ctx
 
-  logger.debug('Create mandate request', {
-    body: ctx.request.body,
-    headers: ctx.request.headers
-  })
+  logger.info('Create mandate request', { body: ctx.request.body })
 
   try {
     const {

@@ -1,47 +1,37 @@
 import { Model } from 'objection'
 import { v4 } from 'uuid'
 
-export type MandateInfo = {
+export type InvoiceInfo = {
   id: string;
-  userId: number;
-  accountId: number;
-  description: string;
+  userId : number;
+  accountId : number;
+  description : string;
   assetCode: string;
   assetScale: number;
   amount: string;
   balance: string;
-  startAt: string;
   expireAt: string;
-  interval: string;
-  cap: boolean;
-  scope: string;
   createdAt: string;
   updatedAt: string;
-  cancelledAt: string;
 }
 
-export class Mandate extends Model {
+export class Invoice extends Model {
 
   static get tableName (): string {
-    return 'mandates'
+    return 'invoices'
   }
 
   id: string;
-  userId!: number;
-  accountId!: number;
-  description!: string;
+  userId : number;
+  accountId : number;
+  description : string;
   assetCode: string;
   assetScale: number;
   amount: bigint;
   balance: bigint;
-  startAt: string;
   expireAt!: string;
-  scope !: string;
-  interval!: string;
-  cap!: boolean;
   createdAt: string;
   updatedAt: string;
-  cancelledAt!: string;
 
   $beforeInsert (): void {
     this.id = v4()
@@ -52,8 +42,8 @@ export class Mandate extends Model {
   $beforeUpdate (): void {
     this.updatedAt = new Date().toISOString()
   }
-  
-  $formatJson (): Partial<MandateInfo> {
+
+  $formatJson (): Partial<InvoiceInfo> {
     return {
       id: this.id,
       description: this.description,
@@ -61,11 +51,7 @@ export class Mandate extends Model {
       assetScale: this.assetScale,
       amount: this.amount.toString(),
       balance: this.balance.toString(),
-      startAt: this.startAt,
       expireAt: this.expireAt,
-      interval: this.interval,
-      cap: this.cap,
-      scope: this.scope
-  }
+    }
   }
 }

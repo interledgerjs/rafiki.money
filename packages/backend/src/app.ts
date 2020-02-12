@@ -85,6 +85,8 @@ export class App {
     this._privateRouter.post('/faucet', FaucetController.create)
 
     this._publicRouter.post('/mandates', MandatesController.store)
+    this._privateRouter.get('/mandates', MandatesController.index)
+    this._privateRouter.get('/mandates/:id', MandatesController.show)
     this._privateRouter.put('/mandates/:id/cancel', CancelMandatesController.store)
   }
 }
