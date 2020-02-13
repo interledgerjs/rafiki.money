@@ -65,6 +65,11 @@ export class App {
     this._privateRouter.use(createAuthMiddleware(hydra))
     this._publicRouter.use(createAttemptAuthMiddleware(hydra))
 
+    this._publicRouter.get('/healthz', (ctx: AppContext) => {
+      ctx.status = 200
+      return
+    })
+
     this._publicRouter.post('/users', UsersController.store)
     this._privateRouter.patch('/users/:id', UsersController.update)
     this._privateRouter.get('/users/me',  UsersController.show)
@@ -74,7 +79,7 @@ export class App {
     this._publicRouter.get('/consent', ConsentController.show)
     this._publicRouter.post('/consent', ConsentController.store)
 
-    this._privateRouter.post('/logout', LogoutController.store)
+    this._publicRouter.post('/logout', LogoutController.store)
 
     this._publicRouter.get('/p/:username', PaymentPointerController.show)
 

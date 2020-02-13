@@ -101,13 +101,10 @@ export const hydra: HydraApi = {
     const url = new URL('/oauth2/introspect', hydraAdminUrl)
     const headers = Object.assign({ 'Content-Type': 'application/x-www-form-urlencoded' }, mockTlsTermination)
     const body = (new URLSearchParams({ token })).toString()
-    console.log('in introspect token: ', token, ' typeof token', typeof token)
     const instance = got.extend({
       hooks: {
         beforeRequest: [
           options => {
-            console.log('headers before going out', options.headers)
-            console.log('body before going out', options.body)
             if (options.headers) {
               options.headers['content-type'] = 'application/x-www-form-urlencoded'
             }

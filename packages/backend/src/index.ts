@@ -6,20 +6,18 @@ import Knex = require('knex')
 const logger = createLogger()
 logger.level = process.env.LOG_LEVEL || 'info'
 
-const PORT = process.env.PORT || 3000
-const KNEX_CLIENT = process.env.KNEX_CLIENT || 'sqlite3'
-const knex = KNEX_CLIENT === 'mysql' ? Knex({
-  client: 'mysql',
+const PORT = process.env.PORT || 3001
+
+const knex = Knex({
+  client: 'postgresql',
   connection: {
-    host: process.env.MYSQL_HOST,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD,
-    database: process.env.MYSQL_DATABASE
-  }
-}) : Knex({
-  client: 'sqlite3',
-  connection: {
-    filename: ':memory:'
+    user: 'postgres',
+    password: 'password',
+    database: 'development'
+  },
+  pool: {
+    min: 2,
+    max: 10
   }
 })
 
