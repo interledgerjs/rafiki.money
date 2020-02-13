@@ -45,7 +45,7 @@
     --color-surface-elevation-8: #2E2E2E;
     --color-surface-elevation-12: #333333;
     --color-surface-elevation-16: #363636;
-    --color-surface-elevation-24: #383838;
+    --color--elevation-24: #383838;
     --color-error: #CF6679;
     --color-red: #F39B9B;
     --color-orange: #F7C192;
@@ -220,4 +220,43 @@ letter-spacing: 0.4px;
 .toPlaceHolder{
   animation-name: toPlaceHolder;
   animation-duration: 0.1s;
+}
+
+.search-div {
+  width: 100%;
+}
+
+.drop-div {
+  width: 100%;
+  text-align: right;
+}
+
+.content-div {
+  width: 100%;
+  margin-left: 32px;
+}
+
+.listline-div {
+  padding: 8px;
+}
+
+.listline-img {
+  height: 56px;
+  width: 56px;
+  min-width: 56px;
+  border-radius: 4px;
+  margin-left: 8px;
+  margin-right: 16px;
+}
+
+.listline-name-div {
+  justify-content: center;
+}
+
+.listline-name {
+  width: 200px;
+}
+
+.listline-values {
+  width: 100%
 }
