@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, Component } from 'react'
+import Select from 'react-select'
 import { NextPage } from "next"
-import { Card, Content, Navigation } from '../components'
+import { Card, Content, Navigation, TextInput } from '../components'
 // import "../styles/main.css";
 
 const listline =
@@ -20,6 +21,19 @@ const listline =
     </div>
   </div>
 
+const options = [
+  { value: 'chocolate', label: 'Chocolate' },
+  { value: 'strawberry', label: 'Strawberry' },
+  { value: 'vanilla', label: 'Vanilla' }
+]
+
+const customStyles = {
+  control: base => ({
+    ...base,
+    height: 56,
+    minHeight: 56
+  })
+};
 
 const Account: NextPage = () => {
   return (
@@ -28,9 +42,19 @@ const Account: NextPage = () => {
       <Content navigation>
         <div className="flex flex-row h-full">
           <div className="flex flex-col">
-            <div className="flex flex-row">
-              <Card >Seearch</Card> {/* className="flex flex-col search-div" */}
-              <div className="flex flex-col drop-div">Drroooopdin</div>
+            <div className="flex flex-row justify-between">
+              <div className='w-full h-full bg-surface'>
+                <div className='w-full max-w-xs bg-surface flex items-center'>
+                  <form className='w-full max-w-xs'>
+                    <div className=''>
+                      <TextInput name='searchFor' label='Search' style={{ position: 'relative', height: '72px'}}></TextInput>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              <div className='w-1/4 h-full bg-surface'>
+                <Select options={options}           styles={customStyles}/>
+              </div>
             </div>
             <div className="flex flex-row">
               <div className="flex flex-col bg-surface-elevation-1 elevation-1 rounded text-on-surface">
