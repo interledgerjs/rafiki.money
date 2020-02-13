@@ -1,90 +1,36 @@
 import React from 'react'
-import Head from 'next/head'
 import { NextPage } from 'next'
 import { parseCookies } from 'nookies'
 import { UsersService } from '../services/users'
+import { Button, Logo } from '../components'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 const usersService = UsersService()
 
 const Home: NextPage = () => {
+  const router = useRouter()
   return (
-    <div>
-      <Head>
-        <title>Home</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <div className="hero">
-        <h1 className="title">Welcome to Next.js!</h1>
-        <p className="description">
-          To get started, edit <code>pages/index.js</code> and save to reload.
-        </p>
-
-        <div className="row">
-          <a href="https://nextjs.org/docs" className="card">
-            <h3>Documentation &rarr;</h3>
-            <p>Learn more about Next.js in the documentation.</p>
-          </a>
-          <a href="https://nextjs.org/learn" className="card">
-            <h3>Next.js Learn &rarr;</h3>
-            <p>Learn about Next.js by following an interactive tutorial!</p>
-          </a>
-          <a
-            href="https://github.com/zeit/next.js/tree/master/examples"
-            className="card"
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Find other example boilerplates on the Next.js GitHub.</p>
-          </a>
+    <div className="flex w-full h-screen">
+      <div className="mx-auto my-auto text-center">
+        <div className="flex justify-center">
+          <Logo height={250}/>
+        </div>
+        <div className="headline-3">
+          Welcome to Rafiki money!
+        </div>
+        <div className="body-1 max-w-xs mx-auto mt-6">
+          Sign up to create an account, or login if you’re returning
+        </div>
+        <div className="flex flex-row justify-center mt-8">
+          <Button type="text" className="mr-4" onTap={() => router.push('/login')}>
+            Login
+          </Button>
+          <Button type="solid" onTap={() => router.push('/signup')}>
+            Signup
+          </Button>
         </div>
       </div>
-
-      <style jsx>{`
-      .hero {
-        width: 100%;
-        color: #333;
-      }
-      .title {
-        margin: 0;
-        width: 100%;
-        padding-top: 80px;
-        line-height: 1.15;
-        font-size: 48px;
-      }
-      .title,
-      .description {
-        text-align: center;
-      }
-      .row {
-        max-width: 880px;
-        margin: 80px auto 40px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-      }
-      .card {
-        padding: 18px 18px 24px;
-        width: 220px;
-        text-align: left;
-        text-decoration: none;
-        color: #434343;
-        border: 1px solid #9b9b9b;
-      }
-      .card:hover {
-        border-color: #067df7;
-      }
-      .card h3 {
-        margin: 0;
-        color: #067df7;
-        font-size: 18px;
-      }
-      .card p {
-        margin: 0;
-        padding: 12px 0 0;
-        font-size: 13px;
-        color: #333;
-      }
-    `}</style>
     </div>
   )
 }
@@ -94,23 +40,24 @@ export default Home
 Home.getInitialProps = async (ctx) => {
   const cookies = parseCookies(ctx)
 
-  try {
-    if(cookies && cookies.token) {
-      const user = await usersService.getUser(cookies.token)
-      console.log(user)
-    } else {
-      throw new Error('no token')
-    }
-  } catch(error) {
-    if (typeof window === 'undefined') {
-      ctx.res.writeHead(302, {
-        Location: '/login'
-      }).end()
-      return
-    }
-
-    window.location.href = '/login'
-  }
+  // TODO add check if logged in and default to overview page
+  // try {
+  //   if(cookies && cookies.token) {
+  //     const user = await usersService.getUser(cookies.token)
+  //     console.log(user)
+  //   } else {
+  //     throw new Error('no token')
+  //   }
+  // } catch(error) {
+  //   // if (typeof window === 'undefined') {
+  //   //   ctx.res.writeHead(302, {
+  //   //     Location: '/login'
+  //   //   }).end()
+  //   //   return
+  //   // }
+  //   //
+  //   // window.location.href = '/login'
+  // }
 
   return {}
 }
