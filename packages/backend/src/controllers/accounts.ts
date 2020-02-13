@@ -37,7 +37,7 @@ export async function update (ctx: AppContext): Promise<void> {
 
   const account = await Account.query().findById(id)
 
-  if(!account) {
+  if (!account) {
     ctx.status = 404
     return
   }
@@ -47,7 +47,7 @@ export async function update (ctx: AppContext): Promise<void> {
     return
   }
 
-  const updatedAccount = await Account.query().patchAndFetchById(account.id,{
+  const updatedAccount = await Account.query().patchAndFetchById(account.id, {
     name: body.name
   })
 
@@ -61,7 +61,7 @@ export async function show (ctx: AppContext): Promise<void> {
 
   const account = await Account.query().findById(id)
 
-  if(!account) {
+  if (!account) {
     return
   }
 
@@ -73,7 +73,6 @@ export async function show (ctx: AppContext): Promise<void> {
   ctx.body = account.toJSON()
 }
 
-
 export async function index (ctx: AppContext): Promise<void> {
   const { userId } = ctx.query
 
@@ -84,7 +83,7 @@ export async function index (ctx: AppContext): Promise<void> {
     return
   }
 
-  const userAccounts = await Account.query().where({userId: userId})
+  const userAccounts = await Account.query().where({ userId: userId })
 
   ctx.body = userAccounts.map(account => {
     return account.toJSON()

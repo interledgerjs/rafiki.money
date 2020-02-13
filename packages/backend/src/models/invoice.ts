@@ -3,9 +3,9 @@ import { v4 } from 'uuid'
 
 export type InvoiceInfo = {
   id: string;
-  userId : number;
-  accountId : number;
-  description : string;
+  userId: number;
+  accountId: number;
+  description: string;
   assetCode: string;
   assetScale: number;
   amount: string;
@@ -16,15 +16,14 @@ export type InvoiceInfo = {
 }
 
 export class Invoice extends Model {
-
   static get tableName (): string {
     return 'invoices'
   }
 
   id: string;
-  userId : number;
-  accountId : number;
-  description : string;
+  userId: number;
+  accountId: number;
+  description: string;
   assetCode: string;
   assetScale: number;
   amount: bigint;
@@ -51,7 +50,7 @@ export class Invoice extends Model {
       assetScale: this.assetScale,
       amount: this.amount.toString(),
       balance: this.balance.toString(),
-      expireAt: this.expireAt,
+      expireAt: this.expireAt
     }
   }
 }

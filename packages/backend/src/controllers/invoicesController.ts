@@ -1,7 +1,7 @@
 import { AppContext } from '../app'
 import { Invoice } from '../models/invoice'
 
-export async function show(ctx: AppContext): Promise<void> {
+export async function show (ctx: AppContext): Promise<void> {
   const { logger } = ctx
 
   const invoiceId = ctx.params.id
@@ -18,7 +18,7 @@ export async function show(ctx: AppContext): Promise<void> {
   ctx.body = invoice.toJSON()
 }
 
-export async function store(ctx: AppContext): Promise<void> {
+export async function store (ctx: AppContext): Promise<void> {
   const { logger } = ctx
 
   logger.info('Create invoice request', { body: ctx.request.body })
@@ -28,7 +28,7 @@ export async function store(ctx: AppContext): Promise<void> {
       assetScale,
       assetCode,
       amount,
-      description,
+      description
     } = ctx.request.body
 
     const invoice = await Invoice.query().insertAndFetch({
@@ -36,7 +36,7 @@ export async function store(ctx: AppContext): Promise<void> {
       assetCode,
       assetScale,
       amount: amount,
-      balance: 0n,
+      balance: 0n
     })
 
     ctx.response.status = 201
@@ -46,4 +46,3 @@ export async function store(ctx: AppContext): Promise<void> {
     throw error
   }
 }
-

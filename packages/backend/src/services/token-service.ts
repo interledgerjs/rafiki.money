@@ -34,7 +34,7 @@ export class TokenService {
   }
 
   async getAccessToken (): Promise<string> {
-    if(!this._client) {
+    if (!this._client) {
       await this.setup()
     }
     return new Promise<string>((resolve, reject) => {

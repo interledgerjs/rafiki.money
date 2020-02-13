@@ -1,6 +1,5 @@
 import { AppContext } from '../app'
 import { Account } from '../models/account'
-import { TransactionInfo } from '../models/transaction'
 
 const enforce = (subject: string, account: Account): boolean => {
   return account.userId.toString() === subject
@@ -13,7 +12,7 @@ export async function create (ctx: AppContext): Promise<void> {
 
   const account = await Account.query().findById(body.accountId)
 
-  if(!account) {
+  if (!account) {
     return
   }
 
@@ -23,6 +22,7 @@ export async function create (ctx: AppContext): Promise<void> {
   }
 
   try {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     await Account.transaction(async trx => {
       const trxAccount = await Account.query(trx).findById(account.id).forUpdate()

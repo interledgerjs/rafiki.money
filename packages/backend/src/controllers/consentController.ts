@@ -112,8 +112,8 @@ export async function show (ctx: AppContext): Promise<void> {
   const agreementUrl = getAgreementUrlFromScopes(grantScopes)
   ctx.logger.debug('grantScopes and agreementUrl', { grantScopes, agreementUrl })
 
-  let accountList = undefined
-  if(agreementUrl) {
+  let accountList
+  if (agreementUrl) {
     const token = await ctx.tokenService.getAccessToken()
     ctx.logger.debug('access token', { token })
 

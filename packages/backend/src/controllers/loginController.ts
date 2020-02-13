@@ -11,7 +11,7 @@ import { postUserSchema } from './userController'
 export async function show (ctx: AppContext): Promise<void> {
   const challenge = ctx.query.login_challenge
 
-  if(!challenge) {
+  if (!challenge) {
     ctx.body = {
       message: 'Validation Failed',
       errors: [
@@ -31,7 +31,7 @@ export async function show (ctx: AppContext): Promise<void> {
     throw error
   })
 
-  if(loginRequest['request_url']) {
+  if (loginRequest['request_url']) {
     const requestUrl = new URL(loginRequest['request_url'])
     const signupSessionId = requestUrl.searchParams.get('signupSessionId')
 
@@ -39,7 +39,7 @@ export async function show (ctx: AppContext): Promise<void> {
     // Auto login users if they just signed up
     if (session) {
       const now = Date.now()
-      if(session.expiresAt > now) {
+      if (session.expiresAt > now) {
         const acceptLogin = await hydra.acceptLoginRequest(challenge, { subject: session.userId,
           remember: true,
           remember_for: 604800 // 1 week
@@ -81,7 +81,7 @@ export async function store (ctx: Context): Promise<void> {
   const challenge = ctx.query.login_challenge
   ctx.logger.debug('Post login request', { username: username, challenge })
 
-  if(!challenge) {
+  if (!challenge) {
     ctx.body = {
       message: 'Validation Failed',
       errors: [
@@ -114,7 +114,7 @@ export async function store (ctx: Context): Promise<void> {
 
   const user = await User.query().where('username', username).first()
 
-  if(!user) {
+  if (!user) {
     ctx.body = {
       message: 'Validation Failed',
       errors: [
@@ -129,7 +129,7 @@ export async function store (ctx: Context): Promise<void> {
   }
 
   const passwordValid = await bcrypt.compare(password, user!.password)
-  if(!passwordValid) {
+  if (!passwordValid) {
     ctx.body = {
       message: 'Validation Failed',
       errors: [

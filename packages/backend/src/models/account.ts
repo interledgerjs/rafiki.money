@@ -30,14 +30,12 @@ export class Account extends Model {
   readonly id: number
   userId !: number
   name !: string
-  assetCode! : string
-  assetScale! : number
+  assetCode!: string
+  assetScale!: number
   balance !: bigint
   limit !: bigint
 
   transactions: Array<Transaction>
-
-
 
   $formatJson (): Partial<AccountInfo> {
     return {
@@ -47,7 +45,7 @@ export class Account extends Model {
       assetCode: this.assetCode,
       assetScale: this.assetScale,
       balance: this.balance.toString(),
-      limit: this.balance.toString(),
+      limit: this.balance.toString()
     }
   }
 }

@@ -46,7 +46,7 @@ export async function store (ctx: AppContext): Promise<void> {
   const hashedPassword = bcrypt.hashSync(password, salt)
 
   const usersWithUsername = await User.query().where('username', username).first()
-  if(usersWithUsername) {
+  if (usersWithUsername) {
     ctx.body = {
       message: 'Validation Failed',
       errors: [
@@ -61,8 +61,8 @@ export async function store (ctx: AppContext): Promise<void> {
   }
 
   const user = await User.query().insertAndFetch({ username, password: hashedPassword })
-  const expiresAt = BigInt((new Date(Date.now() + 1000*30)).getTime())
-  const signupSession = await SignupSession.query().insertAndFetch({userId: user.id, expiresAt})
+  const expiresAt = BigInt((new Date(Date.now() + 1000 * 30)).getTime())
+  const signupSession = await SignupSession.query().insertAndFetch({ userId: user.id, expiresAt })
   ctx.body = {
     ...user.$formatJson(),
     signupSessionId: signupSession.id
@@ -75,7 +75,7 @@ export async function update (ctx: AppContext): Promise<void> {
 
   ctx.logger.debug('Updating user', { userId: id })
 
-  if(id !== ctx.state.user.sub ) {
+  if (id !== ctx.state.user.sub) {
     ctx.status = 403
     return
   }

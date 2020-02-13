@@ -1,7 +1,7 @@
 import { AppContext } from '../app'
 import { Mandate } from '../models/mandate'
 
-export async function store(ctx: AppContext): Promise<void> {
+export async function store (ctx: AppContext): Promise<void> {
   const { logger } = ctx
   const mandateId = ctx.params.id
 
@@ -12,7 +12,7 @@ export async function store(ctx: AppContext): Promise<void> {
     id: mandateId
   }).first()
 
-  if(!mandate) {
+  if (!mandate) {
     return
   }
 

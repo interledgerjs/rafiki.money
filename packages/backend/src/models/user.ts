@@ -19,13 +19,13 @@ export class User extends Model {
   password !: string
   defaultAccountId !: string
 
-  $beforeInsert() {
-    this.createdAt = new Date().toISOString();
-    this.updatedAt = new Date().toISOString();
+  $beforeInsert () {
+    this.createdAt = new Date().toISOString()
+    this.updatedAt = new Date().toISOString()
   }
 
-  $beforeUpdate() {
-    this.updatedAt = new Date().toISOString();
+  $beforeUpdate () {
+    this.updatedAt = new Date().toISOString()
   }
 
   $formatJson (): Partial<UserInfo> {

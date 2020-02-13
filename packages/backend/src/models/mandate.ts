@@ -21,7 +21,6 @@ export type MandateInfo = {
 }
 
 export class Mandate extends Model {
-
   static get tableName (): string {
     return 'mandates'
   }
@@ -52,7 +51,7 @@ export class Mandate extends Model {
   $beforeUpdate (): void {
     this.updatedAt = new Date().toISOString()
   }
-  
+
   $formatJson (): Partial<MandateInfo> {
     return {
       id: this.id,
@@ -66,6 +65,6 @@ export class Mandate extends Model {
       interval: this.interval,
       cap: this.cap,
       scope: this.scope
-  }
+    }
   }
 }

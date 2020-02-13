@@ -1,7 +1,7 @@
 import { AppContext } from '../app'
 import { Mandate } from '../models/mandate'
 
-export async function index(ctx: AppContext): Promise<void> {
+export async function index (ctx: AppContext): Promise<void> {
   const { logger } = ctx
   const userId = ctx.state.user.sub
   const state = ctx.query.state
@@ -37,7 +37,7 @@ export async function index(ctx: AppContext): Promise<void> {
   })
 }
 
-export async function show(ctx: AppContext): Promise<void> {
+export async function show (ctx: AppContext): Promise<void> {
   const { logger } = ctx
   const mandateId = ctx.params.id
   const user = ctx.state.user
@@ -52,14 +52,14 @@ export async function show(ctx: AppContext): Promise<void> {
     id: mandateId
   }).first()
 
-  if(!mandate) {
+  if (!mandate) {
     return
   }
 
   ctx.body = mandate.toJSON()
 }
 
-export async function store(ctx: AppContext): Promise<void> {
+export async function store (ctx: AppContext): Promise<void> {
   const { logger } = ctx
 
   logger.info('Create mandate request', { body: ctx.request.body })

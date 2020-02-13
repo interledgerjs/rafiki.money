@@ -5,13 +5,12 @@ export type TransactionInfo = {
   id: number;
   accountId: number;
   amount: bigint;
-  description: string
-  createdAt: string,
-  updatedAt: string
+  description: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export class Transaction extends Model {
-
   static get tableName (): string {
     return 'transactions'
   }
@@ -27,7 +26,6 @@ export class Transaction extends Model {
     }
   };
 
-
   id: number;
   accountId: number;
   amount: bigint;
@@ -35,12 +33,12 @@ export class Transaction extends Model {
   createdAt: string;
   updatedAt: string;
 
-  $beforeInsert() {
-    this.createdAt = new Date().toISOString();
+  $beforeInsert () {
+    this.createdAt = new Date().toISOString()
   }
 
-  $beforeUpdate() {
-    this.updatedAt = new Date().toISOString();
+  $beforeUpdate () {
+    this.updatedAt = new Date().toISOString()
   }
 
   $formatJson (): Partial<TransactionInfo> {
@@ -50,7 +48,7 @@ export class Transaction extends Model {
       description: this.description,
       amount: this.amount,
       createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
+      updatedAt: this.updatedAt
     }
   }
 }

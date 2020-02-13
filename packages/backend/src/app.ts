@@ -56,23 +56,22 @@ export class App {
   }
 
   public getPort (): number {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     return this._server.address().port
   }
 
   private _setupRoutes (): void {
-
     this._privateRouter.use(createAuthMiddleware(hydra))
     this._publicRouter.use(createAttemptAuthMiddleware(hydra))
 
     this._publicRouter.get('/healthz', (ctx: AppContext) => {
       ctx.status = 200
-      return
     })
 
     this._publicRouter.post('/users', UsersController.store)
     this._privateRouter.patch('/users/:id', UsersController.update)
-    this._privateRouter.get('/users/me',  UsersController.show)
+    this._privateRouter.get('/users/me', UsersController.show)
 
     this._publicRouter.get('/login', LoginController.show)
     this._publicRouter.post('/login', LoginController.store)
