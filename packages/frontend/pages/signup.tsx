@@ -15,17 +15,23 @@ const Signup: NextPage = () => {
   const usersService = UsersService()
 
   const onSubmit = async data => {
-    await usersService.signup(data.username, data.password).then((data) => {
-      window.location.href = `/login?signupSessionId=${data.signupSessionId}`
-    })
+    const emailState = validateEmail({ target: { value: data.username } })
+    const passwordState = validatePassword({ target: { value: data.password } })
+    if (emailState && passwordState) {
+      await usersService.signup(data.username, data.password).then((data) => {
+        window.location.href = `/login?signupSessionId=${data.signupSessionId}`
+      })
+    }
   }
 
   const validateEmail = e => {
     const emailRegex = RegExp(/(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/)
     if (!emailRegex.test(e.target.value)) {
       setError("username", "invalidEmail", "Please submit a valid email address")
+      return (false)
     } else if (errors.username) {
       clearError('username')
+      return (true)
     }
   }
 
@@ -38,8 +44,10 @@ const Signup: NextPage = () => {
     if (errorMessage.length > 0) {
       errorMessage = 'Required: ' + errorMessage
       setError("password", "invalidPassword", errorMessage)
+      return (true)
     } else if (errors.password) {
       clearError('password')
+      return (false)
     }
   }
 
