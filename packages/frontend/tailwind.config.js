@@ -38,6 +38,9 @@ module.exports = {
       width: {
         card: '344px'
       },
+      height: {
+        '18': '4.5rem'
+      },
       opacity: {
         '12': '.12',
         '38': '.38',

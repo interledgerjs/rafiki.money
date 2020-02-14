@@ -16,10 +16,10 @@ const Home: NextPage = () => {
         <div className="flex justify-center">
           <Logo height={250}/>
         </div>
-        <div className="headline-3">
+        <div className="text-on-surface headline-3">
           Welcome to Rafiki money!
         </div>
-        <div className="body-1 max-w-xs mx-auto mt-6">
+        <div className="text-on-surface body-1 max-w-xs mx-auto mt-6">
           Sign up to create an account, or login if you’re returning
         </div>
         <div className="flex flex-row justify-center mt-8">
@@ -37,8 +37,8 @@ const Home: NextPage = () => {
 
 export default Home
 
-Home.getInitialProps = async (ctx) => {
-  const cookies = parseCookies(ctx)
+// Home.getInitialProps = async (ctx) => {
+//   const cookies = parseCookies(ctx)
 
   // TODO add check if logged in and default to overview page
   // try {
@@ -59,5 +59,5 @@ Home.getInitialProps = async (ctx) => {
   //   // window.location.href = '/login'
   // }
 
-  return {}
-}
+//   return {}
+// }
