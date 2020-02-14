@@ -39,6 +39,9 @@ module.exports = {
         card: '344px',
         listTable: '287px'
       },
+      height: {
+        '18': '4.5rem'
+      },
       opacity: {
         '12': '.12',
         '38': '.38',

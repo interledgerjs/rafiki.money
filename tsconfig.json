@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "commonjs",
+    "declaration": true,
+    "noImplicitAny": true,
+    "removeComments": true,
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "inlineSources": true,
+    "strictNullChecks": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "backend" : ["packages/backend/src"]
+    }
+  },
+  "exclude": [
+    "**/node_modules/**/*",
+    "packages/*/dist/**/*"
+  ],
+  "include": [
+    "packages/**/*.ts"
+  ]
+}

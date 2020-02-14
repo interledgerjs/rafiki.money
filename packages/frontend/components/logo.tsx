@@ -8,12 +8,12 @@ type props = {
 const Logo: React.FC<props> = (props) => {
   return (
     <div className="logo">
-      <svg width={props.height} height={props.height} viewBox="0 0 1080 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg width={props.height} height={props.height} viewBox="0 0 584 584" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g>
-          <rect x="273" y="491" width="270" height="270" transform="rotate(-30 273 491)"/>
+          <circle cx="409" cy="292" r="150"/>
         </g>
         <g>
-          <circle cx="657" cy="540" r="150"/>
+          <rect x="25" y="243" width="270" height="270" transform="rotate(-30 25 243)"/>
         </g>
       </svg>
     </div>

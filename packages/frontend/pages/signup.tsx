@@ -4,18 +4,18 @@ import useForm from 'react-hook-form'
 import { TextInput, Button} from '../components'
 import Link from 'next/link'
 import { UsersService } from '../services/users'
+import { useRouter } from 'next/router'
 
 
 const Signup: NextPage = () => {
+  const router = useRouter()
   const {register, handleSubmit, errors, setError, clearError} = useForm()
   const formRef = useRef<HTMLFormElement>(null)
 
   const usersService = UsersService()
 
   const onSubmit = async data => {
-    const emailState = validateEmail({ target: { value: data.username } })
-    const passwordState = validatePassword({ target: { value: data.password } })
-    if (emailState && passwordState) {
+    if (validateEmail({ target: { value: data.username } })) {
       await usersService.signup(data.username, data.password).then((data) => {
         window.location.href = `/login?signupSessionId=${data.signupSessionId}`
       })
@@ -33,41 +33,39 @@ const Signup: NextPage = () => {
     }
   }
 
-  const validatePassword = e => {
-    let errorMessage = ''
-    if (!/^(?=.*[a-z])/.test(e.target.value)) errorMessage += '(1 lowercase)'
-    if (!/^(?=.*[A-Z])/.test(e.target.value)) errorMessage += '(1 uppercase)'
-    if (!/^(?=.*[0-9])/.test(e.target.value)) errorMessage += '(1 number)'
-    if (!/^(?=.{8,})/.test(e.target.value)) errorMessage += '(8 characters)'
-    if (errorMessage.length > 0) {
-      errorMessage = 'Required: ' + errorMessage
-      setError("password", "invalidPassword", errorMessage)
-      return (true)
-    } else if (errors.password) {
-      clearError('password')
-      return (false)
-    }
-  }
-
   return (
     <div className = 'w-full h-full bg-surface'>
       <div className='w-full h-screen max-w-xs mx-auto bg-surface flex items-center'>
         <form ref={formRef} className='w-full max-w-xs' onSubmit={handleSubmit(onSubmit)}>
           <h2 className={`headline-4 text-on-surface text-center my-12`}>Sign up</h2>
-          
+
           <div className=''>
-            <TextInput  errorState={errors.username != undefined} validationFunction={validateEmail} inputRef={(register({required: true}))} name='username' label='email' hint={errors.username ? errors.username.type==='required'?'Email required':(errors.username.message) as string : undefined} style={{position:'relative',height:'72px',marginTop:'20px',marginBottom:'20px'}}></TextInput>
+            <TextInput
+              errorState={errors.username != undefined}
+              validationFunction={validateEmail}
+              inputRef={(register({required: true}))}
+              name='username'
+              label='Email'
+              hint={errors.username ? errors.username.type==='required' ? 'Email required' : (errors.username.message) as string : undefined}
+              className="relative h-18 my-5"
+            />
           </div>
 
           <div>
-            <TextInput  errorState={errors.password != undefined} validationFunction={validatePassword} inputType='password' inputRef={(register({required: true}))} name='password' label='Password' hint={errors.password ? errors.password.type==='required'?'Password required':(errors.password.message) as string : undefined} style={{position:'relative',height:'72px',marginTop:'20px',marginBottom:'20px'}}></TextInput>
+            <TextInput
+              errorState={errors.password != undefined}
+              inputType='password'
+              inputRef={(register({required: true}))}
+              name='password'
+              label='Password'
+              hint={ errors.password ? errors.password.type === 'required' ? 'Password required' : null: null }
+              className="relative h-18 my-5"
+            />
           </div>
 
           <div className='text-center my-12'>
-            <a href='/' className='mr-4'>
-              <Button onTap={() => { window.location.href = 'landing' }} bgColour="primary" type='text'>GO BACK</Button>
-            </a>
-            <Button disabled={Object.keys(errors).length > 0} bgColour="primary" type='solid' buttonType='submit'>SIGN UP</Button>
+            <Button onTap={() => router.push('/')} className="mr-4" bgColour="primary" type='text'>GO BACK</Button>
+            <Button disabled={Object.keys(errors).length > 0} type='solid' buttonType='submit'>SIGN UP</Button>
           </div>
 
         </form>
@@ -75,13 +73,6 @@ const Signup: NextPage = () => {
     </div>
   )
 
-}
-
-Signup.getInitialProps = async ({}) => {
-
-  // TODO Perhaps do a check if user is logged in already and rather redirect
-
-  return {}
 }
 
 export default Signup

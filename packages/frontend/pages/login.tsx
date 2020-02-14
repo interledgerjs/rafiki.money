@@ -44,13 +44,29 @@ const Login: NextPage<Props> = ({login_challenge}) => {
       <div className='w-full h-screen max-w-xs mx-auto bg-surface flex items-center'>
         <form ref={formRef} className='w-full max-w-xs' onSubmit={handleSubmit(onSubmit)}>
           <h2 className={`headline-4 text-on-surface text-center my-12`}>Login</h2>
-          
+
           <div className=''>
-            <TextInput  errorState={errors.username != undefined} validationFunction={validateEmail} inputRef={(register({required: true}))} name='username' label='email' hint={errors.username ? errors.username.type==='required'?'Email required':(errors.username.message) as string : undefined} style={{position:'relative',height:'72px',marginTop:'20px',marginBottom:'20px'}}></TextInput>
+            <TextInput
+              errorState={errors.username != undefined}
+              validationFunction={validateEmail}
+              inputRef={(register({required: true}))}
+              name='username'
+              label='Email'
+              hint={errors.username ? errors.username.type==='required' ? 'Email required' : (errors.username.message) as string : undefined}
+              className="relative h-18 my-5"
+            />
           </div>
 
           <div>
-            <TextInput  errorState={errors.password != undefined} inputType='password' inputRef={(register({required: true}))} name='password' label='Password' hint={errors.password ? errors.password.type==='required'?'Password required':(errors.password.message) as string : undefined} style={{position:'relative',height:'72px',marginTop:'20px',marginBottom:'20px'}}></TextInput>
+            <TextInput
+              errorState={errors.password != undefined}
+              inputType='password'
+              inputRef={(register({required: true}))}
+              name='password'
+              label='Password'
+              hint={ errors.password ? errors.password.type === 'required' ? 'Password required' : null: null }
+              className="relative h-18 my-5"
+            />
           </div>
 
           <div className='text-center my-12'>
@@ -71,11 +87,16 @@ Login.getInitialProps = async ({query, res}) => {
   const { login_challenge, signupSessionId } = query
 
   if(!login_challenge) {
-    res.writeHead(302, {
-      Location: signupSessionId ? HYDRA_LOGIN_GRANT_URL + `&signupSessionId=${signupSessionId}` : HYDRA_LOGIN_GRANT_URL
-    })
-    res.end()
-    return
+    const url = signupSessionId ? HYDRA_LOGIN_GRANT_URL + `&signupSessionId=${signupSessionId}` : HYDRA_LOGIN_GRANT_URL
+    if(res) {
+      res.writeHead(302, {
+        Location: url
+      })
+      res.end()
+      return
+    }
+
+    window.location.href = url
   }
 
   // Check loginChallenge to see if it can be skipped.
