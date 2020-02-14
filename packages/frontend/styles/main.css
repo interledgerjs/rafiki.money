@@ -22,40 +22,40 @@
   --logo-blend: multiply;
 }
 
-/*@media (prefers-color-scheme: dark) {*/
-/*  :root {*/
-/*    --color-primary-100: #FAEDEB;*/
-/*    --color-primary-200: #FDD4C7;*/
-/*    --color-primary: #FEB9A3;*/
-/*    --color-primary-400: #FF9E7C;*/
-/*    --color-primary-500: #FF885B;*/
-/*    --color-secondary-100: #E0F8F7;*/
-/*    --color-secondary-200: #B2EEE8;*/
-/*    --color-secondary: #7AE4D9;*/
-/*    --color-secondary-400: #3AD7C8;*/
-/*    --color-secondary-500: #00CBB9;*/
-/*    --color-on-surface: #FFFFFF;*/
-/*    --color-on-surface-trans: #FFFFFF99;*/
-/*    --color-surface: #121212;*/
-/*    --color-surface-elevation-1: #1E1E1E;*/
-/*    --color-surface-elevation-2: #232323;*/
-/*    --color-surface-elevation-3: #252525;*/
-/*    --color-surface-elevation-4: #272727;*/
-/*    --color-surface-elevation-6: #2C2C2C;*/
-/*    --color-surface-elevation-8: #2E2E2E;*/
-/*    --color-surface-elevation-12: #333333;*/
-/*    --color-surface-elevation-16: #363636;*/
-/*    --color-surface-elevation-24: #383838;*/
-/*    --color-error: #CF6679;*/
-/*    --color-red: #F39B9B;*/
-/*    --color-orange: #F7C192;*/
-/*    --color-yellow: #F7DE92;*/
-/*    --color-green: #8AE5B1;*/
-/*    --color-blue: #77ACF3;*/
-/*    --color-purple: #C193EC;*/
-/*    --logo-blend: screen;*/
-/*  }*/
-/*}*/
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-primary-100: #FAEDEB;
+    --color-primary-200: #FDD4C7;
+    --color-primary: #FEB9A3;
+    --color-primary-400: #FF9E7C;
+    --color-primary-500: #FF885B;
+    --color-secondary-100: #E0F8F7;
+    --color-secondary-200: #B2EEE8;
+    --color-secondary: #7AE4D9;
+    --color-secondary-400: #3AD7C8;
+    --color-secondary-500: #00CBB9;
+    --color-on-surface: #FFFFFF;
+    --color-on-surface-trans: #FFFFFF99;
+    --color-surface: #121212;
+    --color-surface-elevation-1: #1E1E1E;
+    --color-surface-elevation-2: #232323;
+    --color-surface-elevation-3: #252525;
+    --color-surface-elevation-4: #272727;
+    --color-surface-elevation-6: #2C2C2C;
+    --color-surface-elevation-8: #2E2E2E;
+    --color-surface-elevation-12: #333333;
+    --color-surface-elevation-16: #363636;
+    --color-surface-elevation-24: #383838;
+    --color-error: #CF6679;
+    --color-red: #F39B9B;
+    --color-orange: #F7C192;
+    --color-yellow: #F7DE92;
+    --color-green: #8AE5B1;
+    --color-blue: #77ACF3;
+    --color-purple: #C193EC;
+    --logo-blend: screen;
+  }
+}
 
 @tailwind base;
 @tailwind components;
