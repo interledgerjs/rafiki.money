@@ -43,13 +43,6 @@ export async function create (ctx: AppContext): Promise<void> {
         amount: FAUCET_AMOUNT,
         description: 'Faucet money'
       })
-
-      // await trx<Transaction>('transactions').insert({
-      //   accountId: account.id,
-      //   amount: amount.toString(),
-      //   epoch: Date.now(),
-      //   description: description
-      // })
     })
 
     ctx.status = 201
