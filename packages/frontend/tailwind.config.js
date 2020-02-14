@@ -36,7 +36,8 @@ module.exports = {
         'dark-mode': {'raw': '(prefers-color-scheme: dark)'},
       },
       width: {
-        card: '344px'
+        card: '344px',
+        listTable: '287px'
       },
       opacity: {
         '12': '.12',

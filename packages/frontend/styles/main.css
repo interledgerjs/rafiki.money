@@ -238,6 +238,7 @@ letter-spacing: 0.4px;
 
 .listline-div {
   padding: 8px;
+  padding-right: 0;
 }
 
 .listline-img {
@@ -255,8 +256,4 @@ letter-spacing: 0.4px;
 
 .listline-name {
   width: 200px;
-}
-
-.listline-values {
-  width: 100%
 }
