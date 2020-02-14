@@ -13,7 +13,7 @@ type props = {
   disabled?: boolean
   buttonType?: 'button' | 'submit' | 'reset'
   onTap?: (event: any) => void
-
+  className?: string
 }
 
 const Button: React.FC<props> = (props) => {
@@ -27,6 +27,7 @@ const Button: React.FC<props> = (props) => {
   } else {
     throw new Error('Not a supported button type.')
   }
+  className += ` ${props.className}`
   return (
     <button type={props.buttonType? props.buttonType : 'button'} onClick={props.disabled || !props.onTap? () => {} : props.onTap } className={className}>
       { props.children }
