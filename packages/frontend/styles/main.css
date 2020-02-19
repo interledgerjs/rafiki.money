@@ -179,14 +179,6 @@ html {
   letter-spacing: 0.4px;
 }
 
-.textFieldOutline {
-  @apply absolute;
-  left: 0%;
-  right: 0%;
-  top: 0%;
-  bottom: 22.22%;
-}
-
 .inputLabel{
 position: absolute;
 height: 16px;

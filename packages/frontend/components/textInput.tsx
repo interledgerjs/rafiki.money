@@ -20,7 +20,6 @@ type props = {
 }
 
 const TextInput: React.FC<props> = (props) => {
-  let className
   const textColour = props.textColour? props.textColour : 'on-surface'
   let blurColour = props.blurColour? props.blurColour : 'on-surface-trans'
   let focusColour = 'primary'
@@ -39,7 +38,7 @@ const TextInput: React.FC<props> = (props) => {
     <div style={props.style} className={`bg-${bgColour} max-w-${maxWidth} ${props.className}`}>
 
       <div 
-        className={`textFieldOutline border${focussed||props.errorState? '-2': ''} border-${focussed||props.errorState? focusColour: textColour + ' opacity-12'} rounded`}>
+        className={`left-0 right-0 top-0 h-inputBox border${focussed||props.errorState? '-2': ''} border-${focussed||props.errorState? focusColour: textColour + ' opacity-12'} rounded`}>
       </div>
 
       <label 

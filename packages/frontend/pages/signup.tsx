@@ -18,6 +18,14 @@ const Signup: NextPage = () => {
     if (validateEmail({ target: { value: data.username } })) {
       await usersService.signup(data.username, data.password).then((data) => {
         window.location.href = `/login?signupSessionId=${data.signupSessionId}`
+      }).catch(async (error) => {
+        const body = await error.response.json()
+        body.errors.forEach((el) => {
+          if (el.field === 'username')
+            setError('username', 'usernameError', el.message)
+          else if (el.field === 'password')
+            setError('password', 'passwordError', el.message)
+        })
       })
     }
   }
@@ -29,8 +37,8 @@ const Signup: NextPage = () => {
       return (false)
     } else if (errors.username) {
       clearError('username')
-      return (true)
     }
+    return (true)
   }
 
   return (

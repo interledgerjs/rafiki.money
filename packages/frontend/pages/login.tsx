@@ -22,8 +22,15 @@ const Login: NextPage<Props> = ({login_challenge}) => {
         if(resp.redirectTo) {
           window.location.href = resp.redirectTo
         }
-      }).catch(error => {
+      }).catch(async (error) => {
         console.log(error)
+        const body = await error.response.json()
+        body.errors.forEach((el) => {
+          if (el.field === 'username')
+            setError('username', 'usernameError', el.message)
+          else if (el.field === 'password')
+            setError('password', 'passwordError', el.message)
+        })
       })
     }
   }
@@ -35,8 +42,8 @@ const Login: NextPage<Props> = ({login_challenge}) => {
       return (false)
     } else if (errors.username) {
       clearError('username')
-      return (true)
     }
+    return (true)
   }
 
   return (
@@ -64,7 +71,7 @@ const Login: NextPage<Props> = ({login_challenge}) => {
               inputRef={(register({required: true}))}
               name='password'
               label='Password'
-              hint={ errors.password ? errors.password.type === 'required' ? 'Password required' : null: null }
+              hint={ errors.password ? errors.password.type === 'required' ? 'Password required' : (errors.password.message) as string: null }
               className="relative h-18 my-5"
             />
           </div>
