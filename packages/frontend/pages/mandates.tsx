@@ -1,11 +1,13 @@
-import React, { useState, Component } from 'react'
+// import React, { useState, Component } from 'react'
 import Select from 'react-select'
-import { NextPage } from "next"
+import { NextPage } from 'next'
 import { Card, Content, Navigation, TextInput } from '../components'
+import { Doughnut } from 'react-chartjs-2'
+
 // import "../styles/main.css";
 
 // component with which to populate list
-const listline = 
+const listline =
   <div className="border-t border-color-gray h-18 flex flex-row listline-div"> {/* having trouble setting colour of border */}
     <div className="flex flex-col">
       <img className="listline-img" src="http://placecorgi.com/79/79" />
@@ -19,7 +21,11 @@ const listline =
           <div className="text-3xl leading-none">400.00</div>
           <div className="text-xs flex justify-end">/1200.00</div>
         </div>
-        <div className="w-1/3">Monthly</div>
+        <div className="w-1/3 justify-center">
+          {/* <div className="py-auto"> */}
+            Monthly
+          {/* </div> */}
+        </div>
         <div className="w-1/4">XRP</div>
       </div>
     </div>
@@ -39,7 +45,18 @@ const customStyles = {
     height: 56,
     minHeight: 56
   })
-};
+}
+
+const data = {
+  labels: ['Cheque', 'Savings'],
+  datasets: [
+    {
+      data: [300, 500],
+      backgroundColor: ['#9B51E0', '#2F80ED'],
+      hoverBackgroundColor: ['#9B51E0', '#36A2EB']
+    }
+  ]
+}
 
 const Account: NextPage = () => {
   return (
@@ -77,10 +94,45 @@ const Account: NextPage = () => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col bg-surface-elevation-1 elevation-1 rounded text-on-surface content-div">
-            COOOOONTEEENT
-        </div>
-        </div>
+          {/* Master Div */}
+          <div className="ml-8">
+            {/* Graph Card */}
+            <Card>
+              <div className="h-64">
+                <Doughnut
+                  data={data}
+                  width={170}
+                  legend={{
+                    position: 'left',
+                    display: false
+                  }}
+                />
+              </div>
+              {/* Headline */}
+              <div className="mt-10 headline-6">Transactions</div>
+              {/* Transactions master div */}
+              <div className="flex flex-col">
+                {/* Transaction card functionally */}
+                {/* {TransactionCard("Cheque", "16.00", "2 Feb 2020", false)} */}
+                {/* Transaction card manually */}
+                <div className="my-2">
+                  <Card>
+                    <div className="flex justify-between">
+                      <div>
+                        <div className="overline text-blue">Savings</div>
+                        <div className="headline-6">1 Feb 2020</div>
+                      </div>
+                      <div className="self-center headline-6 text-green">
+                        $ 84.00
+                      </div>
+                    </div>
+                  </Card>
+                </div>
+                {/* {TransactionCard("Cheque", "100", "1 Feb 2020")}
+                {TransactionCard("Cheque", "50.00", "1 Feb 2020", false)} */}
+              </div>
+            </Card>
+          </div>        </div>
       </Content>
     </div>
   )
