@@ -50,8 +50,8 @@ const data = {
   datasets: [
     {
       data: [300, 500],
-      backgroundColor: ['#9B51E0', '#2F80ED'],
-      hoverBackgroundColor: ['#9B51E0', '#36A2EB']
+      backgroundColor: ['#FF8A65', '#21D2BF'],
+      hoverBackgroundColor: ['#FF8A65', '#21D2BF']
     }
   ]
 }
