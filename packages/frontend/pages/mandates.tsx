@@ -16,15 +16,13 @@ const listline =
       <div className="listline-name">Bob's Burgers</div>
     </div>
     <div className="flex flex-col justify-center">
-      <div className="flex self-end w-listTable justify-around">
-        <div className="w-5/12">
-          <div className="text-3xl leading-none">400.00</div>
-          <div className="text-xs flex justify-end">/1200.00</div>
+      <div className="flex self-end w-listTable justify-around items-center">
+        <div className="w-5/12 pr-5">
+          <div className="text-3xl leading-none text-right">400.00</div>
+          <div className="text-xs text-right">/1200.00</div>
         </div>
-        <div className="w-1/3 justify-center">
-          {/* <div className="py-auto"> */}
-            Monthly
-          {/* </div> */}
+        <div className="w-1/3">
+          Monthly
         </div>
         <div className="w-1/4">XRP</div>
       </div>
@@ -97,7 +95,7 @@ const Account: NextPage = () => {
           {/* Master Div */}
           <div className="ml-8">
             {/* Graph Card */}
-            <Card>
+            <div className="p-4 bg-surface-elevation-1 elevation-1 rounded text-on-surface sm:max-w-full md:w-card h-full">
               <div className="h-64">
                 <Doughnut
                   data={data}
@@ -119,7 +117,7 @@ const Account: NextPage = () => {
                   <Card>
                     <div className="flex justify-between">
                       <div>
-                        <div className="overline text-blue">Savings</div>
+                        {/* <div className="overline text-blue">Savings</div> */}
                         <div className="headline-6">1 Feb 2020</div>
                       </div>
                       <div className="self-center headline-6 text-green">
@@ -131,7 +129,7 @@ const Account: NextPage = () => {
                 {/* {TransactionCard("Cheque", "100", "1 Feb 2020")}
                 {TransactionCard("Cheque", "50.00", "1 Feb 2020", false)} */}
               </div>
-            </Card>
+            </div>
           </div>        </div>
       </Content>
     </div>
