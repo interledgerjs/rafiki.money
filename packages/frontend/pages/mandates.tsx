@@ -46,12 +46,14 @@ const customStyles = {
 }
 
 const data = {
-  labels: ['Cheque', 'Savings'],
+  labels: ['Used', 'Available'],
+  cutoutPercentage: 10,
   datasets: [
     {
       data: [300, 500],
       backgroundColor: ['#FF8A65', '#21D2BF'],
-      hoverBackgroundColor: ['#FF8A65', '#21D2BF']
+      hoverBackgroundColor: ['#FF8A65', '#21D2BF'],
+      borderWidth: 0
     }
   ]
 }
