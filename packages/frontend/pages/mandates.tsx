@@ -47,7 +47,6 @@ const customStyles = {
 
 const data = {
   labels: ['Used', 'Available'],
-  cutoutPercentage: 10,
   datasets: [
     {
       data: [300, 500],
@@ -56,6 +55,10 @@ const data = {
       borderWidth: 0
     }
   ]
+}
+
+const doughnutOptions = {
+  cutoutPercentage: 64
 }
 
 const Account: NextPage = () => {
@@ -101,6 +104,7 @@ const Account: NextPage = () => {
               <div className="h-64">
                 <Doughnut
                   data={data}
+                  options={doughnutOptions}
                   width={170}
                   legend={{
                     position: 'left',
