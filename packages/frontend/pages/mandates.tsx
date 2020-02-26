@@ -58,7 +58,15 @@ const data = {
 }
 
 const doughnutOptions = {
-  cutoutPercentage: 64
+  cutoutPercentage: 64,
+  elements: {
+    center: {
+      text: 'Desktop',
+      color: '#36A2EB', // Default black
+      fontStyle: 'Helvetica', // Default Arial
+      sidePadding: 20 // Default 20 (as a percentage)
+    }
+  }
 }
 
 const Account: NextPage = () => {
@@ -102,15 +110,25 @@ const Account: NextPage = () => {
             {/* Graph Card */}
             <div className="p-4 bg-surface-elevation-1 elevation-1 rounded text-on-surface sm:max-w-full md:w-card h-full">
               <div className="h-64">
+                {/* <div>help</div> */}
                 <Doughnut
                   data={data}
                   options={doughnutOptions}
                   width={170}
                   legend={{
-                    position: 'left',
-                    display: false
+                    position: 'bottom',
+                    display: false,
+                    align: 'centre',
+                    labels: {
+                      fontColor: '#FF8A65',
+                      usePointStyle: true
+                    }
                   }}
                 />
+                <div className="donut-inner">
+                  <span className="donut-inner-used">Used<br/></span>
+                  <span className="donut-inner-available">Available</span>
+                </div>
               </div>
               {/* Headline */}
               <div className="mt-10 headline-6">Transactions</div>
