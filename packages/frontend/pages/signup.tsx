@@ -55,7 +55,6 @@ const Signup: NextPage = () => {
               name='username'
               label='Email'
               hint={errors.username ? errors.username.type==='required' ? 'Email required' : (errors.username.message) as string : undefined}
-              className="relative h-18 my-5"
             />
           </div>
 
@@ -67,7 +66,6 @@ const Signup: NextPage = () => {
               name='password'
               label='Password'
               hint={ errors.password ? errors.password.type === 'required' ? 'Password required' : null: null }
-              className="relative h-18 my-5"
             />
           </div>
 
