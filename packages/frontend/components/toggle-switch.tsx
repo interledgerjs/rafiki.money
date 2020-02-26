@@ -30,6 +30,7 @@ const ToggleSwitch: React.FC<props> = props => {
     if (props.active === props.text[x])
       arr.push(
         <button
+          key={props.text[x]}
           style={{ width: minWidth }}
           type={"submit"}
           onClick={!props.onClick ? () => {} : props.onClick}
@@ -41,6 +42,7 @@ const ToggleSwitch: React.FC<props> = props => {
     else
       arr.push(
         <button
+          key={props.text[x]}
           style={{ width: minWidth }}
           type={"submit"}
           onClick={!props.onClick ? () => {} : props.onClick}
@@ -50,7 +52,7 @@ const ToggleSwitch: React.FC<props> = props => {
         </button>
       )
     if (x != textLength - 1)
-      arr.push(<div className="border border-on-surface opacity-12"></div>)
+      arr.push(<div key={x} className="border border-on-surface opacity-12"></div>)
   }
 
   return (
