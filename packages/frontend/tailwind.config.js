@@ -39,7 +39,8 @@ module.exports = {
         card: '344px'
       },
       height: {
-        '18': '4.5rem'
+        '18': '4.5rem',
+        inputBox: '3.5rem',
       },
       opacity: {
         '12': '.12',
