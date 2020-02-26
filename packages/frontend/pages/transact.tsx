@@ -33,7 +33,7 @@ const Transact: NextPage = () => {
                 <Button
                   type="solid"
                   buttonType="submit"
-                  onTap={() => setCount(count + 1)}
+                  onClick={() => setCount(count + 1)}
                 >
                   NEXT
                 </Button>
@@ -109,7 +109,7 @@ const Transact: NextPage = () => {
               <Button
                 type="solid"
                 buttonType="submit"
-                onTap={() => setCount(count + 1)}
+                onClick={() => setCount(count + 1)}
               >
                 NEXT
               </Button>
