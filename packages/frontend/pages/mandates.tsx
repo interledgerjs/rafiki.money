@@ -1,4 +1,5 @@
 // import React, { useState, Component } from 'react'
+import React from 'react'
 import Select from 'react-select'
 import { NextPage } from 'next'
 import { Card, Content, Navigation, TextInput } from '../components'
@@ -69,42 +70,50 @@ const doughnutOptions = {
   }
 }
 
+class MainView extends React.Component {
+  render() {
+    return (
+      <div className="flex flex-col">
+        <div className="flex flex-row justify-between">
+          <div className='w-full h-full bg-surface'>
+            <div className='w-full max-w-xs bg-surface flex items-center'>
+              <form className='w-full max-w-xs'>
+                <div className=''>
+                  <TextInput name='searchFor' label='Search' style={{ position: 'relative', height: '72px' }}></TextInput>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div className='w-1/4 h-full bg-surface'>
+            <Select options={options} styles={customStyles} />
+          </div>
+        </div>
+        <div className="flex flex-row">
+          <div className="flex flex-col bg-surface-elevation-1 elevation-1 rounded text-on-surface">
+            <div className="flex h-10 self-end">
+              <div className="flex justify-around w-listTable">
+                <div className="w-5/12">Balance</div>
+                <div className="w-1/3">Interval</div>
+                <div className="w-1/4">Currency</div>
+              </div>
+            </div>
+            {listline}
+            {listline}
+            {listline}
+          </div>
+        </div>
+      </div>
+    )
+  }
+}
+
 const Account: NextPage = () => {
   return (
     <div className="flex flex-grow">
       <Navigation active="mandates"></Navigation>
       <Content navigation>
         <div className="flex flex-row h-full">
-          <div className="flex flex-col">
-            <div className="flex flex-row justify-between">
-              <div className='w-full h-full bg-surface'>
-                <div className='w-full max-w-xs bg-surface flex items-center'>
-                  <form className='w-full max-w-xs'>
-                    <div className=''>
-                      <TextInput name='searchFor' label='Search' style={{ position: 'relative', height: '72px' }}></TextInput>
-                    </div>
-                  </form>
-                </div>
-              </div>
-              <div className='w-1/4 h-full bg-surface'>
-                <Select options={options} styles={customStyles} />
-              </div>
-            </div>
-            <div className="flex flex-row">
-              <div className="flex flex-col bg-surface-elevation-1 elevation-1 rounded text-on-surface">
-                <div className="flex h-10 self-end">
-                  <div className="flex justify-around w-listTable">
-                    <div className="w-5/12">Balance</div>
-                    <div className="w-1/3">Interval</div>
-                    <div className="w-1/4">Currency</div>
-                  </div>
-                </div>
-                {listline}
-                {listline}
-                {listline}
-              </div>
-            </div>
-          </div>
+          <MainView />
           {/* Master Div */}
           <div className="ml-8">
             {/* Graph Card */}
@@ -126,7 +135,7 @@ const Account: NextPage = () => {
                   }}
                 />
                 <div className="donut-inner">
-                  <span className="donut-inner-used">Used<br/></span>
+                  <span className="donut-inner-used">Used<br /></span>
                   <span className="donut-inner-available">Available</span>
                 </div>
               </div>
