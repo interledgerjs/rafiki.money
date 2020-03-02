@@ -9,6 +9,7 @@ import { NextPage } from "next";
 import { Card, Content, Navigation, Button } from "../components";
 import { Doughnut } from "react-chartjs-2";
 import { useRouter } from "next/router";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 type Props = {
   account: AccountData;
@@ -187,7 +188,10 @@ function renderAccountCards(data: AccountData) {
     for (let index = 0; index < listAccounts.length; index++) {
       cardArray.push(
         <Fragment key={listAccounts[index].id}>
-          <div className="w-card md:pr-0 md:w-auto pb-4 cursor-pointer" onClick={() => onAccountClick(listAccounts[index].id)}>
+          <div
+            className="w-card md:pr-0 md:w-auto pb-4 cursor-pointer"
+            onClick={() => onAccountClick(listAccounts[index].id)}
+          >
             {AccountCard(
               listAccounts[index].name,
               listAccounts[index].balance.toString()
@@ -206,9 +210,7 @@ function renderAccountCards(data: AccountData) {
 
 //handles account card click
 function onAccountClick(accountId: number) {
-  return (
-    console.log(accountId)
-  )
+  return console.log(accountId);
 }
 
 function retrieveAccountName(data: AccountData, accountId: number) {
@@ -291,12 +293,9 @@ function renderTransactionCards(data: AccountData) {
   }
 }
 
-
 const Overview: NextPage<Props> = ({ account }) => {
   const router = useRouter();
-  const copyToClipboard = () => {
-    Clipboard.setString('test')
-  }
+
   return (
     <div className="flex">
       <Navigation active="overview"></Navigation>
@@ -317,9 +316,14 @@ const Overview: NextPage<Props> = ({ account }) => {
                   <div className="headline-5">Payment Pointer</div>
                   <div className="body-2">{account.user.paymentPointer}</div>
                   <div className="flex pr-3 pt-5 justify-end">
-                    <Button type="text" onTap={copyToClipboard}>
-                      Copy
-                    </Button>
+                    <CopyToClipboard
+                      text={account.user.paymentPointer}
+                      onCopy={() => alert("Copied to clipboard")}
+                    >
+                      <span>
+                        <Button type="text">Copy</Button>
+                      </span>
+                    </CopyToClipboard>
                   </div>
                 </Card>
               </div>
