@@ -70,8 +70,29 @@ const doughnutOptions = {
   }
 }
 
-class MainView extends React.Component {
+class List extends React.Component {
   render() {
+    return (
+      <div className="flex flex-row">
+      <div className="flex flex-col bg-surface-elevation-1 elevation-1 rounded text-on-surface">
+        <div className="flex h-10 self-end">
+          <div className="flex justify-around w-listTable">
+            <div className="w-5/12">Balance</div>
+            <div className="w-1/3">Interval</div>
+            <div className="w-1/4">Currency</div>
+          </div>
+        </div>
+        {listline}
+        {listline}
+        {listline}
+      </div>
+    </div>
+);
+  }
+}
+
+class MainView extends React.Component {
+  render () {
     return (
       <div className="flex flex-col">
         <div className="flex flex-row justify-between">
@@ -88,20 +109,7 @@ class MainView extends React.Component {
             <Select options={options} styles={customStyles} />
           </div>
         </div>
-        <div className="flex flex-row">
-          <div className="flex flex-col bg-surface-elevation-1 elevation-1 rounded text-on-surface">
-            <div className="flex h-10 self-end">
-              <div className="flex justify-around w-listTable">
-                <div className="w-5/12">Balance</div>
-                <div className="w-1/3">Interval</div>
-                <div className="w-1/4">Currency</div>
-              </div>
-            </div>
-            {listline}
-            {listline}
-            {listline}
-          </div>
-        </div>
+        <List />
       </div>
     )
   }
