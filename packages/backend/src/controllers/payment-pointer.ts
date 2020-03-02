@@ -1,9 +1,9 @@
 import { AppContext } from '../app'
 import { User } from '../models/user'
-import { generatePskEncryptionKey, generateSharedSecretFromToken, generateToken } from 'ilp-protocol-stream/src/crypto'
+import { generateSharedSecretFromToken, generateToken } from 'ilp-protocol-stream/dist/src/crypto'
 import { randomBytes } from 'crypto'
 
-const INTENTS_URL = process.env.INTENTS_URL || 'http://localhost:3001/intents'
+const INVOICES_URL = process.env.INVOICES_URL || 'http://localhost:3001/intents'
 const MANDATES_URL = process.env.MANDATES_URL || 'http://localhost:3001/mandates'
 const SUPPORTED_ASSETS = process.env.SUPPORTED_ASSETS || JSON.stringify(['USD'])
 const AUTHORIZATION_URL = process.env.AUTHORIZATION_URL || 'http://localhost:9000/oauth2/auth'
@@ -70,9 +70,9 @@ export async function show (ctx: AppContext): Promise<void> {
     ctx.set('Access-Control-Allow-Origin', '*')
   } else {
     ctx.body = {
-      payment_intents_endpoint: INTENTS_URL,
-      payment_mandates_endpoint: MANDATES_URL,
-      payment_assets_supported: JSON.parse(SUPPORTED_ASSETS),
+      invoices_endpoint: INVOICES_URL,
+      mandates_endpoint: MANDATES_URL,
+      assets_supported: JSON.parse(SUPPORTED_ASSETS),
       issuer_endpoint: ISSUER_URL,
       authorization_endpoint: AUTHORIZATION_URL,
       token_endpoint: TOKEN_URL

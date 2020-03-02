@@ -81,6 +81,7 @@ export class App {
     this._publicRouter.post('/logout', LogoutController.store)
 
     this._publicRouter.get('/p/:username', PaymentPointerController.show)
+    this._publicRouter.get('/.well-known/open-payments', PaymentPointerController.show)
 
     this._privateRouter.post('/oauth2/clients', Oauth2ClientController.store)
 
