@@ -187,7 +187,7 @@ function renderAccountCards(data: AccountData) {
     for (let index = 0; index < listAccounts.length; index++) {
       cardArray.push(
         <Fragment key={listAccounts[index].id}>
-          <div className="w-card md:pr-0 md:w-auto pb-4 cursor-pointer" onClick={onAccountClick}>
+          <div className="w-card md:pr-0 md:w-auto pb-4 cursor-pointer" onClick={() => onAccountClick(listAccounts[index].id)}>
             {AccountCard(
               listAccounts[index].name,
               listAccounts[index].balance.toString()
@@ -205,9 +205,9 @@ function renderAccountCards(data: AccountData) {
 }
 
 //handles account card click
-function onAccountClick() {
+function onAccountClick(accountId: number) {
   return (
-    alert("Click")
+    console.log(accountId)
   )
 }
 
@@ -294,6 +294,9 @@ function renderTransactionCards(data: AccountData) {
 
 const Overview: NextPage<Props> = ({ account }) => {
   const router = useRouter();
+  const copyToClipboard = () => {
+    Clipboard.setString('test')
+  }
   return (
     <div className="flex">
       <Navigation active="overview"></Navigation>
@@ -314,7 +317,7 @@ const Overview: NextPage<Props> = ({ account }) => {
                   <div className="headline-5">Payment Pointer</div>
                   <div className="body-2">{account.user.paymentPointer}</div>
                   <div className="flex pr-3 pt-5 justify-end">
-                    <Button type="text" onTap={btnCopyTap}>
+                    <Button type="text" onTap={copyToClipboard}>
                       Copy
                     </Button>
                   </div>
