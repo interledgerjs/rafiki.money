@@ -8,6 +8,7 @@ import React, { useState, useEffect, Fragment } from "react";
 import { NextPage } from "next";
 import { Card, Content, Navigation, Button } from "../components";
 import { Doughnut } from "react-chartjs-2";
+import { useRouter } from "next/router";
 
 type Props = {
   account: AccountData;
@@ -18,7 +19,7 @@ type UserInfo = {
   username?: string;
   password?: string;
   defaultAccountId?: string;
-}
+};
 
 type TransactionInfo = {
   // FIXME: bigInt for amount
@@ -44,6 +45,8 @@ type AccountInfo = {
 export type AccountData = {
   user: {
     client_id: string;
+    totalBalance: number;
+    paymentPointer: string;
   };
   accounts?: AccountInfo[];
   transactions: TransactionInfo[];
@@ -51,7 +54,9 @@ export type AccountData = {
 
 const dummyAccountInfo: AccountData = {
   user: {
-    client_id: "Test"
+    client_id: "Test",
+    totalBalance: 500,
+    paymentPointer: "$rafiki.money/p/cairin@coil.com"
   },
   accounts: [
     {
@@ -161,7 +166,7 @@ function AccountCard(name: String, balance: String) {
     <Fragment>
       <Card>
         <div className="headline-5">{name}</div>
-        <div className="headline-4">${balance}</div>
+        <div className="headline-4">$ {balance}</div>
       </Card>
     </Fragment>
   );
@@ -182,7 +187,7 @@ function renderAccountCards(data: AccountData) {
     for (let index = 0; index < listAccounts.length; index++) {
       cardArray.push(
         <Fragment key={listAccounts[index].id}>
-          <div className="w-card md:pr-0 md:w-auto pb-4">
+          <div className="w-card md:pr-0 md:w-auto pb-4 cursor-pointer" onClick={onAccountClick}>
             {AccountCard(
               listAccounts[index].name,
               listAccounts[index].balance.toString()
@@ -199,6 +204,23 @@ function renderAccountCards(data: AccountData) {
   }
 }
 
+//handles account card click
+function onAccountClick() {
+  return (
+    alert("Click")
+  )
+}
+
+function retrieveAccountName(data: AccountData, accountId: number) {
+  //FIXME: Find a way to not pass the whole data object around
+  let name: string;
+  data.accounts.forEach(element => {
+    if (element.id === accountId) name = element.name;
+  });
+  return name;
+}
+
+// Renders Transaction Cards
 function TransactionCard(name: string, date: string, amount: number) {
   //TODO: colors change based on account
 
@@ -226,15 +248,6 @@ function TransactionCard(name: string, date: string, amount: number) {
       </Card>
     </div>
   );
-}
-
-function retrieveAccountName(data: AccountData, accountId: number) {
-  //FIXME: Find a way to not pass the whole data object around
-  let name: string;
-  data.accounts.forEach(element => {
-    if (element.id === accountId) name = element.name;
-  });
-  return name;
 }
 
 function renderTransactionCards(data: AccountData) {
@@ -278,7 +291,9 @@ function renderTransactionCards(data: AccountData) {
   }
 }
 
+
 const Overview: NextPage<Props> = ({ account }) => {
+  const router = useRouter();
   return (
     <div className="flex">
       <Navigation active="overview"></Navigation>
@@ -289,13 +304,15 @@ const Overview: NextPage<Props> = ({ account }) => {
               <div>
                 <Card>
                   <div className="headline-5">Total balance</div>
-                  <div className="headline-3 pb-1">$126.00</div>
+                  <div className="headline-3 pb-1">
+                    $ {account.user.totalBalance}
+                  </div>
                 </Card>
               </div>
               <div className="pl-16 relative flex">
                 <Card>
                   <div className="headline-5">Payment Pointer</div>
-                  <div className="body-2">$rafiki.money/p/cairin@coil.com</div>
+                  <div className="body-2">{account.user.paymentPointer}</div>
                   <div className="flex pr-3 pt-5 justify-end">
                     <Button type="text" onTap={btnCopyTap}>
                       Copy
@@ -308,10 +325,7 @@ const Overview: NextPage<Props> = ({ account }) => {
               <div className="headline-6">Accounts</div>
               <div className="w-64 flex-1"></div>
               <div className="">
-                <Button
-                  type="solid"
-                  onTap={btnAddAccountTap}
-                >
+                <Button type="solid" onTap={() => router.push("/addAccount")}>
                   Add account
                 </Button>
               </div>
@@ -350,6 +364,9 @@ const Overview: NextPage<Props> = ({ account }) => {
 Overview.getInitialProps = async ({}) => {
   // FIXME: Get accounts & Transactions from those accounts instead of mocking data
   const account = dummyAccountInfo;
+  // const response = await axios({
+  //   headers:
+  // })
 
   return { account };
 };
