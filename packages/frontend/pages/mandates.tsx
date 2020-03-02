@@ -130,6 +130,16 @@ const Account: NextPage = () => {
                   <span className="donut-inner-available">Available</span>
                 </div>
               </div>
+              <div className="mt-16 body-2">
+                <div className="flex flex-row justify-between">
+                  <div className="">Created</div>
+                  <div className="">31-01-2020, 10:13</div>
+                </div>
+                <div className="flex flex-row justify-between">
+                  <div className="">Expires</div>
+                  <div className="">06-02-2020, 10:13</div>
+                </div>
+              </div>
               {/* Headline */}
               <div className="mt-10 headline-6">Transactions</div>
               {/* Transactions master div */}
