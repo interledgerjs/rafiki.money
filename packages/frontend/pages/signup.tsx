@@ -15,11 +15,17 @@ const Signup: NextPage = () => {
   const usersService = UsersService()
 
   const onSubmit = async data => {
-    const emailState = validateEmail({ target: { value: data.username } })
-    const passwordState = validatePassword({ target: { value: data.password } })
-    if (emailState && passwordState) {
+    if (validateEmail({ target: { value: data.username } })) {
       await usersService.signup(data.username, data.password).then((data) => {
         window.location.href = `/login?signupSessionId=${data.signupSessionId}`
+      }).catch(async (error) => {
+        const body = await error.response.json()
+        body.errors.forEach((el) => {
+          if (el.field === 'username')
+            setError('username', 'usernameError', el.message)
+          else if (el.field === 'password')
+            setError('password', 'passwordError', el.message)
+        })
       })
     }
   }
@@ -31,24 +37,8 @@ const Signup: NextPage = () => {
       return (false)
     } else if (errors.username) {
       clearError('username')
-      return (true)
     }
-  }
-
-  const validatePassword = e => {
-    let errorMessage = ''
-    if (!/^(?=.*[a-z])/.test(e.target.value)) errorMessage += '(1 lowercase)'
-    if (!/^(?=.*[A-Z])/.test(e.target.value)) errorMessage += '(1 uppercase)'
-    if (!/^(?=.*[0-9])/.test(e.target.value)) errorMessage += '(1 number)'
-    if (!/^(?=.{8,})/.test(e.target.value)) errorMessage += '(8 characters)'
-    if (errorMessage.length > 0) {
-      errorMessage = 'Required: ' + errorMessage
-      setError("password", "invalidPassword", errorMessage)
-      return (true)
-    } else if (errors.password) {
-      clearError('password')
-      return (false)
-    }
+    return (true)
   }
 
   return (
@@ -58,16 +48,32 @@ const Signup: NextPage = () => {
           <h2 className={`headline-4 text-on-surface text-center my-12`}>Sign up</h2>
 
           <div className=''>
-            <TextInput  errorState={errors.username != undefined} validationFunction={validateEmail} inputRef={(register({required: true}))} name='username' label='email' hint={errors.username ? errors.username.type==='required'?'Email required':(errors.username.message) as string : undefined} style={{position:'relative',height:'72px',marginTop:'20px',marginBottom:'20px'}}></TextInput>
+            <TextInput
+              errorState={errors.username != undefined}
+              validationFunction={validateEmail}
+              inputRef={(register({required: true}))}
+              name='username'
+              label='Email'
+              hint={errors.username ? errors.username.type==='required' ? 'Email required' : (errors.username.message) as string : undefined}
+              className="relative h-18 my-5"
+            />
           </div>
 
           <div>
-            <TextInput  errorState={errors.password != undefined} validationFunction={validatePassword} inputType='password' inputRef={(register({required: true}))} name='password' label='Password' hint={errors.password ? errors.password.type==='required'?'Password required':(errors.password.message) as string : undefined} style={{position:'relative',height:'72px',marginTop:'20px',marginBottom:'20px'}}></TextInput>
+            <TextInput
+              errorState={errors.password != undefined}
+              inputType='password'
+              inputRef={(register({required: true}))}
+              name='password'
+              label='Password'
+              hint={ errors.password ? errors.password.type === 'required' ? 'Password required' : null: null }
+              className="relative h-18 my-5"
+            />
           </div>
 
           <div className='text-center my-12'>
             <Button onTap={() => router.push('/')} className="mr-4" bgColour="primary" type='text'>GO BACK</Button>
-            <Button disabled={Object.keys(errors).length > 0} bgColour="primary" type='solid' buttonType='submit'>SIGN UP</Button>
+            <Button disabled={Object.keys(errors).length > 0} type='solid' buttonType='submit'>SIGN UP</Button>
           </div>
 
         </form>
@@ -75,13 +81,6 @@ const Signup: NextPage = () => {
     </div>
   )
 
-}
-
-Signup.getInitialProps = async ({}) => {
-
-  // TODO Perhaps do a check if user is logged in already and rather redirect
-
-  return {}
 }
 
 export default Signup
