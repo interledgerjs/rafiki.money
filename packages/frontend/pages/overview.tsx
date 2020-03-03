@@ -160,59 +160,6 @@ const data = {
   ]
 };
 
-// Renders Accounts cards
-function AccountCard(name: String, balance: String) {
-  // TODO: currency symbols
-  return (
-    <Fragment>
-      <Card>
-        <div className="headline-5">{name}</div>
-        <div className="headline-4">$ {balance}</div>
-      </Card>
-    </Fragment>
-  );
-}
-
-function renderAccountCards(data: AccountData) {
-  if (data.accounts.length > 0) {
-    const listAccounts = data.accounts.map((mapData, index) => {
-      var account: accountData = {
-        id: mapData.id,
-        name: mapData.name,
-        balance: mapData.balance
-      };
-      return account;
-    });
-
-    let cardArray = [];
-    for (let index = 0; index < listAccounts.length; index++) {
-      cardArray.push(
-        <Fragment key={listAccounts[index].id}>
-          <div
-            className="w-card md:pr-0 md:w-auto pb-4 cursor-pointer"
-            onClick={() => onAccountClick(listAccounts[index].id)}
-          >
-            {AccountCard(
-              listAccounts[index].name,
-              listAccounts[index].balance.toString()
-            )}
-          </div>
-        </Fragment>
-      );
-    }
-    return (
-      <div className="flex flex-col items-center sm:flex-row md:flex-wrap md:justify-between">
-        {cardArray}
-      </div>
-    );
-  }
-}
-
-//handles account card click
-function onAccountClick(accountId: number) {
-  return console.log(accountId);
-}
-
 const updatedDummyAccountInfo: TransactionInfo[] = [
   {
     id: 1,
@@ -231,130 +178,163 @@ const updatedDummyAccountInfo: TransactionInfo[] = [
     updatedAt: "1 Feb 2020"
   },
   {
-    id: 3,
-    accountId: 2,
-    amount: 84,
-    description: "Test",
-    createdAt: "1 Feb 2020",
-    updatedAt: "1 Feb 2020"
-  },
-  {
     id: 4,
     accountId: 1,
     amount: -16,
     description: "Test",
     createdAt: "2 Feb 2020",
     updatedAt: "2 Feb 2020"
-  },
-  {
-    id: 5,
-    accountId: 1,
-    amount: 200,
-    description: "Test",
-    createdAt: "2 Feb 2020",
-    updatedAt: "2 Feb 2020"
-  },
-  {
-    id: 6,
-    accountId: 3,
-    amount: -160,
-    description: "Test",
-    createdAt: "2 Feb 2020",
-    updatedAt: "2 Feb 2020"
   }
 ];
-
-function retrieveAccountName(data: AccountData, accountId: number) {
-  //FIXME: Find a way to not pass the whole data object around
-  let name: string;
-  data.accounts.forEach(element => {
-    if (element.id === accountId) name = element.name;
-  });
-  return name;
-}
-
-// Renders Transaction Cards
-function TransactionCard(name: string, date: string, amount: number) {
-  //TODO: colors change based on account
-
-  var nameColor: string = "overline text-purple";
-  var amountColor: string = "self-center headline-6 text-green";
-  var amountSign: string = "";
-
-  if (amount <= 0) {
-    amountColor = "self-center headline-6 text-red";
-    amountSign = "-";
-    amount = Math.abs(amount);
-  }
-  return (
-    <div className="my-2">
-      <Card>
-        <div className="flex justify-between">
-          <div>
-            <div className={nameColor}>{name}</div>
-            <div className="headline-6">{date}</div>
-          </div>
-          <div className={amountColor}>
-            {amountSign}$ {amount}
-          </div>
-        </div>
-      </Card>
-    </div>
-  );
-}
-
-function renderTransactionCards(data: AccountData) {
-  if (data.transactions.length > 0) {
-    const listTransactions = data.transactions.map((mapData, index) => {
-      var transaction: TransactionInfo = {
-        id: mapData.id,
-        accountId: mapData.accountId,
-        amount: mapData.amount,
-        description: mapData.description,
-        createdAt: mapData.createdAt,
-        updatedAt: mapData.updatedAt
-      };
-      return transaction;
-    });
-
-    let cardArray = [];
-    let accountName: string;
-    for (let index = 0; index < listTransactions.length; index++) {
-      {
-        accountName = retrieveAccountName(
-          data,
-          listTransactions[index].accountId
-        );
-      }
-
-      cardArray.push(
-        <Fragment key={listTransactions[index].id}>
-          <div>
-            {TransactionCard(
-              accountName,
-              listTransactions[index].createdAt,
-              listTransactions[index].amount
-            )}
-          </div>
-        </Fragment>
-      );
-    }
-
-    return <div className="flex flex-col-reverse">{cardArray}</div>;
-  }
-}
 
 const Overview: NextPage<Props> = ({ account }) => {
   const router = useRouter();
   const [count, setCount] = useState(0);
 
-  let data = account;
-  const [transactions, setTransactions] = useState();
+  const [accountData, setAccountData] = useState(account);
 
-  function GetTransactionData(accountData: AccountData, accountId: number) {
-    if (accountId != 0) {
-      accountData.transactions = updatedDummyAccountInfo;
-      return accountData;
+  // Renders Accounts cards
+  function AccountCard(name: String, balance: String) {
+    // TODO: currency symbols
+    return (
+      <Fragment>
+        <Card>
+          <div className="headline-5">{name}</div>
+          <div className="headline-4">$ {balance}</div>
+        </Card>
+      </Fragment>
+    );
+  }
+
+  function renderAccountCards(data: AccountData) {
+    if (data.accounts.length > 0) {
+      const listAccounts = data.accounts.map((mapData, index) => {
+        var account: accountData = {
+          id: mapData.id,
+          name: mapData.name,
+          balance: mapData.balance
+        };
+        return account;
+      });
+
+      let cardArray = [];
+      for (let index = 0; index < listAccounts.length; index++) {
+        cardArray.push(
+          <Fragment key={listAccounts[index].id}>
+            <div
+              className="w-card md:pr-0 md:w-auto pb-4 cursor-pointer"
+              onClick={() => onAccountClick(listAccounts[index].id)}
+            >
+              {AccountCard(
+                listAccounts[index].name,
+                listAccounts[index].balance.toString()
+              )}
+            </div>
+          </Fragment>
+        );
+      }
+      return (
+        <div className="flex flex-col items-center sm:flex-row md:flex-wrap md:justify-between">
+          {cardArray}
+        </div>
+      );
+    }
+  }
+
+  //handles account card click
+  async function onAccountClick(accountId: number) {
+    let retrievedTransactions = await GetTransactionsData(accountId);
+
+    const updatedData = {
+      user: account.user,
+      accounts: account.accounts,
+      transactions: retrievedTransactions
+    };
+
+    setAccountData(updatedData);
+  }
+
+  function GetTransactionsData(accountId: number) {
+    return updatedDummyAccountInfo;
+  }
+
+  function retrieveAccountName(data: AccountData, accountId: number) {
+    //FIXME: Find a way to not pass the whole data object around
+    let name: string;
+    data.accounts.forEach(element => {
+      if (element.id === accountId) name = element.name;
+    });
+    return name;
+  }
+
+  // Renders Transaction Cards
+  function TransactionCard(name: string, date: string, amount: number) {
+    //TODO: colors change based on account
+
+    var nameColor: string = "overline text-purple";
+    var amountColor: string = "self-center headline-6 text-green";
+    var amountSign: string = "";
+
+    if (amount <= 0) {
+      amountColor = "self-center headline-6 text-red";
+      amountSign = "-";
+      amount = Math.abs(amount);
+    }
+    return (
+      <div className="my-2">
+        <Card>
+          <div className="flex justify-between">
+            <div>
+              <div className={nameColor}>{name}</div>
+              <div className="headline-6">{date}</div>
+            </div>
+            <div className={amountColor}>
+              {amountSign}$ {amount}
+            </div>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  function renderTransactionCards(data: AccountData) {
+    if (data.transactions.length > 0) {
+      const listTransactions = data.transactions.map((mapData, index) => {
+        var transaction: TransactionInfo = {
+          id: mapData.id,
+          accountId: mapData.accountId,
+          amount: mapData.amount,
+          description: mapData.description,
+          createdAt: mapData.createdAt,
+          updatedAt: mapData.updatedAt
+        };
+        return transaction;
+      });
+
+      let cardArray = [];
+      let accountName: string;
+      for (let index = 0; index < listTransactions.length; index++) {
+        {
+          accountName = retrieveAccountName(
+            data,
+            listTransactions[index].accountId
+          );
+        }
+
+        cardArray.push(
+          <Fragment key={listTransactions[index].id}>
+            <div>
+              {TransactionCard(
+                accountName,
+                listTransactions[index].createdAt,
+                listTransactions[index].amount
+              )}
+            </div>
+          </Fragment>
+        );
+      }
+
+      return <div className="flex flex-col-reverse">{cardArray}</div>;
     }
   }
 
@@ -420,10 +400,7 @@ const Overview: NextPage<Props> = ({ account }) => {
               <div className="mt-10 headline-6">Transactions</div>
               {/* Transactions in sidebar */}
               <div className="flex flex-col h-64 overflow-y-auto">
-                {renderTransactionCards(account)}
-              </div>
-              <div className="flex flex-col h-64 overflow-y-auto">
-                <button onClick={() => setCount(count + 1)}>{count}</button>
+                {renderTransactionCards(accountData)}
               </div>
             </Card>
           </div>
