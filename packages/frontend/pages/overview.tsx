@@ -43,7 +43,7 @@ type AccountInfo = {
   limit?: string;
 };
 
-export type AccountData = {
+type AccountData = {
   user: {
     client_id: string;
     totalBalance: number;
@@ -53,6 +53,7 @@ export type AccountData = {
   transactions: TransactionInfo[];
 };
 
+//dummy for main account info in getInitialProps
 const dummyAccountInfo: AccountData = {
   user: {
     client_id: "Test",
@@ -138,17 +139,7 @@ const dummyAccountInfo: AccountData = {
   ]
 };
 
-type accountData = {
-  id: number;
-  name: string;
-  balance: number;
-};
-
-const btnCopyTap = () => {};
-const btnCopyTo = "";
-const btnAddAccountTap = () => {};
-const btnAddAccountTo = "";
-
+//dummy for graph
 const data = {
   labels: ["Cheque", "Savings"],
   datasets: [
@@ -160,6 +151,7 @@ const data = {
   ]
 };
 
+//dummy for getTransactions
 const updatedDummyAccountInfo: TransactionInfo[] = [
   {
     id: 1,
@@ -189,8 +181,6 @@ const updatedDummyAccountInfo: TransactionInfo[] = [
 
 const Overview: NextPage<Props> = ({ account }) => {
   const router = useRouter();
-  const [count, setCount] = useState(0);
-
   const [accountData, setAccountData] = useState(account);
 
   // Renders Accounts cards
@@ -209,7 +199,7 @@ const Overview: NextPage<Props> = ({ account }) => {
   function renderAccountCards(data: AccountData) {
     if (data.accounts.length > 0) {
       const listAccounts = data.accounts.map((mapData, index) => {
-        var account: accountData = {
+        var account = {
           id: mapData.id,
           name: mapData.name,
           balance: mapData.balance
@@ -338,6 +328,7 @@ const Overview: NextPage<Props> = ({ account }) => {
     }
   }
 
+  //Main return for Overview
   return (
     <div className="flex">
       <Navigation active="overview"></Navigation>
@@ -413,9 +404,6 @@ const Overview: NextPage<Props> = ({ account }) => {
 Overview.getInitialProps = async ({}) => {
   // FIXME: Get accounts & Transactions from those accounts instead of mocking data
   const account = dummyAccountInfo;
-  // const response = await axios({
-  //   headers:
-  // })
 
   return { account };
 };
