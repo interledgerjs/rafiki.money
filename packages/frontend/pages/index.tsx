@@ -23,10 +23,10 @@ const Home: NextPage = () => {
           Sign up to create an account, or login if you’re returning
         </div>
         <div className="flex flex-row justify-center mt-8">
-          <Button type="text" className="mr-4" onTap={() => router.push('/login')}>
+          <Button type="text" className="mr-4" onClick={() => router.push('/login')}>
             Login
           </Button>
-          <Button type="solid" onTap={() => router.push('/signup')}>
+          <Button type="solid" onClick={() => router.push('/signup')}>
             Signup
           </Button>
         </div>

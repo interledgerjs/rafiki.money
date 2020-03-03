@@ -55,7 +55,6 @@ const Signup: NextPage = () => {
               name='username'
               label='Email'
               hint={errors.username ? errors.username.type==='required' ? 'Email required' : (errors.username.message) as string : undefined}
-              className="relative h-18 my-5"
             />
           </div>
 
@@ -67,12 +66,11 @@ const Signup: NextPage = () => {
               name='password'
               label='Password'
               hint={ errors.password ? errors.password.type === 'required' ? 'Password required' : null: null }
-              className="relative h-18 my-5"
             />
           </div>
 
           <div className='text-center my-12'>
-            <Button onTap={() => router.push('/')} className="mr-4" bgColour="primary" type='text'>GO BACK</Button>
+            <Button onClick={() => router.push('/')} className="mr-4" bgColour="primary" type='text'>GO BACK</Button>
             <Button disabled={Object.keys(errors).length > 0} type='solid' buttonType='submit'>SIGN UP</Button>
           </div>
 
