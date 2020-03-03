@@ -213,6 +213,57 @@ function onAccountClick(accountId: number) {
   return console.log(accountId);
 }
 
+const updatedDummyAccountInfo: TransactionInfo[] = [
+  {
+    id: 1,
+    accountId: 1,
+    amount: 50,
+    description: "Test",
+    createdAt: "1 Feb 2020",
+    updatedAt: "1 Feb 2020"
+  },
+  {
+    id: 2,
+    accountId: 1,
+    amount: 100,
+    description: "Test",
+    createdAt: "1 Feb 2020",
+    updatedAt: "1 Feb 2020"
+  },
+  {
+    id: 3,
+    accountId: 2,
+    amount: 84,
+    description: "Test",
+    createdAt: "1 Feb 2020",
+    updatedAt: "1 Feb 2020"
+  },
+  {
+    id: 4,
+    accountId: 1,
+    amount: -16,
+    description: "Test",
+    createdAt: "2 Feb 2020",
+    updatedAt: "2 Feb 2020"
+  },
+  {
+    id: 5,
+    accountId: 1,
+    amount: 200,
+    description: "Test",
+    createdAt: "2 Feb 2020",
+    updatedAt: "2 Feb 2020"
+  },
+  {
+    id: 6,
+    accountId: 3,
+    amount: -160,
+    description: "Test",
+    createdAt: "2 Feb 2020",
+    updatedAt: "2 Feb 2020"
+  }
+];
+
 function retrieveAccountName(data: AccountData, accountId: number) {
   //FIXME: Find a way to not pass the whole data object around
   let name: string;
@@ -295,6 +346,17 @@ function renderTransactionCards(data: AccountData) {
 
 const Overview: NextPage<Props> = ({ account }) => {
   const router = useRouter();
+  const [count, setCount] = useState(0);
+
+  let data = account;
+  const [transactions, setTransactions] = useState();
+
+  function GetTransactionData(accountData: AccountData, accountId: number) {
+    if (accountId != 0) {
+      accountData.transactions = updatedDummyAccountInfo;
+      return accountData;
+    }
+  }
 
   return (
     <div className="flex">
@@ -359,6 +421,9 @@ const Overview: NextPage<Props> = ({ account }) => {
               {/* Transactions in sidebar */}
               <div className="flex flex-col h-64 overflow-y-auto">
                 {renderTransactionCards(account)}
+              </div>
+              <div className="flex flex-col h-64 overflow-y-auto">
+                <button onClick={() => setCount(count + 1)}>{count}</button>
               </div>
             </Card>
           </div>
