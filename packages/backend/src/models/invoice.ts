@@ -9,10 +9,12 @@ export type InvoiceInfo = {
   assetCode: string;
   assetScale: number;
   amount: string;
+  received: string;
   balance: string;
-  expireAt: string;
+  expiresAt: string;
   createdAt: string;
   updatedAt: string;
+  subject: string;
 }
 
 export class Invoice extends Model {
@@ -27,10 +29,12 @@ export class Invoice extends Model {
   assetCode: string;
   assetScale: number;
   amount: bigint;
+  received: bigint;
   balance: bigint;
-  expireAt!: string;
+  expiresAt!: string;
   createdAt: string;
   updatedAt: string;
+  subject: string;
 
   $beforeInsert (): void {
     this.id = v4()
@@ -50,7 +54,9 @@ export class Invoice extends Model {
       assetScale: this.assetScale,
       amount: this.amount.toString(),
       balance: this.balance.toString(),
-      expireAt: this.expireAt
+      expiresAt: this.expiresAt,
+      subject: this.subject,
+      received: this.received.toString()
     }
   }
 }
