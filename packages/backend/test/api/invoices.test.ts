@@ -32,7 +32,7 @@ describe('Create invoice', () => {
   test('can create invoice', async () => {
 
     const { status, data } = await axios.post(`http://localhost:${appContainer.port}/invoices`, {
-      subject: 'https://wallet.example/alice',
+      subject: '$wallet.example/alice',
       assetCode: 'USD',
       assetScale: 2,
       amount: '500',
@@ -46,8 +46,8 @@ describe('Create invoice', () => {
     const invoice = await Invoice.query().first()
 
     expect(status).toEqual(201)
-    expect(data.name).toEqual(`//wallet.example/alice/${invoice.id}`)
-    expect(data.subject).toEqual('https://wallet.example/alice')
+    expect(data.name).toEqual(`//localhost/invoices/${invoice.id}`)
+    expect(data.subject).toEqual('$wallet.example/alice')
     expect(data.amount).toEqual('500')
     expect(data.assetCode).toEqual('USD')
     expect(data.assetScale).toEqual(2)
@@ -62,7 +62,7 @@ describe('Create invoice', () => {
     expect(invoice!.received.toString()).toEqual('0')
     expect(invoice!.expiresAt).toBeNull()
     expect(invoice!.description).toEqual('Test invoice')
-    expect(invoice!.subject).toEqual('https://wallet.example/alice')
+    expect(invoice!.subject).toEqual('$wallet.example/alice')
   })
 })
 
@@ -86,7 +86,7 @@ describe('Get an invoice', () => {
       assetScale: 2,
       assetCode: 'USD',
       amount: 500n,
-      subject: 'https://wallet.example/alice',
+      subject: '$wallet.example/alice',
       balance: 0n,
       received: 0n
     })
@@ -105,8 +105,8 @@ describe('Get an invoice', () => {
     const { status, data } = await axios.get(`http://localhost:${appContainer.port}/invoices/${invoice.id}`)
 
     expect(status).toEqual(200)
-    expect(data.name).toEqual(`//wallet.example/alice/${invoice.id}`)
-    expect(data.subject).toEqual('https://wallet.example/alice')
+    expect(data.name).toEqual(`//localhost/invoices/${invoice.id}`)
+    expect(data.subject).toEqual('$wallet.example/alice')
     expect(data.amount).toEqual('500')
     expect(data.assetCode).toEqual('USD')
     expect(data.assetScale).toEqual(2)

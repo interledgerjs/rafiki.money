@@ -1,8 +1,11 @@
 import { Model } from 'objection'
 import { v4 } from 'uuid'
 
+const OpenPaymentsIssuer = 'localhost' || process.env.OPEN_PAYMENTS_ISSUER
+
 export type MandateInfo = {
   id: string;
+  name: string;
   userId: number;
   accountId: number;
   description: string;
@@ -55,6 +58,7 @@ export class Mandate extends Model {
   $formatJson (): Partial<MandateInfo> {
     return {
       id: this.id,
+      name: `//${OpenPaymentsIssuer}/mandates/${this.id}`,
       description: this.description,
       assetCode: this.assetCode,
       assetScale: this.assetScale,
