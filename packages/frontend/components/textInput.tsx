@@ -35,7 +35,7 @@ const TextInput: React.FC<props> = (props) => {
   const [focussed, setFocussed] = React.useState(false)
 
   return (
-    <div style={props.style} className={`bg-${bgColour} max-w-${maxWidth} ${props.className}`}>
+    <div style={props.style} className={`bg-${bgColour} max-w-${maxWidth} ${props.className} relative h-18 my-5`}>
 
       <div 
         className={`left-0 right-0 top-0 h-inputBox border${focussed||props.errorState? '-2': ''} border-${focussed||props.errorState? focusColour: textColour + ' opacity-12'} rounded`}>
