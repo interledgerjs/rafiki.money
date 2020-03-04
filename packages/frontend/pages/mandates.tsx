@@ -7,6 +7,55 @@ import { Doughnut } from 'react-chartjs-2'
 
 // import "../styles/main.css";
 
+// hard code objects to use in components
+// mandate
+// transaction
+// link components to objects
+// hardcode arrays of above objects
+// link components to arrays
+// put arrays in state
+// link state to rafiki api
+// refine the way components display
+
+type MandateJSON = {
+  id?: string
+  description: string
+  assetCode: string
+  assetScale?: number
+  amount: string
+  balance: string
+  startAt: string
+  expireAt: string
+  interval: string
+  cap?: boolean
+  scope?: string
+}
+
+type TransactionJSON = {
+  id?: number,
+  accountId?: number,
+  description?: string,
+  amount: bigint,
+  createdAt: string,
+  updatedAt?: string
+}
+
+// hard-coded mandate object
+const mandate: MandateJSON = {
+  description: 'the other burger joint',
+  balance: '4.00',
+  amount: '9000.00',
+  interval: 'frequently',
+  assetCode: 'RZL',
+  startAt: 'today, tommorrow and',
+  expireAt: 'always'
+}
+
+const transaction: TransactionJSON = {
+  createdAt: '1st day of Yule',
+  amount: BigInt(100000000000)
+}
+
 // component with which to populate list
 const listline =
   <div className="border-t border-color-gray h-18 flex flex-row listline-div"> {/* having trouble setting colour of border */}
@@ -14,18 +63,16 @@ const listline =
       <img className="listline-img" src="http://placecorgi.com/79/79" />
     </div>
     <div className="flex flex-col justify-center">
-      <div className="listline-name">Bob's Burgers</div>
+      <div className="listline-name">{mandate.description}</div>
     </div>
     <div className="flex flex-col justify-center">
       <div className="flex self-end w-listTable justify-around items-center">
         <div className="w-5/12 pr-5">
-          <div className="text-3xl leading-none text-right">400.00</div>
-          <div className="text-xs text-right">/1200.00</div>
+          <div className="text-3xl leading-none text-right">{mandate.balance}</div>
+          <div className="text-xs text-right">/{mandate.amount}</div>
         </div>
-        <div className="w-1/3">
-          Monthly
-        </div>
-        <div className="w-1/4">XRP</div>
+        <div className="w-1/3">{mandate.interval}</div>
+        <div className="w-1/4">{mandate.assetCode}</div>
       </div>
     </div>
   </div>
@@ -82,16 +129,14 @@ class TransactionCard extends React.Component {
             <div className="flex justify-between">
               <div>
                 {/* <div className="overline text-blue">Savings</div> */}
-                <div className="headline-6">1 Feb 2020</div>
+    <div className="headline-6">{transaction.createdAt}</div>
               </div>
-              <div className="self-center headline-6 text-green">
-                $ 84.00
-              </div>
+    <div className="self-center headline-6 text-green">{Number(transaction.amount)}</div>
             </div>
           </Card>
         </div>
-        {/* {TransactionCard("Cheque", "100", "1 Feb 2020")}
-  {TransactionCard("Cheque", "50.00", "1 Feb 2020", false)} */}
+        {/* {TransactionCard("Cheque", "100", "1 Derp 2020")}
+  {TransactionCard("Cheque", "50.00", "1 Derp 2020", false)} */}
       </div>)
   }
 }
@@ -102,11 +147,11 @@ class DateBox extends React.Component {
       <div className="mt-16 body-2">
         <div className="flex flex-row justify-between">
           <div className="">Created</div>
-          <div className="">31-01-2020, 10:13</div>
+    <div className="">{mandate.startAt}</div>
         </div>
         <div className="flex flex-row justify-between">
           <div className="">Expires</div>
-          <div className="">06-02-2020, 10:13</div>
+    <div className="">{mandate.expireAt}</div>
         </div>
       </div>
     )
