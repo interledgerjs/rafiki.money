@@ -45,7 +45,7 @@ export class Account extends Model {
       assetCode: this.assetCode,
       assetScale: this.assetScale,
       balance: this.balance.toString(),
-      limit: this.balance.toString()
+      limit: this.limit.toString()
     }
   }
 }
