@@ -129,9 +129,9 @@ class TransactionCard extends React.Component {
             <div className="flex justify-between">
               <div>
                 {/* <div className="overline text-blue">Savings</div> */}
-    <div className="headline-6">{transaction.createdAt}</div>
+                <div className="headline-6">{transaction.createdAt}</div>
               </div>
-    <div className="self-center headline-6 text-green">{Number(transaction.amount)}</div>
+              <div className="self-center headline-6 text-green">{Number(transaction.amount)}</div>
             </div>
           </Card>
         </div>
@@ -147,11 +147,11 @@ class DateBox extends React.Component {
       <div className="mt-16 body-2">
         <div className="flex flex-row justify-between">
           <div className="">Created</div>
-    <div className="">{mandate.startAt}</div>
+          <div className="">{mandate.startAt}</div>
         </div>
         <div className="flex flex-row justify-between">
           <div className="">Expires</div>
-    <div className="">{mandate.expireAt}</div>
+          <div className="">{mandate.expireAt}</div>
         </div>
       </div>
     )
