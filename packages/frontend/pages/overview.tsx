@@ -1,7 +1,8 @@
 /* 
 TODO:
 - [] colour on graph change based on darkmode
-- [] get initial props with moc data for accounts & transactions card
+- [] transactions service needed
+- [] accounts service needed
 */
 
 import React, { useState, useEffect, Fragment } from "react";
@@ -10,6 +11,9 @@ import { Card, Content, Navigation, Button } from "../components";
 import { Doughnut } from "react-chartjs-2";
 import { useRouter } from "next/router";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import { checkUser } from "../utils";
+import { UsersService } from "../services/users";
+import { parseCookies } from "nookies";
 
 type Props = {
   account: AccountData;
@@ -90,7 +94,7 @@ const dummyAccountInfo: AccountData = {
   transactions: [
     {
       id: 1,
-      accountId: 1,
+      accountId: 2,
       amount: 50,
       description: "Test",
       createdAt: "1 Feb 2020",
@@ -98,7 +102,7 @@ const dummyAccountInfo: AccountData = {
     },
     {
       id: 2,
-      accountId: 1,
+      accountId: 2,
       amount: 100,
       description: "Test",
       createdAt: "1 Feb 2020",
@@ -114,7 +118,7 @@ const dummyAccountInfo: AccountData = {
     },
     {
       id: 4,
-      accountId: 1,
+      accountId: 2,
       amount: -16,
       description: "Test",
       createdAt: "2 Feb 2020",
@@ -122,7 +126,7 @@ const dummyAccountInfo: AccountData = {
     },
     {
       id: 5,
-      accountId: 1,
+      accountId: 2,
       amount: 200,
       description: "Test",
       createdAt: "2 Feb 2020",
@@ -155,7 +159,7 @@ const data = {
 const updatedDummyAccountInfo: TransactionInfo[] = [
   {
     id: 1,
-    accountId: 1,
+    accountId: 2,
     amount: 50,
     description: "Test",
     createdAt: "1 Feb 2020",
@@ -163,7 +167,7 @@ const updatedDummyAccountInfo: TransactionInfo[] = [
   },
   {
     id: 2,
-    accountId: 1,
+    accountId: 2,
     amount: 100,
     description: "Test",
     createdAt: "1 Feb 2020",
@@ -171,7 +175,7 @@ const updatedDummyAccountInfo: TransactionInfo[] = [
   },
   {
     id: 4,
-    accountId: 1,
+    accountId: 2,
     amount: -16,
     description: "Test",
     createdAt: "2 Feb 2020",
@@ -401,9 +405,20 @@ const Overview: NextPage<Props> = ({ account }) => {
   );
 };
 
-Overview.getInitialProps = async ({}) => {
-  // FIXME: Get accounts & Transactions from those accounts instead of mocking data
+const usersService = UsersService();
+
+Overview.getInitialProps = async ctx => {
+  const retrievedUser = await checkUser(ctx);
+  console.log(retrievedUser);
+  const retrievedAccounts = await usersService.getAccounts(
+    retrievedUser.token,
+    retrievedUser.id
+  );
+  console.log(retrievedAccounts);
+
+  // FIXME: Get Transactions from those accounts instead of mocking data
   const account = dummyAccountInfo;
+  account.accounts = retrievedAccounts;
 
   return { account };
 };
