@@ -12,7 +12,7 @@ type props = {
   textColour?: string
   disabled?: boolean
   buttonType?: 'button' | 'submit' | 'reset'
-  onTap?: (event: any) => void
+  onClick?: (event: any) => void
   className?: string
 }
 
@@ -29,7 +29,7 @@ const Button: React.FC<props> = (props) => {
   }
   className += ` ${props.className}`
   return (
-    <button type={props.buttonType? props.buttonType : 'button'} onClick={props.disabled || !props.onTap? () => {} : props.onTap } className={className}>
+    <button type={props.buttonType? props.buttonType : 'button'} onClick={props.disabled || !props.onClick? () => {} : props.onClick } className={className}>
       { props.children }
     </button>
   )

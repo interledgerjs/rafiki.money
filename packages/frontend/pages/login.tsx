@@ -60,7 +60,6 @@ const Login: NextPage<Props> = ({login_challenge}) => {
               name='username'
               label='Email'
               hint={errors.username ? errors.username.type==='required' ? 'Email required' : (errors.username.message) as string : undefined}
-              className="relative h-18 my-5"
             />
           </div>
 
@@ -72,13 +71,12 @@ const Login: NextPage<Props> = ({login_challenge}) => {
               name='password'
               label='Password'
               hint={ errors.password ? errors.password.type === 'required' ? 'Password required' : (errors.password.message) as string: null }
-              className="relative h-18 my-5"
             />
           </div>
 
           <div className='text-center my-12'>
             <a href='/' className='mr-4'>
-              <Button onTap={() => { window.location.href = 'landing' }} bgColour="primary" type='text'>GO BACK</Button>
+              <Button onClick={() => { window.location.href = 'landing' }} bgColour="primary" type='text'>GO BACK</Button>
             </a>
             <Button disabled={Object.keys(errors).length > 0} bgColour="primary" type='solid' buttonType='submit'>LOGIN</Button>
           </div>
