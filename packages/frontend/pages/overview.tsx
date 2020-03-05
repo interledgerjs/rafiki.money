@@ -15,6 +15,7 @@ import { checkUser } from "../utils";
 import { UsersService } from "../services/users";
 import { parseCookies } from "nookies";
 
+// -- Typings ----------------------------------
 type Props = {
   account: AccountData;
 };
@@ -57,6 +58,7 @@ type AccountData = {
   transactions: TransactionInfo[];
 };
 
+// -- Mocking ----------------------------------
 //dummy for main account info in getInitialProps
 const dummyAccountInfo: AccountData = {
   user: {
@@ -144,7 +146,7 @@ const dummyAccountInfo: AccountData = {
 };
 
 //dummy for graph
-const data = {
+const dummyGraphData = {
   labels: ["Cheque", "Savings"],
   datasets: [
     {
@@ -183,9 +185,10 @@ const updatedDummyAccountInfo: TransactionInfo[] = [
   }
 ];
 
+// -- Main ----------------------------------
 const Overview: NextPage<Props> = ({ account }) => {
   const router = useRouter();
-  const [accountData, setAccountData] = useState(account);
+  const [accountDataState, setAccountData] = useState(account);
 
   // Renders Accounts cards
   function AccountCard(name: String, balance: String) {
@@ -259,6 +262,47 @@ const Overview: NextPage<Props> = ({ account }) => {
       if (element.id === accountId) name = element.name;
     });
     return name;
+  }
+
+  //Renders the right card
+  function RightCard(data: AccountData) {
+    if (data.accounts.length <= 0) {
+      return (
+        <div className="ml-8 hidden md:flex">
+          <Card>
+            <div className="h-64"></div>
+            <div className="headline-6 text-center">
+              Add an account<br></br>to get started.
+            </div>
+            <div className="h-64"></div>
+          </Card>
+        </div>
+      );
+    } else
+      return (
+        <div className="ml-8 hidden md:flex">
+          {/* Graph Card */}
+          <Card>
+            <div className="h-64">
+              <Doughnut
+                data={dummyGraphData}
+                width={170}
+                legend={{
+                  position: "left",
+                  display: false
+                }}
+              />
+            </div>
+
+            {/* Headline */}
+            <div className="mt-10 headline-6">Transactions</div>
+            {/* Transactions in sidebar */}
+            <div className="flex flex-col h-64 overflow-y-auto">
+              {renderTransactionCards(accountDataState)}
+            </div>
+          </Card>
+        </div>
+      );
   }
 
   // Renders Transaction Cards
@@ -377,34 +421,15 @@ const Overview: NextPage<Props> = ({ account }) => {
             {/* Accounts*/}
             <div>{renderAccountCards(account)}</div>
           </div>
-          <div className="ml-8 hidden md:flex">
-            {/* Graph Card */}
-            <Card>
-              <div className="h-64">
-                <Doughnut
-                  data={data}
-                  width={170}
-                  legend={{
-                    position: "left",
-                    display: false
-                  }}
-                />
-              </div>
-
-              {/* Headline */}
-              <div className="mt-10 headline-6">Transactions</div>
-              {/* Transactions in sidebar */}
-              <div className="flex flex-col h-64 overflow-y-auto">
-                {renderTransactionCards(accountData)}
-              </div>
-            </Card>
-          </div>
+          {/* Right Card */}
+          {RightCard(account)}
         </div>
       </Content>
     </div>
   );
 };
 
+// -- Services ----------------------------------
 const usersService = UsersService();
 
 Overview.getInitialProps = async ctx => {
