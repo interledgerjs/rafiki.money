@@ -111,6 +111,18 @@
 //   return undefined
 // }
 
+// function PaymentRequestPromise() {// function getMethodData(e, methodName) {
+//   if(e.methodData && e.methodData.length) {
+//     for(let i = 0; i < e.methodData.length; i++) {
+
+//       if(e.methodData[i].supportedMethods === methodName) {
+//         return e.methodData[i].data
+//       }
+//     }
+//   }
+//   return undefined
+// }
+
 // function PaymentRequestPromise() {
 
 //   /** @private {function(T=): void} */
@@ -144,16 +156,63 @@
 //   }
 // }
 
+//   /** @private {function(T=): void} */
+//   this.resolve_ = undefined
+
+//   /** @private {function(*=): void} */
+//   this.reject_ = undefined
+
+//   /** @private {!Promise<T>} */
+//   this.promise_ = new Promise(function(resolve, reject) {
+//     this.resolve_ = resolve
+//     this.reject_ = reject
+//   }.bind(this))
+// }
+
+// PaymentRequestPromise.prototype = {
+
+//   /** @return {!Promise<T>} */
+//   get promise() {
+//     return this.promise_
+//   },
+
+//   /** @return {function(T=): void} */
+//   get resolve() {
+//     return this.resolve_
+//   },
+
+//   /** @return {function(*=): void} */
+//   get reject() {
+//     return this.reject_
+//   }
+// }
+
 const origin = 'http://localhost:3000';
-const methodName = `${origin}/pay`;
-const checkoutURL = `${origin}/checkout`;
+const methodName = `${origin}`;
+let checkoutURL = `${origin}/checkout`;
 let resolver;
 let payment_request_event;
+
+self.addEventListener('canmakepayment', async (e) => {
+  console.log('can make payment called')
+  if (e.respondWith2 && e.currency) {
+    return e.respondWith2({
+      canMakePayment: true
+    });
+  } else {
+    // Does the PR have supported methods?
+    const rafikiData = getMethodData( e, 'test')
+    e.respondWith(rafikiData !== undefined)
+  }
+})
 
 self.addEventListener('paymentrequest', e => {
   // Preserve the event for future use
   payment_request_event = e;
-  console.log(e)
+  console.log('A->', e)
+
+  console.log('B->',getMethodData( e, 'test'))
+
   // You'll need a polyfill for `PromiseResolver`
   // As it's not implemented in Chrome yet.
   resolver = new PromiseResolver();
@@ -162,6 +221,7 @@ self.addEventListener('paymentrequest', e => {
 
   // try {
     e.openWindow(checkoutURL).then(client => {
+      console.log('opening window')
       if (client === null) {
         resolver.reject(`Failed to open window (${checkoutURL})`);
       }
@@ -185,6 +245,8 @@ self.addEventListener('message', e => {
   if (e.data === "payment_app_window_ready") {
     sendPaymentRequest();
     return;
+  } else if (e.data === "invoice_ready") {
+    checkoutURL += ''
   }
 
   if (e.data.methodName === methodName) {
@@ -204,6 +266,19 @@ const sendPaymentRequest = () => {
       client.postMessage(payment_request_event.total);
     }
   });
+}
+
+const getMethodData = (e, methodName) => {
+  if(e.methodData && e.methodData.length) {
+    for(let i = 0; i < e.methodData.length; i++) {
+
+      if(e.methodData[i].supportedMethods === methodName) {
+        return e.methodData[i].data
+      }
+    }
+  }
+  console.log('no method data')
+  return undefined
 }
 
 function PromiseResolver() {

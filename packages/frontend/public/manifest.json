@@ -1,6 +1,6 @@
 {
-  "short_name": "ILP Wallet",
-  "name": "Interledger Wallet",
+  "short_name": "http://localhost:3000",
+  "name": "http://localhost:3000",
   "icons": [
     {
       "src": "icon_ilp.png",
@@ -8,12 +8,8 @@
       "type": "image/x-icon"
     }
   ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff",
   "serviceworker": {
-    "src": "./sw.js",
+    "src": "sw.js",
     "use_cache": false
   }
 }

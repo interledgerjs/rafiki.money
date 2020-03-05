@@ -28,11 +28,11 @@ const Home: NextPage = () => {
       // @ts-ignore
       registration.paymentManager.instruments.set(
         // Payment instrument key can be any string.
-        'interledger',
+        'http://localhost:3000',
         // Payment instrument detail
         {
           name: 'Payment Handler Example',
-          method: 'interledger'
+          method: 'test'
         }
       )
     }

@@ -2,10 +2,8 @@ import React, { useRef, useState, useEffect } from 'react'
 import { NextPage } from "next"
 import { UsersService } from '../services/users'
 import { Button, TextInput } from '../components'
-
-
-
-
+import { checkUser } from '../utils'
+import { setCookie, parseCookies, destroyCookie } from 'nookies'
 
 const Pay = () => {
 
@@ -14,6 +12,7 @@ const Pay = () => {
   useEffect(() => {
     navigator.serviceWorker.addEventListener('message', e => {
       client = e.source;
+      console.log('e source ->',client)
     });
     navigator.serviceWorker.controller.postMessage('payment_app_window_ready');
   })
@@ -39,13 +38,25 @@ const Pay = () => {
   return (
     <div className = 'w-full h-full bg-surface'>
       <div className='w-full h-screen max-w-xs mx-auto bg-surface flex items-center'>
-
-        <Button onTap={ onCancel } className="mr-4" bgColour="primary" type='text'>CANCEL</Button>
-        <Button onTap={ onPay } bgColour="primary" type='text' >PAY</Button>
-
+        <div className='text-center my-12 mx-auto'>
+          <Button onTap={ onCancel } className="mr-4" bgColour="primary" type='text'>CANCEL</Button>
+          <Button onTap={ onPay } bgColour="primary" type='text' >PAY</Button>
+        </div>
       </div>
     </div>
   )
+}
+
+Pay.getInitialProps = async (ctx) => {
+  const cookies = parseCookies(ctx)
+  if(cookies && cookies.target) {
+    destroyCookie(ctx, 'target')
+  } else {
+    setCookie(ctx, 'target', ctx.req.url, {maxAge: 5 * 60})
+  }
+  const user = await checkUser(ctx)
+
+  return { user }
 }
 
 export default Pay

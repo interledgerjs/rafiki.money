@@ -16,7 +16,7 @@ export async function show (ctx: AppContext): Promise<void> {
   }
   const invoiceObj = invoice.toJSON()
 
-  const name = invoiceObj.subject.substring(invoiceObj.subject.indexOf('//')) + '/' + invoiceObj.id
+  const name = '//' + invoiceObj.subject.substring(invoiceObj.subject.indexOf('$') + 1, invoiceObj.subject.indexOf('/')) + '/' + invoiceObj.id
 
   ctx.body = {
     name,
@@ -55,7 +55,7 @@ export async function store (ctx: AppContext): Promise<void> {
 
     const invoiceObj = invoice.toJSON()
 
-    const name = invoiceObj.subject.substring(invoiceObj.subject.indexOf('//')) + '/' + invoiceObj.id
+    const name = '//' + invoiceObj.subject.substring(invoiceObj.subject.indexOf('$') + 1, invoiceObj.subject.indexOf('/')) + '/' + invoiceObj.id
 
     ctx.response.status = 201
     ctx.body = {
