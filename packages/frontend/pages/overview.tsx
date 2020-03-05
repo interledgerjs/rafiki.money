@@ -413,7 +413,7 @@ const Overview: NextPage<Props> = ({ account }) => {
               <div className="headline-6">Accounts</div>
               <div className="w-64 flex-1"></div>
               <div className="">
-                <Button type="solid" onTap={() => router.push("/addAccount")}>
+                <Button type="solid" onClick={() => router.push("/addAccount")}>
                   Add account
                 </Button>
               </div>
