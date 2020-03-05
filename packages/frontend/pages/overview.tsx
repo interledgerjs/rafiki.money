@@ -395,7 +395,7 @@ const Overview: NextPage<Props> = ({ account }) => {
               <div className="pl-16 relative flex">
                 <Card>
                   <div className="headline-5">Payment Pointer</div>
-                  <div className="body-2">{account.user.paymentPointer}</div>
+                  <div className="body-2 mt-1">{account.user.paymentPointer}</div>
                   <div className="flex pr-3 pt-5 justify-end">
                     <CopyToClipboard
                       text={account.user.paymentPointer}
