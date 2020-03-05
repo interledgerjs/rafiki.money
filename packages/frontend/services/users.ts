@@ -59,6 +59,14 @@ export const UsersService = (authErrorCallback?: () => void) => {
         json: clientDetails,
         headers: { authorization: `Bearer ${token}` }
       }).then(resp => resp.json())
+    },
+    //FIXME: Move to accounts service
+    getAccounts: async (token: string, userId: string) => {
+      const url = new URL('accounts/', USERS_API_URL)
+      url.searchParams.set('userId', userId)
+      return ky.get(url.toString(), {
+        headers: { authorization: `Bearer ${token}` }
+      }).then(resp => resp.json())
     }
   }
 }
