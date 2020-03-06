@@ -84,8 +84,7 @@ describe('Faucet API Test', () => {
       const response = axios.post(`http://localhost:${appContainer.port}/transactions`, {
         accountId: account.id,
         amount: '100'
-      }
-      , {
+      }, {
         headers: {
           authorization: 'Bearer user2token'
         }

@@ -1,8 +1,11 @@
 import { Model } from 'objection'
 import { v4 } from 'uuid'
 
+const OpenPaymentsIssuer = 'localhost' || process.env.OPEN_PAYMENTS_ISSUER
+
 export type InvoiceInfo = {
   id: string;
+  name: string;
   userId: number;
   accountId: number;
   description: string;
@@ -49,6 +52,7 @@ export class Invoice extends Model {
   $formatJson (): Partial<InvoiceInfo> {
     return {
       id: this.id,
+      name: `//${OpenPaymentsIssuer}/invoices/${this.id}`,
       description: this.description,
       assetCode: this.assetCode,
       assetScale: this.assetScale,

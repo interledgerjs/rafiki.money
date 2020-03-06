@@ -14,19 +14,8 @@ export async function show (ctx: AppContext): Promise<void> {
     ctx.response.status = 404
     return
   }
-  const invoiceObj = invoice.toJSON()
 
-  const name = invoiceObj.subject.substring(invoiceObj.subject.indexOf('//')) + '/' + invoiceObj.id
-
-  ctx.body = {
-    name,
-    subject: invoiceObj.subject,
-    amount: invoiceObj.amount,
-    assetCode: invoiceObj.assetCode,
-    assetScale: invoiceObj.assetScale,
-    description: invoiceObj.description,
-    received: invoiceObj.received
-  }
+  ctx.body = invoice.toJSON()
 }
 
 export async function store (ctx: AppContext): Promise<void> {
@@ -53,20 +42,8 @@ export async function store (ctx: AppContext): Promise<void> {
       received: 0n
     })
 
-    const invoiceObj = invoice.toJSON()
-
-    const name = invoiceObj.subject.substring(invoiceObj.subject.indexOf('//')) + '/' + invoiceObj.id
-
     ctx.response.status = 201
-    ctx.body = {
-      name,
-      subject: invoiceObj.subject,
-      amount: invoiceObj.amount,
-      assetCode: invoiceObj.assetCode,
-      assetScale: invoiceObj.assetScale,
-      description: invoiceObj.description,
-      received: invoiceObj.received
-    }
+    ctx.body = invoice.toJSON()
   } catch (error) {
     logger.error(error.message)
     throw error

@@ -150,6 +150,7 @@ describe('Get mandate', () => {
 
     expect(status).toEqual(200)
     expect(data.id).toEqual(mandate.id)
+    expect(data.name).toEqual(`//localhost/mandates/${mandate.id}`)
   })
 
   test('User cant get another users mandate', async () => {
@@ -159,7 +160,7 @@ describe('Get mandate', () => {
     expect(mandate.cancelledAt).toBeNull()
 
     try {
-      await axios.get(`http://localhost:${appContainer.port}/mandates/${mandate.id}`,{
+      await axios.get(`http://localhost:${appContainer.port}/mandates/${mandate.id}`, {
         headers: {
           authorization: `Bearer user_${otherUser.id}`
         }

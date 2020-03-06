@@ -30,9 +30,9 @@ describe('Payment pointer', function () {
 
       expect(status).toEqual(200)
       expect(data).toEqual({
-        payment_intents_endpoint: 'http://localhost:3001/intents',
-        payment_mandates_endpoint: 'http://localhost:3001/mandates',
-        payment_assets_supported: ['USD'],
+        invoices_endpoint: 'http://localhost:3001/intents',
+        mandates_endpoint: 'http://localhost:3001/mandates',
+        assets_supported: ['USD'],
         authorization_endpoint: 'http://localhost:9000/oauth2/auth',
         token_endpoint: 'http://localhost:9000/oauth2/token',
         issuer_endpoint: 'http://localhost:9000/'
