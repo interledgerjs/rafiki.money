@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // import React, { useState, Component } from 'react'
 import React from 'react'
 import Select from 'react-select'
@@ -7,15 +9,16 @@ import { Doughnut } from 'react-chartjs-2'
 
 // import "../styles/main.css";
 
-// hard code objects to use in components
-// mandate
-// transaction
-// link components to objects
 // hardcode arrays of above objects
+// -transaction
+// --transactions for each mandate
 // link components to arrays
 // put arrays in state
+// make mandate list clickable
 // link state to rafiki api
+// make transaction list scrollable
 // refine the way components display
+// re-enable linting rules
 
 type MandateJSON = {
   id?: string
@@ -69,10 +72,18 @@ const mandateArray: Array<MandateJSON> = [
   }
 ]
 
-const transaction: TransactionJSON = {
-  createdAt: '1st day of Yule',
-  amount: BigInt(100000000000)
-}
+const bb1TransactionArray: Array<TransactionJSON> = [
+  {
+    createdAt: '1st day of Yule',
+    amount: BigInt(1000)
+  }, {
+    createdAt: '2nd day of Yule',
+    amount: BigInt(2000)
+  }, {
+    createdAt: '3rd day of Yule',
+    amount: BigInt(3000)
+  }
+]
 
 // this specifies the content of the selector
 const options = [
@@ -119,23 +130,23 @@ class Temp extends React.Component {
     return (
       mandateArray.map(mandate => {
         return (
-          <div className="border-t border-color-gray h-18 flex flex-row listline-div"> {/* having trouble setting colour of border */}
-            <div className="flex flex-col">
-              <img className="listline-img" src="http://placecorgi.com/79/79" />
-            </div>
-            <div className="flex flex-col justify-center">
-              <div className="listline-name">{mandate.description}</div>
-            </div>
-            <div className="flex flex-col justify-center">
-              <div className="flex self-end w-listTable justify-around items-center">
-                <div className="w-5/12 pr-5">
-                  <div className="text-3xl leading-none text-right">{mandate.balance}</div>
-                  <div className="text-xs text-right">/{mandate.amount}</div>
+          <div className="flex flex-col">
+            {/* Transaction card functionally */}
+            {/* {TransactionCard("Cheque", "16.00", "2 Feb 2020", false)} */}
+            {/* Transaction card manually */}
+            <div className="my-2">
+              <Card>
+                <div className="flex justify-between">
+                  <div>
+                    {/* <div className="overline text-blue">Savings</div> */}
+                    <div className="headline-6">{bb1TransactionArray[0].createdAt}</div>
+                  </div>
+                  <div className="self-center headline-6 text-green">{Number(bb1TransactionArray[0].amount)}</div>
                 </div>
-                <div className="w-1/3">{mandate.interval}</div>
-                <div className="w-1/4">{mandate.assetCode}</div>
-              </div>
+              </Card>
             </div>
+            {/* {TransactionCard("Cheque", "100", "1 Derp 2020")}
+      {TransactionCard("Cheque", "50.00", "1 Derp 2020", false)} */}
           </div>
         )
       })
@@ -175,24 +186,29 @@ class Listline extends React.Component {
 class TransactionCard extends React.Component {
   render () {
     return (
-      <div className="flex flex-col">
-        {/* Transaction card functionally */}
-        {/* {TransactionCard("Cheque", "16.00", "2 Feb 2020", false)} */}
-        {/* Transaction card manually */}
-        <div className="my-2">
-          <Card>
-            <div className="flex justify-between">
-              <div>
-                {/* <div className="overline text-blue">Savings</div> */}
-                <div className="headline-6">{transaction.createdAt}</div>
-              </div>
-              <div className="self-center headline-6 text-green">{Number(transaction.amount)}</div>
+      bb1TransactionArray.map(transaction => {
+        return (
+          <div className="flex flex-col">
+            {/* Transaction card functionally */}
+            {/* {TransactionCard("Cheque", "16.00", "2 Feb 2020", false)} */}
+            {/* Transaction card manually */}
+            <div className="my-2">
+              <Card>
+                <div className="flex justify-between">
+                  <div>
+                    {/* <div className="overline text-blue">Savings</div> */}
+                    <div className="headline-6">{transaction.createdAt}</div>
+                  </div>
+                  <div className="self-center headline-6 text-green">{Number(transaction.amount)}</div>
+                </div>
+              </Card>
             </div>
-          </Card>
-        </div>
-        {/* {TransactionCard("Cheque", "100", "1 Derp 2020")}
-  {TransactionCard("Cheque", "50.00", "1 Derp 2020", false)} */}
-      </div>)
+            {/* {TransactionCard("Cheque", "100", "1 Derp 2020")}
+      {TransactionCard("Cheque", "50.00", "1 Derp 2020", false)} */}
+          </div>
+        )
+      })
+    )
   }
 }
 
@@ -269,8 +285,6 @@ class SidePanel extends React.Component {
           {/* Headline */}
           <div className="mt-10 headline-6">Transactions</div>
           {/* Transactions master div */}
-          <TransactionCard />
-          <TransactionCard />
           <TransactionCard />
         </div>
       </div>
