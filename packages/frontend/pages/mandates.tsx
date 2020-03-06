@@ -160,232 +160,174 @@ const doughnutOptions = {
   }
 }
 
-class Listline extends React.Component {
-  render () {
-    return (
-      mandateArray.map(mandate => {
-        return (
-          <div id={mandate.id} className="border-t border-color-gray h-18 flex flex-row listline-div"> {/* having trouble setting colour of border */}
-            <div className="flex flex-col">
-              <img className="listline-img" src="http://placecorgi.com/79/79" />
-            </div>
-            <div className="flex flex-col justify-center">
-              <div className="listline-name">{mandate.description}</div>
-            </div>
-            <div className="flex flex-col justify-center">
-              <div className="flex self-end w-listTable justify-around items-center">
-                <div className="w-5/12 pr-5">
-                  <div className="text-3xl leading-none text-right">{mandate.balance}</div>
-                  <div className="text-xs text-right">/{mandate.amount}</div>
-                </div>
-                <div className="w-1/3">{mandate.interval}</div>
-                <div className="w-1/4">{mandate.assetCode}</div>
+const Listline = ({ mandateArray }) => {
+  return (
+    mandateArray.map(mandate => {
+      return (
+        <div key={mandate.id} className="border-t border-color-gray h-18 flex flex-row listline-div"> {/* having trouble setting colour of border */}
+          <div className="flex flex-col">
+            <img className="listline-img" src="http://placecorgi.com/79/79" />
+          </div>
+          <div className="flex flex-col justify-center">
+            <div className="listline-name">{mandate.description}</div>
+          </div>
+          <div className="flex flex-col justify-center">
+            <div className="flex self-end w-listTable justify-around items-center">
+              <div className="w-5/12 pr-5">
+                <div className="text-3xl leading-none text-right">{mandate.balance}</div>
+                <div className="text-xs text-right">/{mandate.amount}</div>
               </div>
+              <div className="w-1/3">{mandate.interval}</div>
+              <div className="w-1/4">{mandate.assetCode}</div>
             </div>
           </div>
-        )
-      })
-    )
-  }
+        </div>
+      )
+    })
+  )
 }
 
-class TransactionCard extends React.Component {
-  render () {
-    return (
-      bb1TransactionArray.map(transaction => {
-        return (
-          <div key={transaction.id} className="flex flex-col">
-            {/* Transaction card functionally */}
-            {/* {TransactionCard("Cheque", "16.00", "2 Feb 2020", false)} */}
-            {/* Transaction card manually */}
-            <div className="my-2">
-              <Card>
-                <div className="flex justify-between">
-                  <div>
-                    {/* <div className="overline text-blue">Savings</div> */}
-                    <div className="headline-6">{transaction.createdAt}</div>
-                  </div>
-                  <div className="self-center headline-6 text-green">{Number(transaction.amount)}</div>
+const TransactionCard = ({ bb1TransactionArray }) => {
+  return (
+    bb1TransactionArray.map(transaction => {
+      return (
+        <div key={transaction.id} className="flex flex-col">
+          <div className="my-2">
+            <Card>
+              <div className="flex justify-between">
+                <div>
+                  <div className="headline-6">{transaction.createdAt}</div>
                 </div>
-              </Card>
-            </div>
-            {/* {TransactionCard("Cheque", "100", "1 Derp 2020")}
-      {TransactionCard("Cheque", "50.00", "1 Derp 2020", false)} */}
+                <div className="self-center headline-6 text-green">{Number(transaction.amount)}</div>
+              </div>
+            </Card>
           </div>
-        )
-      })
-    )
-  }
-}
-
-class DateBox extends React.Component {
-  render () {
-    return (
-      <div className="mt-16 body-2">
-        <div className="flex flex-row justify-between">
-          <div className="">Created</div>
-          <div className="">{mandateArray[0].startAt}</div>
         </div>
-        <div className="flex flex-row justify-between">
-          <div className="">Expires</div>
-          <div className="">{mandateArray[0].expireAt}</div>
+      )
+    })
+  )
+}
+
+const DateBox = () => (
+  <div className="mt-16 body-2">
+    <div className="flex flex-row justify-between">
+      <div className="">Created</div>
+      <div className="">{mandateArray[0].startAt}</div>
+    </div>
+    <div className="flex flex-row justify-between">
+      <div className="">Expires</div>
+      <div className="">{mandateArray[0].expireAt}</div>
+    </div>
+  </div>
+)
+
+const DoughnutInner = () => (
+  <div className="donut-inner">
+    <span className="donut-inner-used">Used<br /></span>
+    <span className="donut-inner-available">Available</span>
+  </div>
+)
+
+const DoughnutDisplay = () => (
+  <Doughnut
+    data={data}
+    options={doughnutOptions}
+    width={170}
+    legend={{
+      position: 'bottom',
+      display: false,
+      align: 'centre',
+      labels: {
+        fontColor: '#FF8A65',
+        usePointStyle: true
+      }
+    }}
+  />
+)
+
+const WholeDoughnut = () => (
+  <div className="h-64">
+    {/* <div>help</div> */}
+    <DoughnutDisplay />
+    <DoughnutInner />
+  </div>
+)
+
+const SidePanel = () => (
+  <div className="ml-8">
+    <div className="p-4 bg-surface-elevation-1 elevation-1 rounded text-on-surface sm:max-w-full md:w-card h-full">
+      <WholeDoughnut />
+      <DateBox />
+      <div className="mt-10 headline-6">Transactions</div>
+      <TransactionCard bb1TransactionArray={bb1TransactionArray}/>
+    </div>
+  </div>
+)
+
+const TextInputBox = () => (
+  <div className='w-full h-full bg-surface'>
+    <div className='w-full max-w-xs bg-surface flex items-center'>
+      <form className='w-full max-w-xs'>
+        <div className=''>
+          <TextInput name='searchFor' label='Search' style={{ position: 'relative', height: '72px' }}></TextInput>
         </div>
-      </div>
-    )
-  }
-}
+      </form>
+    </div>
+  </div>
+)
 
-class DoughnutInner extends React.Component {
-  render () {
-    return (
-      <div className="donut-inner">
-        <span className="donut-inner-used">Used<br /></span>
-        <span className="donut-inner-available">Available</span>
-      </div>
-    )
-  }
-}
+const Selector = () => (
+  <div className='w-1/4 h-full bg-surface'>
+    <Select options={options} styles={customStyles} />
+  </div>
+)
 
-class DoughnutDisplay extends React.Component {
-  render () {
-    return (
-      <Doughnut
-        data={data}
-        options={doughnutOptions}
-        width={170}
-        legend={{
-          position: 'bottom',
-          display: false,
-          align: 'centre',
-          labels: {
-            fontColor: '#FF8A65',
-            usePointStyle: true
-          }
-        }}
-      />
-    )
-  }
-}
+const TopRow = () => (
+  <div className="flex flex-row justify-between">
+    <TextInputBox />
+    <Selector />
+  </div>
+)
 
-class WholeDoughnut extends React.Component {
-  render () {
-    return (
-      <div className="h-64">
-        {/* <div>help</div> */}
-        <DoughnutDisplay />
-        <DoughnutInner />
-      </div>
-    )
-  }
-}
-
-class SidePanel extends React.Component {
-  render () {
-    return (
-      /* Master Div */
-      <div className="ml-8">
-        {/* Graph Card */}
-        <div className="p-4 bg-surface-elevation-1 elevation-1 rounded text-on-surface sm:max-w-full md:w-card h-full">
-          <WholeDoughnut />
-          <DateBox />
-          {/* Headline */}
-          <div className="mt-10 headline-6">Transactions</div>
-          {/* Transactions master div */}
-          <TransactionCard />
-        </div>
-      </div>
-    )
-  }
-}
-
-class TextInputBox extends React.Component {
-  render () {
-    return (
-      <div className='w-full h-full bg-surface'>
-        <div className='w-full max-w-xs bg-surface flex items-center'>
-          <form className='w-full max-w-xs'>
-            <div className=''>
-              <TextInput name='searchFor' label='Search' style={{ position: 'relative', height: '72px' }}></TextInput>
-            </div>
-          </form>
-        </div>
-      </div>
-    )
-  }
-}
-
-class Selector extends React.Component {
-  render () {
-    return (
-      <div className='w-1/4 h-full bg-surface'>
-        <Select options={options} styles={customStyles} />
-      </div>
-
-    )
-  }
-}
-
-class TopRow extends React.Component {
-  render () {
-    return (
-      <div className="flex flex-row justify-between">
-        <TextInputBox />
-        <Selector />
-      </div>
-    )
-  }
-}
-
-class List extends React.Component {
-  render () {
-    return (
-      <div className="flex flex-row">
-        <div className="flex flex-col bg-surface-elevation-1 elevation-1 rounded text-on-surface">
-          <div className="flex h-10 self-end">
-            <div className="flex justify-around w-listTable">
-              <div className="w-5/12">Balance</div>
-              <div className="w-1/3">Interval</div>
-              <div className="w-1/4">Currency</div>
-            </div>
-          </div>
-          <Listline />
+const List = () => (
+  <div className="flex flex-row">
+    <div className="flex flex-col bg-surface-elevation-1 elevation-1 rounded text-on-surface">
+      <div className="flex h-10 self-end">
+        <div className="flex justify-around w-listTable">
+          <div className="w-5/12">Balance</div>
+          <div className="w-1/3">Interval</div>
+          <div className="w-1/4">Currency</div>
         </div>
       </div>
-    )
-  }
-}
+      <Listline mandateArray={mandateArray} />
+    </div>
+  </div>
+)
 
-class MainView extends React.Component {
-  render () {
-    return (
-      <div className="flex flex-col">
-        <TopRow />
-        <List />
-      </div>
-    )
-  }
-}
+const MainView = () => (
+  <div className="flex flex-col">
+    <TopRow />
+    <List />
+  </div>
+)
 
-class GrandParent extends React.Component {
-  render () {
-    return (
+const GrandParent = () => (
+  <div className="flex flex-row h-full">
+    <MainView />
+    <SidePanel />
+  </div>
+)
+
+const Account: NextPage = () => (
+  <div className="flex flex-grow">
+    <Navigation active="mandates"></Navigation>
+    <Content navigation>
       <div className="flex flex-row h-full">
         <MainView />
         <SidePanel />
       </div>
-    )
-  }
-}
-
-const Account: NextPage = () => {
-  return (
-    <div className="flex flex-grow">
-      <Navigation active="mandates"></Navigation>
-      <Content navigation>
-        <GrandParent />
-      </Content>
-    </div>
-  )
-}
+    </Content>
+  </div>
+)
 
 export default Account
