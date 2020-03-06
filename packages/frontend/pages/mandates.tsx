@@ -43,29 +43,29 @@ type TransactionJSON = {
 // hard-coded mandate object
 const mandateArray: Array<MandateJSON> = [
   {
-    description: 'the other burger joint',
-    balance: '4.00',
-    amount: '9000.00',
-    interval: 'frequently',
-    assetCode: 'RZL',
-    startAt: 'today, tommorrow and',
-    expireAt: 'always'
+    description: 'Big Burger 1',
+    balance: '1.00',
+    amount: '1000.00',
+    interval: 'Once',
+    assetCode: '111',
+    startAt: '01-01-0001 01:01',
+    expireAt: '10-10-1000 10:10'
   }, {
-    description: 'the other burger joint',
-    balance: '4.00',
-    amount: '9000.00',
-    interval: 'frequently',
-    assetCode: 'RZL',
-    startAt: 'today, tommorrow and',
-    expireAt: 'always'
+    description: 'Big Burger 2',
+    balance: '2.00',
+    amount: '2000.00',
+    interval: 'Twice',
+    assetCode: '222',
+    startAt: '02-02-0002 02:02',
+    expireAt: '20-20-2000 20:20'
   }, {
-    description: 'the other burger joint',
-    balance: '4.00',
-    amount: '9000.00',
-    interval: 'frequently',
-    assetCode: 'RZL',
-    startAt: 'today, tommorrow and',
-    expireAt: 'always'
+    description: 'Big Burger 3',
+    balance: '3.00',
+    amount: '3000.00',
+    interval: 'Thrice',
+    assetCode: '333',
+    startAt: '03-03-0003 03:03',
+    expireAt: '30-30-3000 30:30'
   }
 ]
 
