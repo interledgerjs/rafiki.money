@@ -28,7 +28,8 @@ export async function store (ctx: AppContext): Promise<void> {
       assetScale,
       assetCode,
       amount,
-      description
+      description,
+      subject
     } = ctx.request.body
 
     const invoice = await Invoice.query().insertAndFetch({
@@ -36,7 +37,9 @@ export async function store (ctx: AppContext): Promise<void> {
       assetCode,
       assetScale,
       amount: amount,
-      balance: 0n
+      balance: 0n,
+      subject,
+      received: 0n
     })
 
     ctx.response.status = 201

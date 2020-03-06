@@ -1,18 +1,23 @@
 import { Model } from 'objection'
 import { v4 } from 'uuid'
 
+const OpenPaymentsIssuer = 'localhost' || process.env.OPEN_PAYMENTS_ISSUER
+
 export type InvoiceInfo = {
   id: string;
+  name: string;
   userId: number;
   accountId: number;
   description: string;
   assetCode: string;
   assetScale: number;
   amount: string;
+  received: string;
   balance: string;
-  expireAt: string;
+  expiresAt: string;
   createdAt: string;
   updatedAt: string;
+  subject: string;
 }
 
 export class Invoice extends Model {
@@ -27,10 +32,12 @@ export class Invoice extends Model {
   assetCode: string;
   assetScale: number;
   amount: bigint;
+  received: bigint;
   balance: bigint;
-  expireAt!: string;
+  expiresAt!: string;
   createdAt: string;
   updatedAt: string;
+  subject: string;
 
   $beforeInsert (): void {
     this.id = v4()
@@ -45,12 +52,15 @@ export class Invoice extends Model {
   $formatJson (): Partial<InvoiceInfo> {
     return {
       id: this.id,
+      name: `//${OpenPaymentsIssuer}/invoices/${this.id}`,
       description: this.description,
       assetCode: this.assetCode,
       assetScale: this.assetScale,
       amount: this.amount.toString(),
       balance: this.balance.toString(),
-      expireAt: this.expireAt
+      expiresAt: this.expiresAt,
+      subject: this.subject,
+      received: this.received.toString()
     }
   }
 }
