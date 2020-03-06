@@ -6,6 +6,7 @@ import Select from 'react-select'
 import { NextPage } from 'next'
 import { Card, Content, Navigation, TextInput } from '../components'
 import { Doughnut } from 'react-chartjs-2'
+import { realpathSync } from 'fs'
 
 // import "../styles/main.css";
 
@@ -365,15 +366,23 @@ class MainView extends React.Component {
   }
 }
 
+class GrandParent extends React.Component {
+  render () {
+    return (
+      <div className="flex flex-row h-full">
+        <MainView />
+        <SidePanel />
+      </div>
+    )
+  }
+}
+
 const Account: NextPage = () => {
   return (
     <div className="flex flex-grow">
       <Navigation active="mandates"></Navigation>
       <Content navigation>
-        <div className="flex flex-row h-full">
-          <MainView />
-          <SidePanel />
-        </div>
+        <GrandParent />
       </Content>
     </div>
   )
