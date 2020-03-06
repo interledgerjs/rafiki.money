@@ -74,27 +74,6 @@ const transaction: TransactionJSON = {
   amount: BigInt(100000000000)
 }
 
-// component with which to populate list
-const listline =
-  <div className="border-t border-color-gray h-18 flex flex-row listline-div"> {/* having trouble setting colour of border */}
-    <div className="flex flex-col">
-      <img className="listline-img" src="http://placecorgi.com/79/79" />
-    </div>
-    <div className="flex flex-col justify-center">
-      <div className="listline-name">{mandateArray[0].description}</div>
-    </div>
-    <div className="flex flex-col justify-center">
-      <div className="flex self-end w-listTable justify-around items-center">
-        <div className="w-5/12 pr-5">
-          <div className="text-3xl leading-none text-right">{mandateArray[0].balance}</div>
-          <div className="text-xs text-right">/{mandateArray[0].amount}</div>
-        </div>
-        <div className="w-1/3">{mandateArray[0].interval}</div>
-        <div className="w-1/4">{mandateArray[0].assetCode}</div>
-      </div>
-    </div>
-  </div>
-
 // this specifies the content of the selector
 const options = [
   { value: 'chocolate', label: 'Chocolate' },
@@ -132,6 +111,64 @@ const doughnutOptions = {
       fontStyle: 'Helvetica', // Default Arial
       sidePadding: 20 // Default 20 (as a percentage)
     }
+  }
+}
+
+class Temp extends React.Component {
+  render () {
+    return (
+      mandateArray.map(mandate => {
+        return (
+          <div className="border-t border-color-gray h-18 flex flex-row listline-div"> {/* having trouble setting colour of border */}
+            <div className="flex flex-col">
+              <img className="listline-img" src="http://placecorgi.com/79/79" />
+            </div>
+            <div className="flex flex-col justify-center">
+              <div className="listline-name">{mandate.description}</div>
+            </div>
+            <div className="flex flex-col justify-center">
+              <div className="flex self-end w-listTable justify-around items-center">
+                <div className="w-5/12 pr-5">
+                  <div className="text-3xl leading-none text-right">{mandate.balance}</div>
+                  <div className="text-xs text-right">/{mandate.amount}</div>
+                </div>
+                <div className="w-1/3">{mandate.interval}</div>
+                <div className="w-1/4">{mandate.assetCode}</div>
+              </div>
+            </div>
+          </div>
+        )
+      })
+    )
+  }
+}
+
+class Listline extends React.Component {
+  render () {
+    return (
+      mandateArray.map(mandate => {
+        return (
+          <div className="border-t border-color-gray h-18 flex flex-row listline-div"> {/* having trouble setting colour of border */}
+            <div className="flex flex-col">
+              <img className="listline-img" src="http://placecorgi.com/79/79" />
+            </div>
+            <div className="flex flex-col justify-center">
+              <div className="listline-name">{mandate.description}</div>
+            </div>
+            <div className="flex flex-col justify-center">
+              <div className="flex self-end w-listTable justify-around items-center">
+                <div className="w-5/12 pr-5">
+                  <div className="text-3xl leading-none text-right">{mandate.balance}</div>
+                  <div className="text-xs text-right">/{mandate.amount}</div>
+                </div>
+                <div className="w-1/3">{mandate.interval}</div>
+                <div className="w-1/4">{mandate.assetCode}</div>
+              </div>
+            </div>
+          </div>
+        )
+      })
+    )
   }
 }
 
@@ -291,9 +328,7 @@ class List extends React.Component {
               <div className="w-1/4">Currency</div>
             </div>
           </div>
-          {listline}
-          {listline}
-          {listline}
+          <Listline />
         </div>
       </div>
     )
