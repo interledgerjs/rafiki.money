@@ -1,14 +1,16 @@
 import axios from 'axios'
 import { hydra } from '../../src/services/hydra'
 import { accounts } from '../../src/services/accounts'
-import { getAgreementUrlFromScopes } from '../../src/controllers/consentController'
 import { User } from '../../src/models/user'
 import { createTestApp, TestAppContainer } from '../helpers/app'
 import { mockAuth } from '../helpers/auth'
+import { Account } from '../../src/models/account'
+import { Mandate } from '../../src/models/mandate'
 
 describe('Consent', function () {
   let appContainer: TestAppContainer
   let user: User
+  let account: Account
   mockAuth()
 
   beforeAll(async () => {
@@ -21,6 +23,13 @@ describe('Consent', function () {
     user = await User.query().insert({
       username: 'albert'
     })
+    account = await Account.query().insert({
+      name: 'Main',
+      assetCode: 'USD',
+      assetScale: 6,
+      userId: user.id,
+      limit: 0n
+    })
   })
 
   afterEach(async () => {
@@ -32,48 +41,8 @@ describe('Consent', function () {
     appContainer.knex.destroy()
   })
 
-  describe('getAgreementUrlFromScopes', function () {
-    test('returns id for valid mandates url', async () => {
-      const scopes = ['offline', 'openid', 'mandates.aef-123']
-
-      const url = getAgreementUrlFromScopes(scopes)
-
-      expect(url).toEqual('http://localhost:3001/mandates/aef-123')
-    })
-
-    test('returns id for valid intents url', async () => {
-      const scopes = ['offline', 'openid', 'intents.aef-123']
-
-      const url = getAgreementUrlFromScopes(scopes)
-
-      expect(url).toEqual('http://localhost:3001/intents/aef-123')
-    })
-
-    test('returns undefined if invalid agreements url', async () => {
-      const scopes = ['offline', 'openid']
-
-      const url = getAgreementUrlFromScopes(scopes)
-
-      expect(url).toBeUndefined()
-    })
-  })
-
   describe('Get consent request', function () {
-    test('returns agreementUrl, user, accounts, client and requested_scope if scopes contain intent', async () => {
-      hydra.getConsentRequest = jest.fn().mockResolvedValue({ skip: false, subject: user.id.toString(), client: 'test-client', requested_scope: ['offline', 'openid', 'intents'] })
-
-      const { status, data } = await axios.get(`http://localhost:${appContainer.port}/consent?consent_challenge=test`)
-
-      expect(status).toEqual(200)
-      expect(hydra.getConsentRequest).toHaveBeenCalled()
-      expect(data).toEqual({
-        requestedScopes: ['offline', 'openid', 'intents'],
-        client: 'test-client',
-        user: user.id.toString()
-      })
-    })
-
-    test('returns client, user and requested_scope if scope isn\'t for mandate/intent', async () => {
+    test('returns client, user and requested_scope', async () => {
       hydra.getConsentRequest = jest.fn().mockResolvedValue({ skip: false, subject: user.id.toString(), client: 'test-client', requested_scope: ['offline', 'openid'] })
       accounts.getUserAccounts = jest.fn()
 
@@ -84,6 +53,37 @@ describe('Consent', function () {
       expect(accounts.getUserAccounts).not.toHaveBeenCalled()
       expect(data).toEqual({
         requestedScopes: ['offline', 'openid'],
+        client: 'test-client',
+        user: user.id.toString()
+      })
+    })
+
+    test('returns agreementUrl, user, accounts, client and requested_scope if scopes contain intent', async () => {
+      const mandate = await Mandate.query().insert({
+        assetCode: 'USD',
+        assetScale: 2,
+        amount: 500n
+      })
+      const authorizationDetails = [
+        {
+          type: 'open_payments_mandate',
+          locations: [
+            mandate.toJSON().name
+          ],
+          actions: [
+            'read', 'charge'
+          ]
+        }
+      ]
+
+      hydra.getConsentRequest = jest.fn().mockResolvedValue({ skip: false, subject: user.id.toString(), client: 'test-client', requested_scope: ['offline'], request_url: `https://localhost.com/authorize?authorization_details=${encodeURIComponent(JSON.stringify(authorizationDetails))}` })
+
+      const { status, data } = await axios.get(`http://localhost:${appContainer.port}/consent?consent_challenge=test`)
+
+      expect(status).toEqual(200)
+      expect(hydra.getConsentRequest).toHaveBeenCalled()
+      expect(data).toEqual({
+        requestedScopes: ['offline', 'openid', 'intents'],
         client: 'test-client',
         user: user.id.toString()
       })

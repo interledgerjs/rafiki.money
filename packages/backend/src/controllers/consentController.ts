@@ -5,26 +5,21 @@ import { hydra } from '../../src/services/hydra'
 import { accounts } from '../services/accounts'
 import { Context } from 'koa'
 import { User } from '../models/user'
+import { Mandate } from '../models/mandate'
 
 const INTENTS_URL = process.env.INTENTS_URL || 'http://localhost:3001/intents'
 const MANDATES_URL = process.env.MANDATES_URL || 'http://localhost:3001/mandates'
 const BASE_PAYMENT_POINTER_URL = process.env.BASE_PAYMENT_POINTER_URL || '$rafiki.money/p'
 
-export function getAgreementUrlFromScopes (scopes: string[]): string | undefined {
-  const agreementScopes = scopes.filter(scope => {
-    return scope.startsWith('intents.') || scope.startsWith('mandates.')
+export function getMandateFromAuthorizationDetails (authorizationDetails: Array<AuthorizationDetail>): Mandate | undefined {
+  const mandate = authorizationDetails.filter(item => {
+    return item.type === 'open_payments_mandate'
   })
 
-  if (agreementScopes.length > 1) {
-    throw new Error('Can only ask for single agreement scope at a time')
-  }
-
-  if (agreementScopes.length === 0) {
+  if (mandate.length === 0) {
     return undefined
   }
 
-  return agreementScopes[0].startsWith('intents.')
-    ? INTENTS_URL + '/' + agreementScopes[0].slice(8) : MANDATES_URL + '/' + agreementScopes[0].slice(9)
 }
 
 async function getUsersPaymentPointer (userId: string): Promise<string> {
@@ -38,6 +33,7 @@ async function getUsersPaymentPointer (userId: string): Promise<string> {
 
 export async function generateAccessAndIdTokenInfo (scopes: string[], userId: string, assert: Context['assert'], accountId?: number): Promise<{ accessTokenInfo: { [k: string]: any }; idTokenInfo: { [k: string]: any } }> {
   const agreementUrl = getAgreementUrlFromScopes(scopes)
+
   if (!agreementUrl) {
     return {
       accessTokenInfo: {},
@@ -61,13 +57,15 @@ export async function generateAccessAndIdTokenInfo (scopes: string[], userId: st
 
   return {
     accessTokenInfo: {
-      interledger: {
-        agreement: updatedAgreement
+      openPayments: {
+        mandates: [
+
+        ]
       }
     },
     idTokenInfo: {
-      interledger: {
-        agreement: updatedAgreement
+      openPayments: {
+        mandates: updatedAgreement
       }
     }
   }
@@ -81,6 +79,11 @@ export async function show (ctx: AppContext): Promise<void> {
     ctx.logger.error(error, 'error in login request')
     throw error
   })
+
+  const requestUrl = consentRequest['request_url']
+  const url = new URL(requestUrl)
+  const authorizationDetails = url.searchParams.get('authorization_details')
+
   ctx.logger.debug('Got hydra consent request', { consentRequest })
 
   if (consentRequest['skip'] || consentRequest['client'].client_id === 'frontend-client' || consentRequest['client'].client_id === 'wallet-gui-service') {
@@ -90,12 +93,6 @@ export async function show (ctx: AppContext): Promise<void> {
       grant_scope: consentRequest['requested_scope'],
       grant_access_token_audience: consentRequest['requested_access_token_audience'],
       session: {
-        // // This data will be available when introspecting the token. Try to avoid sensitive information here,
-        // // unless you limit who can introspect tokens.
-        // access_token: accessTokenInfo,
-        //
-        // // This data will be available in the ID token.
-        // id_token: idTokenInfo
       }
     }).catch(error => {
       ctx.logger.error('Error with hydra accepting consent', { error })
@@ -109,6 +106,7 @@ export async function show (ctx: AppContext): Promise<void> {
   }
 
   const grantScopes: string[] = Array.from(consentRequest['requested_scope'])
+  const mandate = authorizationDetails
   const agreementUrl = getAgreementUrlFromScopes(grantScopes)
   ctx.logger.debug('grantScopes and agreementUrl', { grantScopes, agreementUrl })
 
