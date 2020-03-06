@@ -9,13 +9,9 @@ import { Doughnut } from 'react-chartjs-2'
 
 // import "../styles/main.css";
 
-// hardcode arrays of above objects
-// -transaction
-// --transactions for each mandate
-// link components to arrays
 // put arrays in state
-// make mandate list clickable
 // link state to rafiki api
+// make mandate list clickable
 // make transaction list scrollable
 // refine the way components display
 // re-enable linting rules
@@ -74,14 +70,40 @@ const mandateArray: Array<MandateJSON> = [
 
 const bb1TransactionArray: Array<TransactionJSON> = [
   {
-    createdAt: '1st day of Yule',
-    amount: BigInt(1000)
+    createdAt: 'date of bb1 t1',
+    amount: BigInt(11)
   }, {
-    createdAt: '2nd day of Yule',
-    amount: BigInt(2000)
+    createdAt: 'date of bb1 t2',
+    amount: BigInt(12)
   }, {
-    createdAt: '3rd day of Yule',
-    amount: BigInt(3000)
+    createdAt: 'date of bb1 t3',
+    amount: BigInt(13)
+  }
+]
+
+const bb2TransactionArray: Array<TransactionJSON> = [
+  {
+    createdAt: 'date of bb2 t1',
+    amount: BigInt(21)
+  }, {
+    createdAt: 'date of bb2 t2',
+    amount: BigInt(22)
+  }, {
+    createdAt: 'date of bb2 t3',
+    amount: BigInt(23)
+  }
+]
+
+const bb3TransactionArray: Array<TransactionJSON> = [
+  {
+    createdAt: 'date of bb3 t1',
+    amount: BigInt(31)
+  }, {
+    createdAt: 'date of bb3 t2',
+    amount: BigInt(32)
+  }, {
+    createdAt: 'date of bb3 t3',
+    amount: BigInt(33)
   }
 ]
 
