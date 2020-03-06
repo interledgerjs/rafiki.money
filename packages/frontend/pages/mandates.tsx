@@ -17,7 +17,7 @@ import { Doughnut } from 'react-chartjs-2'
 // re-enable linting rules
 
 type MandateJSON = {
-  id?: string
+  id: string
   description: string
   assetCode: string
   assetScale?: number
@@ -31,7 +31,7 @@ type MandateJSON = {
 }
 
 type TransactionJSON = {
-  id?: number,
+  id: number,
   accountId?: number,
   description?: string,
   amount: bigint,
@@ -42,6 +42,7 @@ type TransactionJSON = {
 // hard-coded mandate object
 const mandateArray: Array<MandateJSON> = [
   {
+    id: '3061108',
     description: 'Big Burger 1',
     balance: '1.00',
     amount: '1000.00',
@@ -50,6 +51,7 @@ const mandateArray: Array<MandateJSON> = [
     startAt: '01-01-0001 01:01',
     expireAt: '10-10-1000 10:10'
   }, {
+    id: '3061109',
     description: 'Big Burger 2',
     balance: '2.00',
     amount: '2000.00',
@@ -58,6 +60,7 @@ const mandateArray: Array<MandateJSON> = [
     startAt: '02-02-0002 02:02',
     expireAt: '20-20-2000 20:20'
   }, {
+    id: '3061110',
     description: 'Big Burger 3',
     balance: '3.00',
     amount: '3000.00',
@@ -70,12 +73,15 @@ const mandateArray: Array<MandateJSON> = [
 
 const bb1TransactionArray: Array<TransactionJSON> = [
   {
+    id: 3061111,
     createdAt: 'date of bb1 t1',
     amount: BigInt(11)
   }, {
+    id: 3061112,
     createdAt: 'date of bb1 t2',
     amount: BigInt(12)
   }, {
+    id: 3061113,
     createdAt: 'date of bb1 t3',
     amount: BigInt(13)
   }
@@ -83,12 +89,15 @@ const bb1TransactionArray: Array<TransactionJSON> = [
 
 const bb2TransactionArray: Array<TransactionJSON> = [
   {
+    id: 3061114,
     createdAt: 'date of bb2 t1',
     amount: BigInt(21)
   }, {
+    id: 3061115,
     createdAt: 'date of bb2 t2',
     amount: BigInt(22)
   }, {
+    id: 3061116,
     createdAt: 'date of bb2 t3',
     amount: BigInt(23)
   }
@@ -96,12 +105,15 @@ const bb2TransactionArray: Array<TransactionJSON> = [
 
 const bb3TransactionArray: Array<TransactionJSON> = [
   {
+    id: 3061117,
     createdAt: 'date of bb3 t1',
     amount: BigInt(31)
   }, {
+    id: 3061118,
     createdAt: 'date of bb3 t2',
     amount: BigInt(32)
   }, {
+    id: 3061119,
     createdAt: 'date of bb3 t3',
     amount: BigInt(33)
   }
@@ -147,41 +159,12 @@ const doughnutOptions = {
   }
 }
 
-class Temp extends React.Component {
-  render () {
-    return (
-      mandateArray.map(mandate => {
-        return (
-          <div className="flex flex-col">
-            {/* Transaction card functionally */}
-            {/* {TransactionCard("Cheque", "16.00", "2 Feb 2020", false)} */}
-            {/* Transaction card manually */}
-            <div className="my-2">
-              <Card>
-                <div className="flex justify-between">
-                  <div>
-                    {/* <div className="overline text-blue">Savings</div> */}
-                    <div className="headline-6">{bb1TransactionArray[0].createdAt}</div>
-                  </div>
-                  <div className="self-center headline-6 text-green">{Number(bb1TransactionArray[0].amount)}</div>
-                </div>
-              </Card>
-            </div>
-            {/* {TransactionCard("Cheque", "100", "1 Derp 2020")}
-      {TransactionCard("Cheque", "50.00", "1 Derp 2020", false)} */}
-          </div>
-        )
-      })
-    )
-  }
-}
-
 class Listline extends React.Component {
   render () {
     return (
       mandateArray.map(mandate => {
         return (
-          <div className="border-t border-color-gray h-18 flex flex-row listline-div"> {/* having trouble setting colour of border */}
+          <div id={mandate.id} className="border-t border-color-gray h-18 flex flex-row listline-div"> {/* having trouble setting colour of border */}
             <div className="flex flex-col">
               <img className="listline-img" src="http://placecorgi.com/79/79" />
             </div>
@@ -210,7 +193,7 @@ class TransactionCard extends React.Component {
     return (
       bb1TransactionArray.map(transaction => {
         return (
-          <div className="flex flex-col">
+          <div key={transaction.id} className="flex flex-col">
             {/* Transaction card functionally */}
             {/* {TransactionCard("Cheque", "16.00", "2 Feb 2020", false)} */}
             {/* Transaction card manually */}
