@@ -12,7 +12,7 @@ import { Doughnut } from "react-chartjs-2";
 import { useRouter } from "next/router";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { checkUser } from "../utils";
-import { UsersService } from "../services/users";
+import { AccountsService } from "../services/accounts";
 import { parseCookies } from "nookies";
 
 // -- Typings ----------------------------------
@@ -386,7 +386,7 @@ const Overview: NextPage<Props> = ({ account }) => {
             <div className="flex flex-row">
               <div>
                 <Card>
-                  <div className="headline-5">Total balance</div>
+                  <div className="headline-5 bg">Total balance</div>
                   <div className="headline-3 pb-1">
                     $ {account.user.totalBalance}
                   </div>
@@ -410,7 +410,7 @@ const Overview: NextPage<Props> = ({ account }) => {
               </div>
             </div>
             <div className="flex py-6">
-              <div className="headline-6">Accounts</div>
+              <div className="headline-6 bg-white">Accounts</div>
               <div className="w-64 flex-1"></div>
               <div className="">
                 <Button type="solid" onClick={() => router.push("/addAccount")}>
@@ -430,12 +430,12 @@ const Overview: NextPage<Props> = ({ account }) => {
 };
 
 // -- Services ----------------------------------
-const usersService = UsersService();
+const accountsService = AccountsService();
 
 Overview.getInitialProps = async ctx => {
   const retrievedUser = await checkUser(ctx);
   console.log(retrievedUser);
-  const retrievedAccounts = await usersService.getAccounts(
+  const retrievedAccounts = await accountsService.getAccounts(
     retrievedUser.token,
     retrievedUser.id
   );
