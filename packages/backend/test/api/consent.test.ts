@@ -43,7 +43,7 @@ describe('Consent', function () {
 
   describe('Get consent request', function () {
     test('returns client, user and requested_scope', async () => {
-      hydra.getConsentRequest = jest.fn().mockResolvedValue({ skip: false, subject: user.id.toString(), client: 'test-client', requested_scope: ['offline', 'openid'] })
+      hydra.getConsentRequest = jest.fn().mockResolvedValue({ skip: false, subject: user.id.toString(), client: 'test-client', requested_scope: ['offline', 'openid'], request_url: 'http://localhost' })
       accounts.getUserAccounts = jest.fn()
 
       const { status, data } = await axios.get(`http://localhost:${appContainer.port}/consent?consent_challenge=test`)
@@ -58,7 +58,7 @@ describe('Consent', function () {
       })
     })
 
-    test('returns agreementUrl, user, accounts, client and requested_scope if scopes contain intent', async () => {
+    test('Handles consent request for mandate', async () => {
       const mandate = await Mandate.query().insert({
         assetCode: 'USD',
         assetScale: 2,
@@ -82,17 +82,20 @@ describe('Consent', function () {
 
       expect(status).toEqual(200)
       expect(hydra.getConsentRequest).toHaveBeenCalled()
-      expect(data).toEqual({
-        requestedScopes: ['offline', 'openid', 'intents'],
+      expect(data).toMatchObject({
+        requestedScopes: ['offline'],
         client: 'test-client',
         user: user.id.toString()
+      })
+      expect(data.mandate).toMatchObject({
+        id: mandate.id
       })
     })
   })
 
   describe('Post consent', function () {
     test('gives consent if user accepts and returns redirectTo', async () => {
-      hydra.getConsentRequest = jest.fn().mockResolvedValue({ requested_access_token_audience: 'test', subject: user.id.toString(), scopes: ['offline', 'openid'] })
+      hydra.getConsentRequest = jest.fn().mockResolvedValue({ requested_access_token_audience: 'test', subject: user.id.toString(), scopes: ['offline', 'openid'], request_url: 'http://localhost' })
       hydra.acceptConsentRequest = jest.fn().mockResolvedValue({ redirect_to: 'http://localhost:9010/callback' })
 
       const { status, data } = await axios.post(`http://localhost:${appContainer.port}/consent?consent_challenge=testChallenge`, { accepts: true, scopes: ['offline', 'openid'] })
@@ -142,87 +145,49 @@ describe('Consent', function () {
       })
     })
 
-    test('returns 401 if mandates scope is set and it doesn\'t match the logged in users payment pointer', async () => {
-      // scenario: bob has logged in and is trying to give consent to a mandate that is scoped to alice's payment pointer
-      const bob = await User.query().insertAndFetch({ username: 'bob', password: 'test' })
-      const mandate = { id: 'aef-123', scope: '$rafiki.money/p/alice' }
-      axios.get = jest.fn().mockResolvedValue({ data: mandate })
-      hydra.getConsentRequest = jest.fn().mockResolvedValue({ requested_access_token_audience: 'test', subject: bob.id.toString(), scopes: ['offline', 'openid'] })
 
-      try {
-        await axios.post(`http://localhost:${appContainer.port}/consent?consent_challenge=testChallenge`, { accepts: true, accountId: 1, scopes: ['offline', 'openid', 'mandates.aef-123'] })
-      } catch (error) {
-        expect(error.response.status).toEqual(401)
-        expect(error.response.data).toEqual('You are not allowed to give consent to this agreement.')
-        return
-      }
+    test('binds accountId, userId to mandate if user gives consent for mandate', async () => {
+      const mandate = await Mandate.query().insert({
+        assetCode: 'USD',
+        assetScale: 2,
+        amount: 500n
+      })
+      const authorizationDetails = [
+        {
+          type: 'open_payments_mandate',
+          locations: [
+            mandate.toJSON().name
+          ],
+          actions: [
+            'read', 'charge'
+          ]
+        }
+      ]
 
-      fail()
+      hydra.getConsentRequest = jest.fn().mockResolvedValue({ skip: false, subject: user.id.toString(), client: 'test-client', requested_scope: ['offline'], requested_access_token_audience: 'test', request_url: `https://localhost.com/authorize?authorization_details=${encodeURIComponent(JSON.stringify(authorizationDetails))}` })
+      hydra.acceptConsentRequest = jest.fn().mockResolvedValue({ redirect_to: 'http://localhost:9010/callback' })
+
+      const { status, data } = await axios.post(`http://localhost:${appContainer.port}/consent?consent_challenge=testChallenge`, { accepts: true, accountId: account.id, scopes: ['offline', 'openid'] })
+
+      const updatedMandate = await mandate.$query()
+      expect(updatedMandate.accountId).toBe(account.id)
+      expect(status).toEqual(200)
+      expect(data).toEqual({ redirectTo: 'http://localhost:9010/callback' })
+      expect(hydra.getConsentRequest).toHaveBeenCalled()
+      expect(hydra.acceptConsentRequest).toHaveBeenCalledWith('testChallenge', {
+        remember: true,
+        remember_for: 0,
+        grant_scope: ['offline', 'openid'],
+        grant_access_token_audience: 'test',
+        session: {
+          access_token: {
+            authorization_details: authorizationDetails
+          },
+          id_token: {
+            authorization_details: authorizationDetails
+          }
+        }
+      })
     })
-
-    // TODO Update
-    // test('binds accountId, userId and scope to agreement if user gives consent for mandate', async () => {
-    //   const updatedAgreement = { id: 'aef-123', userId: user.id.toString(), accountId: 1, scope: '$rafiki.money/p/alice' }
-    //   hydra.getConsentRequest = jest.fn().mockResolvedValue({ requested_access_token_audience: 'test', subject: user.id.toString(), scopes: ['offline', 'openid'] })
-    //   hydra.acceptConsentRequest = jest.fn().mockResolvedValue({ redirect_to: 'http://localhost:9010/callback' })
-    //   axios.patch = jest.fn().mockResolvedValue({ data: updatedAgreement })
-    //
-    //   const { status, data } = await axios.post(`http://localhost:${appContainer.port}/consent?consent_challenge=testChallenge`, { accepts: true, accountId: 1, scopes: ['offline', 'openid', 'mandates.aef-123'] })
-    //
-    //   expect(status).toEqual(200)
-    //   expect(data).toEqual({ redirectTo: 'http://localhost:9010/callback' })
-    //   expect(hydra.getConsentRequest).toHaveBeenCalled()
-    //   expect(axios.patch).toHaveBeenCalledWith('http://localhost:3001/mandates/aef-123', { accountId: 1, userId: user.id.toString(), scope: '$rafiki.money/p/alice' })
-    //   expect(hydra.acceptConsentRequest).toHaveBeenCalledWith('testChallenge', {
-    //     remember: true,
-    //     remember_for: 0,
-    //     grant_scope: ['offline', 'openid', 'mandates.aef-123'],
-    //     grant_access_token_audience: 'test',
-    //     session: {
-    //       access_token: {
-    //         interledger: {
-    //           agreement: updatedAgreement
-    //         }
-    //       },
-    //       id_token: {
-    //         interledger: {
-    //           agreement: updatedAgreement
-    //         }
-    //       }
-    //     }
-    //   })
-    // })
-    //
-    // test('binds accountId and userId to agreement if user gives consent for intent', async () => {
-    //   const updatedIntent = { id: 'aef-123', userId: user.id.toString(), accountId: 1 }
-    //   hydra.getConsentRequest = jest.fn().mockResolvedValue({ requested_access_token_audience: 'test', subject: user.id.toString(), scopes: ['offline', 'openid'] })
-    //   hydra.acceptConsentRequest = jest.fn().mockResolvedValue({ redirect_to: 'http://localhost:9010/callback' })
-    //   axios.patch = jest.fn().mockResolvedValue({ data: updatedIntent })
-    //
-    //   const { status, data } = await axios.post('http://localhost:3000/consent?consent_challenge=testChallenge', { accepts: true, accountId: 1, scopes: ['offline', 'openid', 'intents.aef-123'] })
-    //
-    //   expect(status).toEqual(200)
-    //   expect(data).toEqual({ redirectTo: 'http://localhost:9010/callback' })
-    //   expect(hydra.getConsentRequest).toHaveBeenCalled()
-    //   expect(axios.patch).toHaveBeenCalledWith('http://localhost:3001/intents/aef-123', { accountId: 1, userId: user.id.toString() })
-    //   expect(hydra.acceptConsentRequest).toHaveBeenCalledWith('testChallenge', {
-    //     remember: true,
-    //     remember_for: 0,
-    //     grant_scope: ['offline', 'openid', 'intents.aef-123'],
-    //     grant_access_token_audience: 'test',
-    //     session: {
-    //       access_token: {
-    //         interledger: {
-    //           agreement: updatedIntent
-    //         }
-    //       },
-    //       id_token: {
-    //         interledger: {
-    //           agreement: updatedIntent
-    //         }
-    //       }
-    //     }
-    //   })
-    // })
   })
 })
