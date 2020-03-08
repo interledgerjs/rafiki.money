@@ -1,11 +1,10 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars */
 import React, { useState, Component } from 'react'
 import Select from 'react-select'
 import { NextPage } from 'next'
 import { Card, Content, Navigation, TextInput } from '../components'
 import { Doughnut } from 'react-chartjs-2'
-import { realpathSync } from 'fs'
 
 // import "../styles/main.css";
 
@@ -126,14 +125,14 @@ const doughnutOptions = {
   }
 }
 
-const Listline = ({ mandateArray, setSelectedMandate }) => {
+const Listline = ({ mandateArray, selectMandate }) => {
   return (
     mandateArray.map(mandate => {
       return (
         <div
           key={mandate.id}
           className="border-t border-color-gray h-18 flex flex-row listline-div"
-          onClick={() => setSelectedMandate(mandate.id)}> {/* having trouble setting colour of border */}
+          onClick={() => selectMandate(mandate.id)}> {/* having trouble setting colour of border */}
           <div className="flex flex-col">
             <img className="listline-img" src="http://placecorgi.com/79/79" />
           </div>
@@ -258,7 +257,7 @@ const TopRow = () => (
   </div>
 )
 
-const List = ({ mandateArray, setSelectedMandate }) => (
+const List = ({ mandateArray, selectMandate }) => (
   <div className="flex flex-row">
     <div className="flex flex-col bg-surface-elevation-1 elevation-1 rounded text-on-surface">
       <div className="flex h-10 self-end">
@@ -268,20 +267,24 @@ const List = ({ mandateArray, setSelectedMandate }) => (
           <div className="w-1/4">Currency</div>
         </div>
       </div>
-      <Listline mandateArray={mandateArray} setSelectedMandate={setSelectedMandate} />
+      <Listline
+        mandateArray={mandateArray}
+        selectMandate={selectMandate}/>
     </div>
   </div>
 )
 
-const MainView = ({ mandateArray, setSelectedMandate }) => (
+const MainView = ({ mandateArray, selectMandate }) => (
   <div className="flex flex-col">
     <TopRow />
-    <List mandateArray={mandateArray} setSelectedMandate={setSelectedMandate} />
+    <List
+      mandateArray={mandateArray}
+      selectMandate={selectMandate}/>
   </div>
 )
 
 const Account: NextPage = () => {
-  const [mandateArray, setMandateArray] = useState( // hard-coded mandate object
+  const [mandateArray] = useState( // hard-coded mandate object
     [
       {
         id: '3061108',
@@ -314,32 +317,32 @@ const Account: NextPage = () => {
     ]
   )
 
-  const [selectedMandateTransactionArray, setSelectedMandateTransactionArray] = useState(
-    [
-      {
-        id: 3061111,
-        createdAt: 'date of bb1 t1',
-        amount: BigInt(11)
-      }, {
-        id: 3061112,
-        createdAt: 'date of bb1 t2',
-        amount: BigInt(12)
-      }, {
-        id: 3061113,
-        createdAt: 'date of bb1 t3',
-        amount: BigInt(13)
-      }
-    ]
-  )
+  const [selectedMandate, setSelectedMandate] = useState('3061108')
 
-  const [selectedMandate, setSelectedMandate] = useState(3061108)
+  const [selectedMandateTransactionArray, setSelectedMandateTransactionArray] = useState(bb1TransactionArray)
+
+  const selectMandate = (mandateId) => {
+    setSelectedMandate(mandateId)
+    setSelectedMandateTransactionArray(() => {
+      switch (mandateId) {
+        case '3061108':
+          return (bb1TransactionArray)
+        case '3061109':
+          return (bb2TransactionArray)
+        case '3061110':
+          return (bb3TransactionArray)
+      }
+    })
+  }
 
   return (
     <div className="flex flex-grow">
       <Navigation active="mandates"></Navigation>
       <Content navigation>
         <div className="flex flex-row h-full">
-          <MainView mandateArray={mandateArray} setSelectedMandate={setSelectedMandate} />
+          <MainView
+            mandateArray={mandateArray}
+            selectMandate={selectMandate}/>
           <SidePanel
             mandateArray={mandateArray}
             selectedMandateTransactionArray={selectedMandateTransactionArray}
