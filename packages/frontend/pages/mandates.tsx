@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// import React, { useState, Component } from 'react'
-import React from 'react'
+import React, { useState, Component } from 'react'
 import Select from 'react-select'
 import { NextPage } from 'next'
 import { Card, Content, Navigation, TextInput } from '../components'
@@ -10,12 +9,11 @@ import { realpathSync } from 'fs'
 
 // import "../styles/main.css";
 
-// put arrays in state
-// link state to rafiki api
 // make mandate list clickable
+// link state to rafiki api
 // make transaction list scrollable
 // refine the way components display
-// re-enable linting rules
+// re-enable linting rules (top of file)
 
 type MandateJSON = {
   id: string
@@ -39,38 +37,6 @@ type TransactionJSON = {
   createdAt: string,
   updatedAt?: string
 }
-
-// hard-coded mandate object
-const mandateArray: Array<MandateJSON> = [
-  {
-    id: '3061108',
-    description: 'Big Burger 1',
-    balance: '1.00',
-    amount: '1000.00',
-    interval: 'Once',
-    assetCode: '111',
-    startAt: '01-01-0001 01:01',
-    expireAt: '10-10-1000 10:10'
-  }, {
-    id: '3061109',
-    description: 'Big Burger 2',
-    balance: '2.00',
-    amount: '2000.00',
-    interval: 'Twice',
-    assetCode: '222',
-    startAt: '02-02-0002 02:02',
-    expireAt: '20-20-2000 20:20'
-  }, {
-    id: '3061110',
-    description: 'Big Burger 3',
-    balance: '3.00',
-    amount: '3000.00',
-    interval: 'Thrice',
-    assetCode: '333',
-    startAt: '03-03-0003 03:03',
-    expireAt: '30-30-3000 30:30'
-  }
-]
 
 const bb1TransactionArray: Array<TransactionJSON> = [
   {
@@ -160,11 +126,14 @@ const doughnutOptions = {
   }
 }
 
-const Listline = ({ mandateArray }) => {
+const Listline = ({ mandateArray, setSelectedMandate }) => {
   return (
     mandateArray.map(mandate => {
       return (
-        <div key={mandate.id} className="border-t border-color-gray h-18 flex flex-row listline-div"> {/* having trouble setting colour of border */}
+        <div
+          key={mandate.id}
+          className="border-t border-color-gray h-18 flex flex-row listline-div"
+          onClick={() => setSelectedMandate(mandate.id)}> {/* having trouble setting colour of border */}
           <div className="flex flex-col">
             <img className="listline-img" src="http://placecorgi.com/79/79" />
           </div>
@@ -187,9 +156,9 @@ const Listline = ({ mandateArray }) => {
   )
 }
 
-const TransactionCard = ({ bb1TransactionArray }) => {
+const TransactionCard = ({ selectedMandateTransactionArray }) => {
   return (
-    bb1TransactionArray.map(transaction => {
+    selectedMandateTransactionArray.map(transaction => {
       return (
         <div key={transaction.id} className="flex flex-col">
           <div className="my-2">
@@ -208,11 +177,11 @@ const TransactionCard = ({ bb1TransactionArray }) => {
   )
 }
 
-const DateBox = () => (
+const DateBox = ({ mandateArray, selectedMandate }) => (
   <div className="mt-16 body-2">
     <div className="flex flex-row justify-between">
       <div className="">Created</div>
-      <div className="">{mandateArray[0].startAt}</div>
+      <div className="">{selectedMandate}</div>
     </div>
     <div className="flex flex-row justify-between">
       <div className="">Expires</div>
@@ -253,13 +222,13 @@ const WholeDoughnut = () => (
   </div>
 )
 
-const SidePanel = () => (
+const SidePanel = ({ mandateArray, selectedMandateTransactionArray, selectedMandate }) => (
   <div className="ml-8">
     <div className="p-4 bg-surface-elevation-1 elevation-1 rounded text-on-surface sm:max-w-full md:w-card h-full">
       <WholeDoughnut />
-      <DateBox />
+      <DateBox mandateArray={mandateArray} selectedMandate={selectedMandate} />
       <div className="mt-10 headline-6">Transactions</div>
-      <TransactionCard bb1TransactionArray={bb1TransactionArray}/>
+      <TransactionCard selectedMandateTransactionArray={selectedMandateTransactionArray} />
     </div>
   </div>
 )
@@ -289,7 +258,7 @@ const TopRow = () => (
   </div>
 )
 
-const List = () => (
+const List = ({ mandateArray, setSelectedMandate }) => (
   <div className="flex flex-row">
     <div className="flex flex-col bg-surface-elevation-1 elevation-1 rounded text-on-surface">
       <div className="flex h-10 self-end">
@@ -299,35 +268,86 @@ const List = () => (
           <div className="w-1/4">Currency</div>
         </div>
       </div>
-      <Listline mandateArray={mandateArray} />
+      <Listline mandateArray={mandateArray} setSelectedMandate={setSelectedMandate} />
     </div>
   </div>
 )
 
-const MainView = () => (
+const MainView = ({ mandateArray, setSelectedMandate }) => (
   <div className="flex flex-col">
     <TopRow />
-    <List />
+    <List mandateArray={mandateArray} setSelectedMandate={setSelectedMandate} />
   </div>
 )
 
-const GrandParent = () => (
-  <div className="flex flex-row h-full">
-    <MainView />
-    <SidePanel />
-  </div>
-)
+const Account: NextPage = () => {
+  const [mandateArray, setMandateArray] = useState( // hard-coded mandate object
+    [
+      {
+        id: '3061108',
+        description: 'Big Burger 1',
+        balance: '1.00',
+        amount: '1000.00',
+        interval: 'Once',
+        assetCode: '111',
+        startAt: '01-01-0001 01:01',
+        expireAt: '10-10-1000 10:10'
+      }, {
+        id: '3061109',
+        description: 'Big Burger 2',
+        balance: '2.00',
+        amount: '2000.00',
+        interval: 'Twice',
+        assetCode: '222',
+        startAt: '02-02-0002 02:02',
+        expireAt: '20-20-2000 20:20'
+      }, {
+        id: '3061110',
+        description: 'Big Burger 3',
+        balance: '3.00',
+        amount: '3000.00',
+        interval: 'Thrice',
+        assetCode: '333',
+        startAt: '03-03-0003 03:03',
+        expireAt: '30-30-3000 30:30'
+      }
+    ]
+  )
 
-const Account: NextPage = () => (
-  <div className="flex flex-grow">
-    <Navigation active="mandates"></Navigation>
-    <Content navigation>
-      <div className="flex flex-row h-full">
-        <MainView />
-        <SidePanel />
-      </div>
-    </Content>
-  </div>
-)
+  const [selectedMandateTransactionArray, setSelectedMandateTransactionArray] = useState(
+    [
+      {
+        id: 3061111,
+        createdAt: 'date of bb1 t1',
+        amount: BigInt(11)
+      }, {
+        id: 3061112,
+        createdAt: 'date of bb1 t2',
+        amount: BigInt(12)
+      }, {
+        id: 3061113,
+        createdAt: 'date of bb1 t3',
+        amount: BigInt(13)
+      }
+    ]
+  )
+
+  const [selectedMandate, setSelectedMandate] = useState(3061108)
+
+  return (
+    <div className="flex flex-grow">
+      <Navigation active="mandates"></Navigation>
+      <Content navigation>
+        <div className="flex flex-row h-full">
+          <MainView mandateArray={mandateArray} setSelectedMandate={setSelectedMandate} />
+          <SidePanel
+            mandateArray={mandateArray}
+            selectedMandateTransactionArray={selectedMandateTransactionArray}
+            selectedMandate={selectedMandate} />
+        </div>
+      </Content>
+    </div>
+  )
+}
 
 export default Account
