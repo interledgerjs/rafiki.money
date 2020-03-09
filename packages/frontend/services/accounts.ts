@@ -13,10 +13,11 @@ export const AccountsService = (authErrorCallback?: () => void) => {
         headers: { authorization: `Bearer ${token}` }
       }).then(resp => resp.json())
     },
-    createAccount: async(token: string, accountName: string) => {
+    createAccount: async(token: string, name: string) => {
       const url = new URL('accounts/', ACCOUNTS_API_URL)
       return ky.post(url.toString(), {
-        json: {accountName}
+        headers: { authorization: `Bearer ${token}` },
+        json: {name}
       }).then(resp => resp.json())
     }
   }

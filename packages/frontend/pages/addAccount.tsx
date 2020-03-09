@@ -14,17 +14,18 @@ type Props = {
   token: any;
 };
 
-const AddAccount: NextPage<Props> = (props) => {
+const AddAccount: NextPage<Props> = props => {
   const router = useRouter();
   const { register, handleSubmit, errors, setError, clearError } = useForm();
   const formRef = useRef<HTMLFormElement>(null);
   const accountsService = AccountsService();
 
-  const onSubmit = async (data) => {
-    console.log(data)
+  const onSubmit = async data => {
+    console.log(data.name);
+    console.log(props.token)
     if (data) {
       await accountsService
-        .createAccount(props.token, data.accountName)
+        .createAccount(props.token.toString(), data.name.toString())
         .then(data => {
           window.location.href = `/overview`;
         })
@@ -47,7 +48,7 @@ const AddAccount: NextPage<Props> = (props) => {
             <div className="self-center w-full ">
               <TextInput
                 errorState={errors.name != undefined}
-                name="account"
+                name="name"
                 label="Account Name"
                 inputRef={register({ required: true })}
                 hint="Required"
@@ -67,11 +68,11 @@ const AddAccount: NextPage<Props> = (props) => {
               </div>
               <div>
                 <Button
-                  // onClick={() => router.push("/overview")}
                   className="mr-4"
                   bgColour="primary"
                   type="solid"
                   buttonType="submit"
+                  disabled={Object.keys(errors).length > 0}
                 >
                   SAVE
                 </Button>
@@ -86,7 +87,7 @@ const AddAccount: NextPage<Props> = (props) => {
 
 AddAccount.getInitialProps = async ctx => {
   const user = await checkUser(ctx);
-
+  console.log(user);
   return user;
 };
 
