@@ -6,9 +6,6 @@ import useForm from "react-hook-form";
 import { AccountsService } from "../services/accounts";
 import { checkUser } from "../utils";
 
-const btnCancelTap = () => {};
-const btnSaveTap = () => {};
-
 type Props = {
   id: any;
   token: any;
@@ -21,8 +18,6 @@ const AddAccount: NextPage<Props> = props => {
   const accountsService = AccountsService();
 
   const onSubmit = async data => {
-    console.log(data.name);
-    console.log(props.token)
     if (data) {
       await accountsService
         .createAccount(props.token.toString(), data.name.toString())

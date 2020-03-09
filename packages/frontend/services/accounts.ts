@@ -19,6 +19,14 @@ export const AccountsService = (authErrorCallback?: () => void) => {
         headers: { authorization: `Bearer ${token}` },
         json: {name}
       }).then(resp => resp.json())
+    },
+    // FIXME: Remove from production
+    faucetAccount: async(token: string, accountId: string) => {
+      const url = new URL('faucet/', ACCOUNTS_API_URL)
+      return ky.post(url.toString(), {
+        headers: { authorization: `Bearer ${token}` },
+        json: {accountId}
+      }).then(resp => resp.json())
     }
   }
 }

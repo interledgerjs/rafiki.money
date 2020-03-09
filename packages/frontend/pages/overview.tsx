@@ -2,7 +2,9 @@
 TODO:
 - [] colour on graph change based on darkmode
 - [] transactions service needed
-- [] accounts service needed
+- [X] accounts service needed
+- [] total balance
+- [] dynamic payment pointer
 */
 
 import React, { useState, useEffect, Fragment } from "react";
@@ -13,7 +15,6 @@ import { useRouter } from "next/router";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { checkUser } from "../utils";
 import { AccountsService } from "../services/accounts";
-import { parseCookies } from "nookies";
 
 // -- Typings ----------------------------------
 type Props = {
@@ -395,7 +396,9 @@ const Overview: NextPage<Props> = ({ account }) => {
               <div className="pl-16 relative flex">
                 <Card>
                   <div className="headline-5">Payment Pointer</div>
-                  <div className="body-2 mt-1">{account.user.paymentPointer}</div>
+                  <div className="body-2 mt-1">
+                    {account.user.paymentPointer}
+                  </div>
                   <div className="flex pr-3 pt-5 justify-end">
                     <CopyToClipboard
                       text={account.user.paymentPointer}
