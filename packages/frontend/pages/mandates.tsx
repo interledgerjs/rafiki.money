@@ -8,7 +8,7 @@ import { Doughnut } from 'react-chartjs-2'
 
 // import "../styles/main.css";
 
-// make mandate list clickable
+// make datebox reactive
 // link state to rafiki api
 // make transaction list scrollable
 // refine the way components display
@@ -176,15 +176,15 @@ const TransactionCard = ({ selectedMandateTransactionArray }) => {
   )
 }
 
-const DateBox = ({ mandateArray, selectedMandate }) => (
+const DateBox = ({ selectedMandate }) => (
   <div className="mt-16 body-2">
     <div className="flex flex-row justify-between">
       <div className="">Created</div>
-      <div className="">{selectedMandate}</div>
+      <div className="">{selectedMandate.startAt}</div>
     </div>
     <div className="flex flex-row justify-between">
       <div className="">Expires</div>
-      <div className="">{mandateArray[0].expireAt}</div>
+      <div className="">{selectedMandate.expireAt}</div>
     </div>
   </div>
 )
@@ -221,11 +221,11 @@ const WholeDoughnut = () => (
   </div>
 )
 
-const SidePanel = ({ mandateArray, selectedMandateTransactionArray, selectedMandate }) => (
+const SidePanel = ({ selectedMandateTransactionArray, selectedMandate }) => (
   <div className="ml-8">
     <div className="p-4 bg-surface-elevation-1 elevation-1 rounded text-on-surface sm:max-w-full md:w-card h-full">
       <WholeDoughnut />
-      <DateBox mandateArray={mandateArray} selectedMandate={selectedMandate} />
+      <DateBox selectedMandate={selectedMandate} />
       <div className="mt-10 headline-6">Transactions</div>
       <TransactionCard selectedMandateTransactionArray={selectedMandateTransactionArray} />
     </div>
@@ -317,12 +317,30 @@ const Account: NextPage = () => {
     ]
   )
 
-  const [selectedMandate, setSelectedMandate] = useState('3061108')
+  const [selectedMandate, setSelectedMandate] = useState({
+    id: '3061108',
+    description: 'Big Burger 1',
+    balance: '1.00',
+    amount: '1000.00',
+    interval: 'Once',
+    assetCode: '111',
+    startAt: '01-01-0001 01:01',
+    expireAt: '10-10-1000 10:10'
+  })
 
   const [selectedMandateTransactionArray, setSelectedMandateTransactionArray] = useState(bb1TransactionArray)
 
   const selectMandate = (mandateId) => {
-    setSelectedMandate(mandateId)
+    setSelectedMandate(() => {
+      switch (mandateId) {
+        case '3061108':
+          return (mandateArray[0])
+        case '3061109':
+          return (mandateArray[1])
+        case '3061110':
+          return (mandateArray[2])
+      }
+    })
     setSelectedMandateTransactionArray(() => {
       switch (mandateId) {
         case '3061108':
@@ -344,7 +362,6 @@ const Account: NextPage = () => {
             mandateArray={mandateArray}
             selectMandate={selectMandate}/>
           <SidePanel
-            mandateArray={mandateArray}
             selectedMandateTransactionArray={selectedMandateTransactionArray}
             selectedMandate={selectedMandate} />
         </div>
