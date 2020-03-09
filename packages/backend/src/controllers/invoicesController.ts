@@ -15,21 +15,7 @@ export async function show (ctx: AppContext): Promise<void> {
     return
   }
 
-<<<<<<< HEAD
   ctx.body = invoice.toJSON()
-=======
-  const name = '//' + invoiceObj.subject.substring(invoiceObj.subject.indexOf('$') + 1, invoiceObj.subject.indexOf('/')) + '/invoices/' + invoiceObj.id
-
-  ctx.body = {
-    name,
-    subject: invoiceObj.subject,
-    amount: invoiceObj.amount,
-    assetCode: invoiceObj.assetCode,
-    assetScale: invoiceObj.assetScale,
-    description: invoiceObj.description,
-    received: invoiceObj.received
-  }
->>>>>>> origin/invoicePayment
 }
 
 export async function store (ctx: AppContext): Promise<void> {
@@ -56,13 +42,6 @@ export async function store (ctx: AppContext): Promise<void> {
       received: 0n
     })
 
-<<<<<<< HEAD
-=======
-    const invoiceObj = invoice.toJSON()
-
-    const name = '//' + invoiceObj.subject.substring(invoiceObj.subject.indexOf('$') + 1, invoiceObj.subject.indexOf('/')) + '/invoices/' + invoiceObj.id
-
->>>>>>> origin/invoicePayment
     ctx.response.status = 201
     ctx.body = invoice.toJSON()
   } catch (error) {

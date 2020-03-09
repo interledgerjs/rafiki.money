@@ -70,11 +70,7 @@ const Signup: NextPage = () => {
           </div>
 
           <div className='text-center my-12'>
-<<<<<<< HEAD
             <Button onClick={() => router.push('/')} className="mr-4" bgColour="primary" type='text'>GO BACK</Button>
-=======
-            <Button onTap={ () => { window.location.href = '/' } } className="mr-4" bgColour="primary" type='text'>GO BACK</Button>
->>>>>>> origin/invoicePayment
             <Button disabled={Object.keys(errors).length > 0} type='solid' buttonType='submit'>SIGN UP</Button>
           </div>
 

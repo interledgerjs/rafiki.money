@@ -75,13 +75,9 @@ const Login: NextPage<Props> = ({login_challenge}) => {
           </div>
 
           <div className='text-center my-12'>
-<<<<<<< HEAD
             <a href='/' className='mr-4'>
               <Button onClick={() => { window.location.href = 'landing' }} bgColour="primary" type='text'>GO BACK</Button>
             </a>
-=======
-            <Button onTap={ () => { window.location.href = '/' } } className="mr-4" bgColour="primary" type='text'>GO BACK</Button>
->>>>>>> origin/invoicePayment
             <Button disabled={Object.keys(errors).length > 0} bgColour="primary" type='solid' buttonType='submit'>LOGIN</Button>
           </div>
 
