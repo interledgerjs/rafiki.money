@@ -1,14 +1,44 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { NextPage } from 'next'
 import { parseCookies } from 'nookies'
 import { UsersService } from '../services/users'
 import { Button, Logo } from '../components'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import Head from 'next/head'
 
 const usersService = UsersService()
 
 const Home: NextPage = () => {
+
+  useEffect(() => {
+    // Check if service worker is available
+    if ('serviceWorker' in navigator) {
+      // Register a service worker
+      const registration = navigator.serviceWorker.register(
+        // A service worker JS file is separate
+        'sw.js'
+      );
+      // Check if Payment Handler is available
+      // @ts-ignore
+      if (!registration.paymentManager) return;
+
+      // @ts-ignore
+      registration.paymentManager.userHint = 'payment-handler user hint';
+      // @ts-ignore
+      registration.paymentManager.instruments.set(
+        // Payment instrument key can be any string.
+        'http://localhost:3000',
+        // Payment instrument detail
+        {
+          name: 'Payment Handler Example',
+          method: 'test'
+        }
+      )
+    }
+
+  });
+
   const router = useRouter()
   return (
     <div className="flex w-full h-screen">
@@ -37,7 +67,7 @@ const Home: NextPage = () => {
 
 export default Home
 
-// Home.getInitialProps = async (ctx) => {
+Home.getInitialProps = async (ctx) => {
 //   const cookies = parseCookies(ctx)
 
   // TODO add check if logged in and default to overview page
@@ -58,6 +88,7 @@ export default Home
   //   //
   //   // window.location.href = '/login'
   // }
+  ctx.res.setHeader('link', "<http://localhost:3000/payment-manifest.json>; rel=\"payment-method-manifest\"")
 
-//   return {}
-// }
+  return {}
+}

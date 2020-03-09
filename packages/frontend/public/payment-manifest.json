@@ -1,0 +1,4 @@
+{
+  "default_applications": ["http://localhost:3000/manifest.json"],
+  "supported_origins": ["http://localhost:3000"]
+}
