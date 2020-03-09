@@ -6,20 +6,25 @@ import { createTestApp, TestAppContainer } from '../helpers/app'
 import { mockAuth } from '../helpers/auth'
 import { Account } from '../../src/models/account'
 import { Mandate } from '../../src/models/mandate'
+import Knex, { Transaction } from 'knex'
+import { Model } from 'objection'
 
 describe('Consent', function () {
   let appContainer: TestAppContainer
   let user: User
   let account: Account
+  let trx: Transaction
   mockAuth()
 
   beforeAll(async () => {
     appContainer = createTestApp()
+    await appContainer.knex.migrate.rollback()
+    await appContainer.knex.migrate.latest()
   })
 
   beforeEach(async () => {
-    await appContainer.knex.migrate.rollback()
-    await appContainer.knex.migrate.latest()
+    trx = await appContainer.knex.transaction()
+    Model.knex(trx as Knex)
     user = await User.query().insert({
       username: 'albert'
     })
@@ -33,12 +38,14 @@ describe('Consent', function () {
   })
 
   afterEach(async () => {
-    await appContainer.knex.migrate.rollback()
+    await trx.rollback()
+    await trx.destroy()
   })
 
-  afterAll(() => {
+  afterAll(async () => {
+    await appContainer.knex.migrate.rollback()
     appContainer.app.shutdown()
-    appContainer.knex.destroy()
+    await appContainer.knex.destroy()
   })
 
   describe('Get consent request', function () {

@@ -21,19 +21,29 @@ export type ConsentRequest = {
     client_name?: string
   },
   requestedScopes: string[],
-  agreementUrl?: string,
+  mandate?: {
+    id: string,
+    assetCode: string
+    assetScale: number
+    amount: string
+  },
   redirectTo?: string
 }
 
-const dummyConsent: ConsentRequest = {
+const dummyMandateConsent: ConsentRequest = {
   client: {
     client_id: 'Test',
     redirect_uris: [],
     client_name: 'Merchant'
   },
-  agreementUrl: '123',
+  mandate: {
+    id: '123',
+    assetCode: 'EUR',
+    assetScale: 6,
+    amount: '20000000'
+  },
   requestedScopes: [
-    'intents', 'offline', 'openid'
+    'offline',
   ],
   accounts: [
     {
@@ -70,13 +80,18 @@ const Consent: NextPage<Props> = ({consentChallenge, consent}) => {
   }
 
   return consent ?
-    consent.agreementUrl ?
+    consent.mandate ?
       <AgreementConsent challenge={consentChallenge} consentRequest={consent} /> :
       <NormalConsent consentRequest={consent}  acceptConsent={handleConsent.bind(this)} /> : null
 }
 
 Consent.getInitialProps = async ({query, res}) => {
   const { consent_challenge } = query
+
+  return {
+    consentChallenge: consent_challenge.toString(),
+    consent: dummyMandateConsent
+  }
 
   if(!consent_challenge) {
     res.writeHead(302, {

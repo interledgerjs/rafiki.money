@@ -1,28 +1,35 @@
 import axios from 'axios'
+import Knex from 'knex'
 import { createTestApp, TestAppContainer } from '../helpers/app'
 import { Account } from '../../src/models/account'
 import { mockAuth } from '../helpers/auth'
 import { User } from '../../src/models/user'
+import { Transaction } from 'knex'
+import { Model } from 'objection'
 
 describe('Accounts API Test', () => {
   let appContainer: TestAppContainer
+  let trx: Transaction
   mockAuth()
 
   beforeAll(async () => {
-    appContainer = createTestApp()
-  })
-
-  beforeEach(async () => {
+    appContainer = await createTestApp()
     await appContainer.knex.migrate.latest()
   })
 
-  afterEach(async () => {
-    await appContainer.knex.migrate.rollback()
+  beforeEach(async () => {
+    trx = await appContainer.knex.transaction()
+    Model.knex(trx as Knex)
   })
 
-  afterAll(() => {
+  afterEach(async () => {
+    await trx.rollback()
+    await trx.destroy()
+  })
+
+  afterAll(async () => {
     appContainer.app.shutdown()
-    appContainer.knex.destroy()
+    await appContainer.knex.destroy()
   })
 
   describe('Creating Account', () => {
@@ -183,7 +190,7 @@ describe('Accounts API Test', () => {
     })
 
     it('User can get their own accounts', async () => {
-      const response = await axios.get(`http://localhost:${appContainer.port}/accounts?userId=1`, {
+      const response = await axios.get(`http://localhost:${appContainer.port}/accounts?userId=${user.id}`, {
         headers: {
           authorization: `Bearer user_${user.id}`
         }
@@ -193,7 +200,7 @@ describe('Accounts API Test', () => {
 
       expect(response.length).toBe(2)
       response.forEach((account: any) => {
-        expect(account.userId).toBe(1)
+        expect(account.userId).toBe(user.id)
       })
     })
 
