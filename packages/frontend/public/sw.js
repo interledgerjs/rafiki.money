@@ -58,6 +58,9 @@ self.addEventListener('message', e => {
     return;
   } else if (e.data === "invoice_ready") {
     checkoutURL += ''
+  } else if (e.data === "The payment request is cancelled by user") {
+    resolver.resolve(e.data)
+    return
   }
 
   if (e.data.methodName === methodName) {
