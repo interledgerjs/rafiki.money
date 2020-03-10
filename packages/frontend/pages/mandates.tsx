@@ -5,12 +5,15 @@ import Select from 'react-select'
 import { NextPage } from 'next'
 import { Card, Content, Navigation, TextInput } from '../components'
 import { Doughnut } from 'react-chartjs-2'
+import { MandatesService } from '../services/mandates'
 
 // import "../styles/main.css";
 
-// make datebox reactive
 // link state to rafiki api
+// -implement test call from mandates page to api
+// -implement remainder of calls and make data live
 // make transaction list scrollable
+// make doughnut ratio reactive
 // refine the way components display
 // re-enable linting rules (top of file)
 
