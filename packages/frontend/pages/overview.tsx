@@ -1,10 +1,12 @@
 /* 
 TODO:
 - [] colour on graph change based on darkmode
+- [] graph updated on click
+- [] graph dynamic data
 - [] transactions service needed
 - [X] accounts service needed
 - [] total balance
-- [] dynamic payment pointer
+- [X] dynamic payment pointer
 */
 
 import React, { useState, useEffect, Fragment } from "react";
@@ -52,8 +54,8 @@ type AccountInfo = {
 type AccountData = {
   user: {
     client_id: string;
-    totalBalance: number;
-    paymentPointer: string;
+    username: string;
+    defaultAccountId: number;
   };
   accounts?: AccountInfo[];
   transactions: TransactionInfo[];
@@ -63,9 +65,9 @@ type AccountData = {
 //dummy for main account info in getInitialProps
 const dummyAccountInfo: AccountData = {
   user: {
-    client_id: "Test",
-    totalBalance: 500,
-    paymentPointer: "$rafiki.money/p/cairin@coil.com"
+    client_id: "1",
+    username: "Testname",
+    defaultAccountId: null
   },
   accounts: [
     {
@@ -190,6 +192,7 @@ const updatedDummyAccountInfo: TransactionInfo[] = [
 const Overview: NextPage<Props> = ({ account }) => {
   const router = useRouter();
   const [accountDataState, setAccountData] = useState(account);
+  const paymentPointer:string  = `$rafiki.money/p/${account.user.username}`
 
   // Renders Accounts cards
   function AccountCard(name: String, balance: String) {
@@ -389,7 +392,7 @@ const Overview: NextPage<Props> = ({ account }) => {
                 <Card>
                   <div className="headline-5 bg">Total balance</div>
                   <div className="headline-3 pb-1">
-                    $ {account.user.totalBalance}
+                    $ 500
                   </div>
                 </Card>
               </div>
@@ -397,11 +400,11 @@ const Overview: NextPage<Props> = ({ account }) => {
                 <Card>
                   <div className="headline-5">Payment Pointer</div>
                   <div className="body-2 mt-1">
-                    {account.user.paymentPointer}
+                  {paymentPointer}
                   </div>
                   <div className="flex pr-3 pt-5 justify-end">
                     <CopyToClipboard
-                      text={account.user.paymentPointer}
+                      text= {paymentPointer}
                       onCopy={() => alert("Copied to clipboard")}
                     >
                       <span>
@@ -447,6 +450,7 @@ Overview.getInitialProps = async ctx => {
   // FIXME: Get Transactions from those accounts instead of mocking data
   const account = dummyAccountInfo;
   account.accounts = retrievedAccounts;
+  account.user = retrievedUser
 
   return { account };
 };
