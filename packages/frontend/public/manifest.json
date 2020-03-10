@@ -1,6 +1,6 @@
 {
-  "short_name": "http://localhost:3000",
-  "name": "http://localhost:3000",
+  "short_name": "http://localhost:3000/",
+  "name": "http://localhost:3000/",
   "icons": [
     {
       "src": "icon_ilp.png",

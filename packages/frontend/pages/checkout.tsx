@@ -3,40 +3,41 @@ import { NextPage } from "next"
 import { UsersService } from '../services/users'
 import ky from 'ky'
 import axios from 'axios'
-import { Button, TextInput } from '../components'
+import { Button } from '../components'
 import { checkUser } from '../utils'
 import { setCookie, parseCookies, destroyCookie } from 'nookies'
 
+const METHOD_NAME = process.env.METHOD_NAME || 'http://localhost:3000/'
+
 const Pay = (props) => {
 
-  let client;
+  let client
 
   useEffect(() => {
     navigator.serviceWorker.addEventListener('message', e => {
-      client = e.source;
+      client = e.source
       console.log('e source ->',client)
-    });
-    navigator.serviceWorker.controller.postMessage('payment_app_window_ready');
+    })
+    navigator.serviceWorker.controller.postMessage('payment_app_window_ready')
+    if (props.invoice) {
+      console.log(props.invoice.name)
+    }
   })
 
   const onPay = () => {
-    if (!client) return;
+    if (!client) return
     console.log(client)
     const response = {
-      methodName: 'http://localhost:3000',
-      details: { id: '123456' }
-    };
-    client.postMessage(response);
-    // Chrome will close all windows in the scope of the service worker
-    // after the service worker responds to the 'paymentrequest' event.
+      methodName: METHOD_NAME,
+      details: props.invoice
+    }
+    client.postMessage(response)
   }
 
   const onCancel = () => {
-    if (!client) return;
-    client.postMessage('The payment request is cancelled by user')
-    window.close();
-    // Chrome will close all windows in the scope of the service worker
-    // after the service worker responds to the 'paymentrequest' event.
+    if (!client) return
+    const response = "The payment request is cancelled by user"
+    client.postMessage(response)
   }
 
   if (props.invoice) {
@@ -62,8 +63,8 @@ const Pay = (props) => {
               </tbody>
             </table>
             <div className='text-center my-8 mx-auto'>
-              <Button onTap={ onCancel } className="mr-4" bgColour="primary" type='text'>CANCEL</Button>
-              <Button onTap={ onPay } bgColour="primary" type='text' >PAY</Button>
+              <Button onClick={ onCancel } className="mr-4" bgColour="primary" type='text'>CANCEL</Button>
+              <Button onClick={ onPay } bgColour="primary" type='text' >PAY</Button>
             </div>
           </div>
         </div>
@@ -76,7 +77,7 @@ const Pay = (props) => {
           <div className="max-w-sm">
             <h2 className={`headline-4 text-on-surface text-center my-8`}>Payment Failed</h2>
             <div className='text-center my-8 mx-auto'>
-              <Button onTap={ window.close() } className="mr-4" bgColour="primary" type='text'>CANCEL</Button>
+              <Button onClick={ () => {window.close()} } className="mr-4" bgColour="primary" type='text'>CANCEL</Button>
             </div>
           </div>
         </div>

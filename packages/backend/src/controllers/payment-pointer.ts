@@ -3,7 +3,7 @@ import { User } from '../models/user'
 import { generateSharedSecretFromToken, generateToken } from 'ilp-protocol-stream/dist/src/crypto'
 import { randomBytes } from 'crypto'
 
-const INVOICES_URL = process.env.INVOICES_URL || 'http://localhost:3001/intents'
+const INVOICES_URL = process.env.INVOICES_URL || 'http://localhost:3001/invoices'
 const MANDATES_URL = process.env.MANDATES_URL || 'http://localhost:3001/mandates'
 const SUPPORTED_ASSETS = process.env.SUPPORTED_ASSETS || JSON.stringify(['USD'])
 const AUTHORIZATION_URL = process.env.AUTHORIZATION_URL || 'http://localhost:9000/oauth2/auth'
