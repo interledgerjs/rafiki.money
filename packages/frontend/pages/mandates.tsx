@@ -6,6 +6,10 @@ import { NextPage } from 'next'
 import { Card, Content, Navigation, TextInput } from '../components'
 import { Doughnut } from 'react-chartjs-2'
 import { MandatesService } from '../services/mandates'
+import { checkUser } from '../utils'
+import { defaultProps } from 'react-select/src/Select'
+import { Mandate } from '../../backend/src/models/mandate'
+
 
 // import "../styles/main.css";
 
@@ -135,7 +139,7 @@ const Listline = ({ mandateArray, selectMandate }) => {
         <div
           key={mandate.id}
           className="border-t border-color-gray h-18 flex flex-row listline-div"
-          onClick={() => selectMandate(mandate.id)}> {/* having trouble setting colour of border */}
+          onClick={() => selectMandate(mandate)}> {/* having trouble setting colour of border */}
           <div className="flex flex-col">
             <img className="listline-img" src="http://placecorgi.com/79/79" />
           </div>
@@ -286,71 +290,23 @@ const MainView = ({ mandateArray, selectMandate }) => (
   </div>
 )
 
-const Account: NextPage = () => {
-  const [mandateArray] = useState( // hard-coded mandate object
-    [
-      {
-        id: '3061108',
-        description: 'Big Burger 1',
-        balance: '1.00',
-        amount: '1000.00',
-        interval: 'Once',
-        assetCode: '111',
-        startAt: '01-01-0001 01:01',
-        expireAt: '10-10-1000 10:10'
-      }, {
-        id: '3061109',
-        description: 'Big Burger 2',
-        balance: '2.00',
-        amount: '2000.00',
-        interval: 'Twice',
-        assetCode: '222',
-        startAt: '02-02-0002 02:02',
-        expireAt: '20-20-2000 20:20'
-      }, {
-        id: '3061110',
-        description: 'Big Burger 3',
-        balance: '3.00',
-        amount: '3000.00',
-        interval: 'Thrice',
-        assetCode: '333',
-        startAt: '03-03-0003 03:03',
-        expireAt: '30-30-3000 30:30'
-      }
-    ]
-  )
+const Account: NextPage<Props> = (props) => {
+  const [mandateArray] = useState(props.mandateArray)
 
-  const [selectedMandate, setSelectedMandate] = useState({
-    id: '3061108',
-    description: 'Big Burger 1',
-    balance: '1.00',
-    amount: '1000.00',
-    interval: 'Once',
-    assetCode: '111',
-    startAt: '01-01-0001 01:01',
-    expireAt: '10-10-1000 10:10'
-  })
+  const [selectedMandate, setSelectedMandate]: [Mandate, any] = useState(props.mandateArray[0])
 
   const [selectedMandateTransactionArray, setSelectedMandateTransactionArray] = useState(bb1TransactionArray)
 
-  const selectMandate = (mandateId) => {
-    setSelectedMandate(() => {
-      switch (mandateId) {
-        case '3061108':
-          return (mandateArray[0])
-        case '3061109':
-          return (mandateArray[1])
-        case '3061110':
-          return (mandateArray[2])
-      }
-    })
+  const selectMandate = (mandate: Mandate) => {
+    setSelectedMandate(mandate)
     setSelectedMandateTransactionArray(() => {
-      switch (mandateId) {
-        case '3061108':
+      const i = Math.floor(Math.random() * Math.floor(3))
+      switch (i) {
+        case 0:
           return (bb1TransactionArray)
-        case '3061109':
+        case 1:
           return (bb2TransactionArray)
-        case '3061110':
+        case 2:
           return (bb3TransactionArray)
       }
     })
@@ -371,6 +327,24 @@ const Account: NextPage = () => {
       </Content>
     </div>
   )
+}
+
+type Props = {
+  user: {
+    id: number,
+    username: string,
+    defaultAccountId: string,
+    token: string
+  },
+  mandateArray: Mandate[]
+}
+
+Account.getInitialProps = async (ctx) => {
+  const user = await checkUser(ctx)
+  const mandateArray = await MandatesService().getMandates(user.token)
+  console.log(mandateArray)
+
+  return { user, mandateArray }
 }
 
 export default Account
