@@ -20,7 +20,8 @@ import { AccountsService } from "../services/accounts";
 
 // -- Typings ----------------------------------
 type Props = {
-  account: AccountData;
+  accountData: AccountData;
+  totalBalance: number;
 };
 
 type UserInfo = {
@@ -189,10 +190,10 @@ const updatedDummyAccountInfo: TransactionInfo[] = [
 ];
 
 // -- Main ----------------------------------
-const Overview: NextPage<Props> = ({ account }) => {
+const Overview: NextPage<Props> = ({ accountData, totalBalance }) => {
   const router = useRouter();
-  const [accountDataState, setAccountData] = useState(account);
-  const paymentPointer:string  = `$rafiki.money/p/${account.user.username}`
+  const [accountDataState, setAccountData] = useState(accountData);
+  const paymentPointer:string  = `$rafiki.money/p/${accountData.user.username}`
 
   // Renders Accounts cards
   function AccountCard(name: String, balance: String) {
@@ -247,8 +248,8 @@ const Overview: NextPage<Props> = ({ account }) => {
     let retrievedTransactions = await GetTransactionsData(accountId);
 
     const updatedData = {
-      user: account.user,
-      accounts: account.accounts,
+      user: accountData.user,
+      accounts: accountData.accounts,
       transactions: retrievedTransactions
     };
 
@@ -392,7 +393,7 @@ const Overview: NextPage<Props> = ({ account }) => {
                 <Card>
                   <div className="headline-5 bg">Total balance</div>
                   <div className="headline-3 pb-1">
-                    $ 500
+                    $ {totalBalance}
                   </div>
                 </Card>
               </div>
@@ -425,15 +426,26 @@ const Overview: NextPage<Props> = ({ account }) => {
               </div>
             </div>
             {/* Accounts*/}
-            <div>{renderAccountCards(account)}</div>
+            <div>{renderAccountCards(accountData)}</div>
           </div>
           {/* Right Card */}
-          {RightCard(account)}
+          {RightCard(accountData)}
         </div>
       </Content>
     </div>
   );
 };
+
+// -- Initial Functions ----------------------------------
+
+function calculateBalance(accounts: AccountInfo[]){
+  let result: number = 0
+  accounts.forEach(element => {
+    result = result + Number(element.balance)
+    console.log(result)
+  })
+  return result
+}
 
 // -- Services ----------------------------------
 const accountsService = AccountsService();
@@ -448,11 +460,13 @@ Overview.getInitialProps = async ctx => {
   console.log(retrievedAccounts);
 
   // FIXME: Get Transactions from those accounts instead of mocking data
-  const account = dummyAccountInfo;
-  account.accounts = retrievedAccounts;
-  account.user = retrievedUser
+  const accountData = dummyAccountInfo;
+  accountData.accounts = retrievedAccounts;
+  accountData.user = retrievedUser
 
-  return { account };
+  const totalBalance = calculateBalance(accountData.accounts)
+
+  return { accountData, totalBalance };
 };
 
 export default Overview;
