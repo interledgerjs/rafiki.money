@@ -194,7 +194,7 @@ const updatedDummyAccountInfo: TransactionInfo[] = [
 const Overview: NextPage<Props> = ({ accountData, totalBalance }) => {
   const router = useRouter();
   const [accountDataState, setAccountData] = useState(accountData);
-  const paymentPointer:string  = `$rafiki.money/p/${accountData.user.username}`
+  const paymentPointer: string = `$rafiki.money/p/${accountData.user.username}`;
 
   // Renders Accounts cards
   function AccountCard(name: String, balance: String) {
@@ -270,8 +270,47 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance }) => {
     return name;
   }
 
+  function RenderGraph(data: AccountInfo[]) {
+    // const graphData = {
+    //   labels: ["Cheque", "Savings"],
+    //   datasets: [
+    //     {
+    //       data: [300, 500],
+    //       backgroundColor: ["#9B51E0", "#2F80ED"],
+    //       hoverBackgroundColor: ["#9B51E0", "#36A2EB"]
+    //     }
+    //   ]
+    // };
+    let nameList: string[] = data.map(element => {
+      return element.name;
+    });
+    let balancesList: number[] = data.map(element => {
+      return element.balance;
+    });
+    let colourIndex = 0;
+    let graphData = {
+      labels: nameList,
+      datasets: [
+        {
+          data: balancesList,
+          backgroundColor: function(context) {
+            var index = context.dataIndex;
+            if (index == 0){
+              return "#9B51E0"
+            }
+            else if (index == 1){
+              return "#2F80ED"
+            }
+          }
+        }
+      ]
+    };
+    return graphData;
+  }
+
   //Renders the right card
   function RightCard(data: AccountData) {
+    let graphData = RenderGraph(data.accounts);
     if (data.accounts.length <= 0) {
       return (
         <div className="ml-8 hidden md:flex">
@@ -291,7 +330,7 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance }) => {
           <Card>
             <div className="h-64">
               <Doughnut
-                data={dummyGraphData}
+                data={graphData}
                 width={170}
                 legend={{
                   position: "left",
@@ -393,20 +432,16 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance }) => {
               <div>
                 <Card>
                   <div className="headline-5 bg">Total balance</div>
-                  <div className="headline-3 pb-1">
-                    $ {totalBalance}
-                  </div>
+                  <div className="headline-3 pb-1">$ {totalBalance}</div>
                 </Card>
               </div>
               <div className="pl-16 relative flex">
                 <Card>
                   <div className="headline-5">Payment Pointer</div>
-                  <div className="body-2 mt-1">
-                  {paymentPointer}
-                  </div>
+                  <div className="body-2 mt-1">{paymentPointer}</div>
                   <div className="flex pr-3 pt-5 justify-end">
                     <CopyToClipboard
-                      text= {paymentPointer}
+                      text={paymentPointer}
                       onCopy={() => alert("Copied to clipboard")}
                     >
                       <span>
@@ -439,15 +474,15 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance }) => {
 
 // -- Initial Functions ----------------------------------
 
-function calculateTotalBalance(accounts: AccountInfo[]){
-  let result: number = 0
+function calculateTotalBalance(accounts: AccountInfo[]) {
+  let result: number = 0;
   accounts.forEach(element => {
-    result = result + Number(element.balance)
-  })
-  return (result)
+    result = result + Number(element.balance);
+  });
+  return result;
 }
 
-function truncateBalances(accounts: AccountInfo[]){
+function truncateBalances(accounts: AccountInfo[]) {
   let result = accounts.map(element => {
     var truncatedAccount: AccountInfo = {
       id: element.id,
@@ -459,8 +494,8 @@ function truncateBalances(accounts: AccountInfo[]){
       limit: element.limit
     };
     return truncatedAccount;
-  })
-  return (result)
+  });
+  return result;
 }
 
 // -- Services ----------------------------------
@@ -476,13 +511,13 @@ Overview.getInitialProps = async ctx => {
   console.log(retrievedAccounts);
 
   // Working out balances
-  const truncatedAccounts = truncateBalances(retrievedAccounts)
-  const totalBalance = calculateTotalBalance(truncatedAccounts)
+  const truncatedAccounts = truncateBalances(retrievedAccounts);
+  const totalBalance = calculateTotalBalance(truncatedAccounts);
 
   // FIXME: Get Transactions from those accounts instead of mocking data
   const accountData = dummyAccountInfo;
   accountData.accounts = truncatedAccounts;
-  accountData.user = retrievedUser
+  accountData.user = retrievedUser;
 
   return { accountData, totalBalance };
 };
