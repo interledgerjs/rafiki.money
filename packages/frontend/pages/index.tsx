@@ -13,31 +13,31 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     // Check if service worker is available
-    if ('serviceWorker' in navigator) {
-      // Register a service worker
-      const registration = navigator.serviceWorker.register(
-        // A service worker JS file is separate
-        'sw.js'
-      );
-      // Check if Payment Handler is available
-      // @ts-ignore
-      if (!registration.paymentManager) return;
+    // if ('serviceWorker' in navigator) {
+    //   // Register a service worker
+    //   const registration = navigator.serviceWorker.register(
+    //     // A service worker JS file is separate
+    //     'sw.js'
+    //   );
+    //   // Check if Payment Handler is available
+    //   // @ts-ignore
+    //   if (!registration.paymentManager) return;
 
-      // @ts-ignore
-      registration.paymentManager.userHint = 'payment-handler user hint';
-      // @ts-ignore
-      registration.paymentManager.instruments.set(
-        // Payment instrument key can be any string.
-        'http://localhost:3000/',
-        // Payment instrument detail
-        {
-          name: 'Payment Handler Example',
-          method: 'test'
-        }
-      )
-    }
+    //   // @ts-ignore
+    //   registration.paymentManager.userHint = 'payment-handler user hint';
+    //   // @ts-ignore
+    //   registration.paymentManager.instruments.set(
+    //     // Payment instrument key can be any string.
+    //     'http://localhost:3000/',
+    //     // Payment instrument detail
+    //     {
+    //       name: 'Payment Handler Example',
+    //       method: 'test'
+    //     }
+    //   )
+    // }
 
-  });
+  })
 
   const router = useRouter()
   return (

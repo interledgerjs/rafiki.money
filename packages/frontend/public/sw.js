@@ -4,15 +4,16 @@ let resolver
 let payment_request_event
 
 self.addEventListener('canmakepayment', async (e) => {
-  console.log('can make payment called')
-  if (e.respondWith2 && e.currency) {
-    return e.respondWith2({
-      canMakePayment: true
-    })
-  } else {
-    const rafikiData = getMethodData( e, methodName)
-    e.respondWith(rafikiData !== undefined)
-  }
+  // console.log('can make payment called')
+  // if (e.respondWith2 && e.currency) {
+  //   return e.respondWith2({
+  //     canMakePayment: true
+  //   })
+  // } else {
+  //   const rafikiData = getMethodData( e, methodName)
+  //   e.respondWith(rafikiData !== undefined)
+  // }
+  e.respondwith(true)
 })
 
 self.addEventListener('paymentrequest', e => {
@@ -20,7 +21,7 @@ self.addEventListener('paymentrequest', e => {
   console.log('A->', e)
 
   console.log('B->',getMethodData( e, methodName))
-  checkoutURL = `${methodName}checkout?name=${e.methodData[0].data.invoice.name}`
+  checkoutURL = `http://localhost:3000/checkout?name=${e.methodData[0].data.invoice.name}`
 
   resolver = new PromiseResolver()
 
