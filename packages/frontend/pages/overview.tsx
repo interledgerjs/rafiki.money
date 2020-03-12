@@ -5,7 +5,7 @@ TODO:
 - [] graph dynamic data
 - [] transactions service needed
 - [X] accounts service needed
-- [] total balance
+- [X] total balance
 - [X] dynamic payment pointer
 */
 
@@ -19,6 +19,7 @@ import { checkUser } from "../utils";
 import { AccountsService } from "../services/accounts";
 
 // -- Typings ----------------------------------
+// FIXME: Import types from backend?
 type Props = {
   accountData: AccountData;
   totalBalance: number;
@@ -438,13 +439,28 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance }) => {
 
 // -- Initial Functions ----------------------------------
 
-function calculateBalance(accounts: AccountInfo[]){
+function calculateTotalBalance(accounts: AccountInfo[]){
   let result: number = 0
   accounts.forEach(element => {
     result = result + Number(element.balance)
-    console.log(result)
   })
-  return result
+  return (result)
+}
+
+function truncateBalances(accounts: AccountInfo[]){
+  let result = accounts.map(element => {
+    var truncatedAccount: AccountInfo = {
+      id: element.id,
+      userId: element.userId,
+      name: element.name,
+      assetCode: element.assetCode,
+      assetScale: element.assetScale,
+      balance: element.balance / Math.pow(10, element.assetScale),
+      limit: element.limit
+    };
+    return truncatedAccount;
+  })
+  return (result)
 }
 
 // -- Services ----------------------------------
@@ -459,12 +475,14 @@ Overview.getInitialProps = async ctx => {
   );
   console.log(retrievedAccounts);
 
+  // Working out balances
+  const truncatedAccounts = truncateBalances(retrievedAccounts)
+  const totalBalance = calculateTotalBalance(truncatedAccounts)
+
   // FIXME: Get Transactions from those accounts instead of mocking data
   const accountData = dummyAccountInfo;
-  accountData.accounts = retrievedAccounts;
+  accountData.accounts = truncatedAccounts;
   accountData.user = retrievedUser
-
-  const totalBalance = calculateBalance(accountData.accounts)
 
   return { accountData, totalBalance };
 };
