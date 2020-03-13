@@ -1,8 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { NextPage } from "next"
 import { UsersService } from '../services/users'
-import ky from 'ky'
-import axios from 'axios'
+import ky from 'ky-universal'
 import { Button } from '../components'
 import { checkUser } from '../utils'
 import { setCookie, parseCookies, destroyCookie } from 'nookies'
@@ -19,9 +18,6 @@ const Pay = (props) => {
       console.log('e source ->',client)
     })
     navigator.serviceWorker.controller.postMessage('payment_app_window_ready')
-    if (props.invoice) {
-      console.log(props.invoice.name)
-    }
   })
 
   const onPay = () => {
@@ -97,12 +93,11 @@ Pay.getInitialProps = async (ctx) => {
   const { query } = ctx
 
   try {
-    const invoice = await axios.get(`http:${query.name}`)
-    // const invoiceOptions = await ky(`http:${query.name}`, {method: 'OPTIONS'})
+    const invoice = await ky(`http:${query.name}`, {method: 'GET'}).json()
+    console.log('the invoice: ',invoice)
     const props = {
       user,
-      invoice: invoice.data,
-      // invoiceOptions
+      invoice: invoice,
     }
 
     return (props)

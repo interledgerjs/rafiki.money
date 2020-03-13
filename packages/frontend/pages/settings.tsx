@@ -21,36 +21,6 @@ const Settings: NextPage = () => {
   }
 
   const installSw = () => {
-    
-    // if ('serviceWorker' in navigator) {
-    //   const registration = navigator.serviceWorker.register(
-    //     'sw.js'
-    //   ).then(() => {
-    //     setSwInstalled(true)
-    //     console.log('here')
-    //   })
-      
-    //   // @ts-ignore
-    //   if (!registration.paymentManager) return;
-
-    //   // @ts-ignore
-    //   registration.paymentManager.userHint = 'payment-handler user hint';
-
-    //   // @ts-ignore
-    //   registration.paymentManager.instruments.set(
-    //     'http://localhost:3000/',
-    //     {
-    //       name: 'Payment Handler Example',
-    //       method: 'test'
-    //     }
-    //   )
-    // }
-
-
-
-
-
-
 
       navigator.serviceWorker.register('/sw.js').then(function(registration) {
         // @ts-ignore

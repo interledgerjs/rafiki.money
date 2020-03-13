@@ -55,7 +55,7 @@ export async function show (ctx: AppContext): Promise<void> {
     const token = base64url(generateToken())
     const sharedSecret = generateSharedSecretFromToken(STREAM_SERVER_SECRET, Buffer.from(token, 'ascii'))
 
-    if (user ){//&& !user.defaultAccountId) {
+    if (user && !user.defaultAccountId) {
       ctx.status = 404
       return
     }
