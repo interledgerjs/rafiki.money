@@ -18,6 +18,8 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { checkUser } from "../utils";
 import { AccountsService } from "../services/accounts";
 
+const colourValues = ["#9B51E0", "#2F80ED", "#21D2BF", "#FF8A65"];
+
 // -- Typings ----------------------------------
 // FIXME: Import types from backend?
 type Props = {
@@ -271,39 +273,27 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance }) => {
   }
 
   function RenderGraph(data: AccountInfo[]) {
-    // const graphData = {
-    //   labels: ["Cheque", "Savings"],
-    //   datasets: [
-    //     {
-    //       data: [300, 500],
-    //       backgroundColor: ["#9B51E0", "#2F80ED"],
-    //       hoverBackgroundColor: ["#9B51E0", "#36A2EB"]
-    //     }
-    //   ]
-    // };
     let nameList: string[] = data.map(element => {
       return element.name;
     });
     let balancesList: number[] = data.map(element => {
       return element.balance;
     });
-    let colourIndex = 0;
+
     let graphData = {
       labels: nameList,
       datasets: [
         {
           data: balancesList,
           backgroundColor: function(context) {
+            // colours change based on colourValue array
             var index = context.dataIndex;
-            if (index == 0){
-              return "#9B51E0"
-            }
-            else if (index == 1){
-              return "#2F80ED"
-            }
-          }
+            return colourValues[index % 4];
+          },
+          borderWidth: 0
         }
-      ]
+      ],
+      options: {}
     };
     return graphData;
   }
@@ -311,6 +301,7 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance }) => {
   //Renders the right card
   function RightCard(data: AccountData) {
     let graphData = RenderGraph(data.accounts);
+
     if (data.accounts.length <= 0) {
       return (
         <div className="ml-8 hidden md:flex">
@@ -453,7 +444,7 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance }) => {
               </div>
             </div>
             <div className="flex py-6">
-              <div className="headline-6 bg-white">Accounts</div>
+              <div className="headline-6 text-on-surface">Accounts</div>
               <div className="w-64 flex-1"></div>
               <div className="">
                 <Button type="solid" onClick={() => router.push("/addAccount")}>
