@@ -41,26 +41,17 @@ const Pay = (props) => {
       <div className = 'w-full h-full bg-surface overflow-hidden'>
         <div className='w-full h-screen mx-auto bg-surface flex items-center max-w-sm'>
           <div className="max-w-sm">
-            <h2 className={`headline-4 text-on-surface text-center my-8`}>Confirm Payment</h2>
-            <table className="table-fixed w-full bg-primary text-surface rounded">
-              <tbody>
-                <tr className="">
-                  <td className="px-4 py-2 w-1/3">Description</td>
-                  <td className="px-4 py-2 overflow-x-auto">{props.invoice.description}</td>
-                </tr>
-                <tr className="">
-                  <td className="px-4 py-2">Amount</td>
-                  <td className="px-4 py-2 overflow-x-auto">{`${(props.invoice.amount/Math.pow(10, props.invoice.assetScale)).toFixed(props.invoice.assetScale).toString()} ${props.invoice.assetCode}`}</td>
-                </tr>
-                <tr className="">
-                  <td className="px-4 py-2">Receiving wallet</td>
-                  <td className="px-4 py-2 break-words">{props.invoice.subject}</td>
-                </tr>
-              </tbody>
-            </table>
-            <div className='text-center my-8 mx-auto'>
+            <p className="headline-4 text-on-surface text-center my-8">Confirm Payment</p>
+            <p className="body-1 text-on-surface text-left mt-8 mb-4">
+              <span className="font-medium">{`${(props.invoice.amount/Math.pow(10, props.invoice.assetScale)).toFixed(props.invoice.assetScale).toString()} ${props.invoice.assetCode}`}</span>
+              &nbsp;is going to be paid for&nbsp; 
+              <span className="font-medium">{props.invoice.description}</span>
+              &nbsp;to:
+            </p>
+            <p className="body-1 font-medium mt-4 mb-8">{props.invoice.subject}</p>
+            <div className='text-right my-8 mx-auto'>
               <Button onClick={ onCancel } className="mr-4" bgColour="primary" type='text'>CANCEL</Button>
-              <Button onClick={ onPay } bgColour="primary" type='text' >PAY</Button>
+              <Button onClick={ onPay } bgColour="primary" type='solid' >PAY</Button>
             </div>
           </div>
         </div>
