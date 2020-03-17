@@ -99,7 +99,7 @@ export class App {
     this._privateRouter.put('/mandates/:id/cancel', CancelMandatesController.store)
     this._privateRouter.get('/mandates/:id/transactions', MandatesTransactionController.index)
 
-    this._privateRouter.post('/invoices', InvoicesController.store)
+    this._publicRouter.post('/invoices', InvoicesController.store)
     this._publicRouter.get('/invoices/:id', InvoicesController.show)
   }
 }
