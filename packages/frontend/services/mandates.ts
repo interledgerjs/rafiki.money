@@ -8,13 +8,15 @@ export const MandatesService = (authErrorCallback?: () => void) => {
   return {
     getMandates: async (token: string) => {
       const url = new URL('mandates', USERS_API_URL)
-      return ky.get(url.toString(),
-        { headers: { authorization: `Bearer ${token}` } }
-      ).then(resp => resp.json())
+      const resp = await ky.get(url.toString(),
+        { headers: { authorization: `Bearer ${token}` } })
+      return await resp.json()
     },
-    getUser: async (token: string) => {
-      const url = new URL('users/me', USERS_API_URL)
-      return ky.get(url.toString(), { headers: { authorization: `Bearer ${token}` } }).then(resp => resp.json())
+    getMandatesByMandateId: async (token: string, mandateId: string) => {
+      const url = new URL(`mandates/${mandateId}/transactions`, USERS_API_URL)
+      const resp = await ky.get(url.toString(),
+        { headers: { authorization: `Bearer ${token}` } })
+      return await resp.json()
     }
   }
 }

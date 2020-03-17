@@ -9,13 +9,12 @@ import { MandatesService } from '../services/mandates'
 import { checkUser } from '../utils'
 import { defaultProps } from 'react-select/src/Select'
 import { Mandate } from '../../backend/src/models/mandate'
+import { Transaction } from '../../backend/src/models/transaction'
 
 
 // import "../styles/main.css";
 
 // link state to rafiki api
-// -implement test call from mandates page to api
-// -implement remainder of calls and make data live
 // make transaction list scrollable
 // make doughnut ratio reactive
 // refine the way components display
@@ -276,7 +275,7 @@ const List = ({ mandateArray, selectMandate }) => (
       </div>
       <Listline
         mandateArray={mandateArray}
-        selectMandate={selectMandate}/>
+        selectMandate={selectMandate} />
     </div>
   </div>
 )
@@ -286,7 +285,7 @@ const MainView = ({ mandateArray, selectMandate }) => (
     <TopRow />
     <List
       mandateArray={mandateArray}
-      selectMandate={selectMandate}/>
+      selectMandate={selectMandate} />
   </div>
 )
 
@@ -297,19 +296,9 @@ const Account: NextPage<Props> = (props) => {
 
   const [selectedMandateTransactionArray, setSelectedMandateTransactionArray] = useState(bb1TransactionArray)
 
-  const selectMandate = (mandate: Mandate) => {
+  const selectMandate = async (mandate: Mandate) => {
     setSelectedMandate(mandate)
-    setSelectedMandateTransactionArray(() => {
-      const i = Math.floor(Math.random() * Math.floor(3))
-      switch (i) {
-        case 0:
-          return (bb1TransactionArray)
-        case 1:
-          return (bb2TransactionArray)
-        case 2:
-          return (bb3TransactionArray)
-      }
-    })
+    setSelectedMandateTransactionArray(await MandatesService().getMandatesByMandateId(props.user.token, mandate.id))
   }
 
   return (
@@ -319,7 +308,7 @@ const Account: NextPage<Props> = (props) => {
         <div className="flex flex-row h-full">
           <MainView
             mandateArray={mandateArray}
-            selectMandate={selectMandate}/>
+            selectMandate={selectMandate} />
           <SidePanel
             selectedMandateTransactionArray={selectedMandateTransactionArray}
             selectedMandate={selectedMandate} />
@@ -341,8 +330,7 @@ type Props = {
 
 Account.getInitialProps = async (ctx) => {
   const user = await checkUser(ctx)
-  const mandateArray = await MandatesService().getMandates(user.token)
-  console.log(mandateArray)
+  const mandateArray: Mandate[] = await MandatesService().getMandates(user.token)
 
   return { user, mandateArray }
 }
