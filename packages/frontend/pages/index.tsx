@@ -1,14 +1,19 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { NextPage } from 'next'
 import { parseCookies } from 'nookies'
 import { UsersService } from '../services/users'
 import { Button, Logo } from '../components'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import Head from 'next/head'
 
 const usersService = UsersService()
 
 const Home: NextPage = () => {
+
+  useEffect(() => {
+  })
+
   const router = useRouter()
   return (
     <div className="flex w-full h-screen">
@@ -37,7 +42,7 @@ const Home: NextPage = () => {
 
 export default Home
 
-// Home.getInitialProps = async (ctx) => {
+Home.getInitialProps = async (ctx) => {
 //   const cookies = parseCookies(ctx)
 
   // TODO add check if logged in and default to overview page
@@ -58,6 +63,7 @@ export default Home
   //   //
   //   // window.location.href = '/login'
   // }
+  ctx.res.setHeader('link', "<http://localhost:3000/payment-manifest.json>; rel=\"payment-method-manifest\"")
 
-//   return {}
-// }
+  return {}
+}
