@@ -2,7 +2,7 @@ import React from 'react'
 import { NextPage } from "next"
 import ky from 'ky-universal'
 import qs from 'querystring'
-import { setCookie } from 'nookies'
+import { setCookie, parseCookies, destroyCookie } from 'nookies'
 
 const HYDRA_TOKEN_ENDPOINT = process.env.HYDRA_TOKEN_ENDPOINT || 'http://localhost:9000/oauth2/token'
 const HYDRA_REDIRECT_URI = process.env.HYDRA_REDIRECT_URI || 'http://localhost:3000/callback'
@@ -43,8 +43,14 @@ Callback.getInitialProps = async (ctx) => {
 
   setCookie(ctx, 'token', tokenInfo.access_token, {})
 
+  let target = '/overview'
+  const cookies = parseCookies(ctx)
+  if (cookies && cookies.target) {
+    target = cookies.target
+  }
+
   ctx.res.writeHead(302, {
-    Location: '/'
+    Location: `${target}`
   })
   ctx.res.end()
   return {}
