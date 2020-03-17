@@ -101,6 +101,6 @@ export class App {
     this._privateRouter.post('/invoices', InvoicesController.store)
     this._publicRouter.get('/invoices/:id', InvoicesController.show)
 
-    this._privateRouter.get('/accounts/:id/transactions', TransactionsController.show)
+    this._privateRouter.get('/transactions/', TransactionsController.index)
   }
 }

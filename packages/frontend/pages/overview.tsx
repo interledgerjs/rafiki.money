@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { checkUser } from "../utils";
 import { AccountsService } from "../services/accounts";
+import { TransactionsService } from "../services/transactions";
 
 const colourValues = ["#9B51E0", "#2F80ED", "#21D2BF", "#FF8A65"];
 
@@ -491,6 +492,7 @@ function truncateBalances(accounts: AccountInfo[]) {
 
 // -- Services ----------------------------------
 const accountsService = AccountsService();
+const transactionsService = TransactionsService()
 
 Overview.getInitialProps = async ctx => {
   const retrievedUser = await checkUser(ctx);
@@ -500,6 +502,12 @@ Overview.getInitialProps = async ctx => {
     retrievedUser.id
   );
   // console.log(retrievedAccounts);
+
+  // const retrievedTransactions = await transactionsService.getTransactionsByAccountId(
+  //   retrievedUser.token,
+  //   "1"
+  // )
+  // console.log(retrievedTransactions)
 
   // Working out balances
   const truncatedAccounts = truncateBalances(retrievedAccounts);
