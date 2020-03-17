@@ -26,6 +26,7 @@ const colourValues = ["#9B51E0", "#2F80ED", "#21D2BF", "#FF8A65"];
 type Props = {
   accountData: AccountData;
   totalBalance: number;
+  token: string;
 };
 
 type UserInfo = {
@@ -194,7 +195,7 @@ const updatedDummyAccountInfo: TransactionInfo[] = [
 ];
 
 // -- Main ----------------------------------
-const Overview: NextPage<Props> = ({ accountData, totalBalance }) => {
+const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
   const router = useRouter();
   const [accountDataState, setAccountData] = useState(accountData);
   const paymentPointer: string = `$rafiki.money/p/${accountData.user.username}`;
@@ -229,7 +230,7 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance }) => {
           <Fragment key={listAccounts[index].id}>
             <div
               className="w-card md:pr-0 md:w-auto pb-4 cursor-pointer"
-              onClick={() => onAccountClick(listAccounts[index].id)}
+              onClick={() => onAccountClick(listAccounts[index].id, token)}
             >
               {AccountCard(
                 listAccounts[index].name,
@@ -248,8 +249,8 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance }) => {
   }
 
   //handles account card click
-  async function onAccountClick(accountId: number) {
-    let retrievedTransactions = await GetTransactionsData(accountId);
+  async function onAccountClick(accountId: number, token: string) {
+    let retrievedTransactions = await GetTransactionsData(accountId, token);
 
     const updatedData = {
       user: accountData.user,
@@ -260,8 +261,15 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance }) => {
     setAccountData(updatedData);
   }
 
-  function GetTransactionsData(accountId: number) {
-    return updatedDummyAccountInfo;
+  function GetTransactionsData(accountId: number, token: string) {
+      const retrievedTransactions = transactionsService.getTransactionsByAccountId(
+        token,
+        accountId.toString()
+  )
+
+    console.log(retrievedTransactions)
+    return  retrievedTransactions
+    // return updatedDummyAccountInfo;
   }
 
   function retrieveAccountName(data: AccountData, accountId: number) {
@@ -496,6 +504,7 @@ const transactionsService = TransactionsService()
 
 Overview.getInitialProps = async ctx => {
   const retrievedUser = await checkUser(ctx);
+  const token = retrievedUser.token
   console.log(retrievedUser);
   const retrievedAccounts = await accountsService.getAccounts(
     retrievedUser.token,
@@ -518,7 +527,7 @@ Overview.getInitialProps = async ctx => {
   accountData.accounts = truncatedAccounts;
   accountData.user = retrievedUser;
 
-  return { accountData, totalBalance };
+  return { accountData, totalBalance, token };
 };
 
 export default Overview;
