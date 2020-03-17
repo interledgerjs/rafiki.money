@@ -1,17 +1,18 @@
 
 exports.seed = function (knex) {
   // Deletes ALL existing entries
-  return knex('transactions').del()
+  return knex('mandateTransactions').del()
     .then(function () {
       // Inserts seed entries
-      return knex('transactions').insert([
+      return knex('mandateTransactions').insert([
         {
           id: 1,
           accountId: 1,
           amount: 100,
           description: 'Description for This',
           createdAt: '1010-01-01 01:11:10.111111+00',
-          updatedAt: '1010-01-01 01:11:10.111111+00'
+          updatedAt: '1010-01-01 01:11:10.111111+00',
+          mandateId: 'ce149ace-61e3-11ea-bc55-0242ac130003'
         },
         {
           id: 2,
@@ -19,7 +20,8 @@ exports.seed = function (knex) {
           amount: 200,
           description: 'Description for This',
           createdAt: '2020-02-02 02:22:20.222222+00',
-          updatedAt: '2020-02-02 02:22:20.222222+00'
+          updatedAt: '2020-02-02 02:22:20.222222+00',
+          mandateId: 'ce149ace-61e3-11ea-bc55-0242ac130003'
         },
         {
           id: 3,
@@ -27,7 +29,8 @@ exports.seed = function (knex) {
           amount: 300,
           description: 'Description for This',
           createdAt: '3030-03-03 03:33:30.333333+00',
-          updatedAt: '3030-03-03 03:33:30.333333+00'
+          updatedAt: '3030-03-03 03:33:30.333333+00',
+          mandateId: 'ce149ace-61e3-11ea-bc55-0242ac130003'
         },
         {
           id: 4,
@@ -35,7 +38,8 @@ exports.seed = function (knex) {
           amount: 400,
           description: 'Description for This',
           createdAt: '4040-04-04 04:44:40.444444+00',
-          updatedAt: '4040-04-04 04:44:40.444444+00'
+          updatedAt: '4040-04-04 04:44:40.444444+00',
+          mandateId: 'ce149d9e-61e3-11ea-bc55-0242ac130003'
         },
         {
           id: 5,
@@ -43,7 +47,8 @@ exports.seed = function (knex) {
           amount: 500,
           description: 'Description for This',
           createdAt: '5050-05-05 05:55:50.555555+00',
-          updatedAt: '5050-05-05 05:55:50.555555+00'
+          updatedAt: '5050-05-05 05:55:50.555555+00',
+          mandateId: 'ce149d9e-61e3-11ea-bc55-0242ac130003'
         },
         {
           id: 6,
@@ -51,7 +56,8 @@ exports.seed = function (knex) {
           amount: 600,
           description: 'Description for This',
           createdAt: '6060-06-06 06:06:06.666666+00',
-          updatedAt: '6060-06-06 06:06:06.666666+00'
+          updatedAt: '6060-06-06 06:06:06.666666+00',
+          mandateId: 'ce149d9e-61e3-11ea-bc55-0242ac130003'
         },
         {
           id: 7,
@@ -59,7 +65,8 @@ exports.seed = function (knex) {
           amount: 700,
           description: 'Description for This',
           createdAt: '7070-07-07 07:07:07.777777+00',
-          updatedAt: '7070-07-07 07:07:07.777777+00'
+          updatedAt: '7070-07-07 07:07:07.777777+00',
+          mandateId: 'ce149ee8-61e3-11ea-bc55-0242ac130003'
         },
         {
           id: 8,
@@ -67,7 +74,8 @@ exports.seed = function (knex) {
           amount: 800,
           description: 'Description for This',
           createdAt: '8080-08-08 08:08:08.888888+00',
-          updatedAt: '8080-08-08 08:08:08.888888+00'
+          updatedAt: '8080-08-08 08:08:08.888888+00',
+          mandateId: 'ce149ee8-61e3-11ea-bc55-0242ac130003'
         },
         {
           id: 9,
@@ -75,7 +83,8 @@ exports.seed = function (knex) {
           amount: 900,
           description: 'Description for This',
           createdAt: '9090-09-09 09:09:09.999999+00',
-          updatedAt: '9090-09-09 09:09:09.999999+00'
+          updatedAt: '9090-09-09 09:09:09.999999+00',
+          mandateId: 'ce149ee8-61e3-11ea-bc55-0242ac130003'
         },
       ]);
     });
