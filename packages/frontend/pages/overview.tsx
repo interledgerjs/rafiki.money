@@ -499,7 +499,7 @@ Overview.getInitialProps = async ctx => {
     retrievedUser.token,
     retrievedUser.id
   );
-  console.log(retrievedAccounts);
+  // console.log(retrievedAccounts);
 
   // Working out balances
   const truncatedAccounts = truncateBalances(retrievedAccounts);

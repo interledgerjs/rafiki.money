@@ -15,6 +15,7 @@ import * as AccountsController from './controllers/accounts'
 import * as MandatesController from './controllers/mandatesController'
 import * as InvoicesController from './controllers/invoicesController'
 import * as CancelMandatesController from './controllers/cancelMandatesController'
+import * as TransactionsController from './controllers/transactions'
 import { createAuthMiddleware } from './middleware/auth'
 import { TokenService } from './services/token-service'
 import * as FaucetController from './controllers/faucet'
@@ -99,5 +100,7 @@ export class App {
 
     this._privateRouter.post('/invoices', InvoicesController.store)
     this._publicRouter.get('/invoices/:id', InvoicesController.show)
+
+    this._privateRouter.get('/accounts/:id/transactions', TransactionsController.show)
   }
 }
