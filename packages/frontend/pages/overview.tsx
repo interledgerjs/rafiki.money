@@ -261,6 +261,7 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
     setAccountData(updatedData);
   }
 
+  //FIXME: transform data
   function GetTransactionsData(accountId: number, token: string) {
       const retrievedTransactions = transactionsService.getTransactionsByAccountId(
         token,
