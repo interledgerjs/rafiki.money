@@ -9,7 +9,7 @@ import { MandatesService } from '../services/mandates'
 import { checkUser } from '../utils'
 import { defaultProps } from 'react-select/src/Select'
 import { Mandate } from '../../backend/src/models/mandate'
-import { Transaction } from '../../backend/src/models/transaction'
+import { MandateTransaction } from '../../backend/src/models/mandateTransaction'
 
 
 // import "../styles/main.css";
@@ -138,7 +138,7 @@ const Listline = ({ mandateArray, selectMandate }) => {
         <div
           key={mandate.id}
           className="border-t border-color-gray h-18 flex flex-row listline-div"
-          onClick={() => selectMandate(mandate)}> {/* having trouble setting colour of border */}
+          onClick={() => selectMandate(mandate)}>
           <div className="flex flex-col">
             <img className="listline-img" src="http://placecorgi.com/79/79" />
           </div>
@@ -146,9 +146,12 @@ const Listline = ({ mandateArray, selectMandate }) => {
             <div className="listline-name">{mandate.description}</div>
           </div>
           <div className="flex flex-col justify-center">
-            <div className="flex self-end w-listTable justify-around items-center">
+            <div className="flex self-end w-listTable justify-around
+              items-center">
               <div className="w-5/12 pr-5">
-                <div className="text-3xl leading-none text-right">{mandate.balance}</div>
+                <div className="text-3xl leading-none text-right">
+                  {mandate.balance}
+                </div>
                 <div className="text-xs text-right">/{mandate.amount}</div>
               </div>
               <div className="w-1/3">{mandate.interval}</div>
@@ -161,6 +164,29 @@ const Listline = ({ mandateArray, selectMandate }) => {
   )
 }
 
+const months: Array<string> = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec"
+]
+
+const getTransactionCardDate = (DBString: string) => {
+  const date = new Date(Date.parse(DBString))
+  return (
+    date.getDate() + ' ' +
+    months[(date.getMonth() + 1)] + ' ' +
+    date.getFullYear()
+  )
+}
+
 const TransactionCard = ({ selectedMandateTransactionArray }) => {
   return (
     selectedMandateTransactionArray.map(transaction => {
@@ -170,9 +196,13 @@ const TransactionCard = ({ selectedMandateTransactionArray }) => {
             <Card>
               <div className="flex justify-between">
                 <div>
-                  <div className="headline-6">{transaction.createdAt}</div>
+                  <div className="headline-6">
+                    {getTransactionCardDate(transaction.createdAt)}
+                  </div>
                 </div>
-                <div className="self-center headline-6 text-green">{Number(transaction.amount)}</div>
+                <div className="self-center headline-6 text-green">
+                  {Number(transaction.amount)}
+                </div>
               </div>
             </Card>
           </div>
@@ -182,18 +212,50 @@ const TransactionCard = ({ selectedMandateTransactionArray }) => {
   )
 }
 
-const DateBox = ({ selectedMandate }) => (
-  <div className="mt-16 body-2">
-    <div className="flex flex-row justify-between">
-      <div className="">Created</div>
-      <div className="">{selectedMandate.startAt}</div>
+const makeMinLenTwo = (input: number) => {
+  const string = input.toString()
+  if (string.length === 1)
+    return '0' + string
+  else
+    return string
+}
+
+const getDateBoxDateString = (DBString: string) => {
+  const date = new Date(Date.parse(DBString))
+  const rawArray = [
+    date.getDate(),
+    (date.getMonth() + 1),
+    date.getFullYear(),
+    date.getHours(),
+    date.getMinutes()
+  ]
+  const finalArray = rawArray.map(makeMinLenTwo)
+  return (
+    finalArray[0] + '-' +
+    finalArray[1] + '-' +
+    finalArray[2] + ', ' +
+    finalArray[3] + ':' +
+    finalArray[4]
+  )
+}
+
+const DateBox = ({ selectedMandate }) => {
+  const startDate = getDateBoxDateString(selectedMandate.startAt)
+  const expiryDate = getDateBoxDateString(selectedMandate.expireAt)
+
+  return (
+    <div className="mt-16 body-2">
+      <div className="flex flex-row justify-between">
+        <div className="">Created</div>
+        <div className="">{startDate}</div>
+      </div>
+      <div className="flex flex-row justify-between">
+        <div className="">Expires</div>
+        <div className="">{expiryDate}</div>
+      </div>
     </div>
-    <div className="flex flex-row justify-between">
-      <div className="">Expires</div>
-      <div className="">{selectedMandate.expireAt}</div>
-    </div>
-  </div>
-)
+  )
+}
 
 const DoughnutInner = () => (
   <div className="donut-inner">
@@ -227,13 +289,29 @@ const WholeDoughnut = () => (
   </div>
 )
 
+const SidePanelInner = ({
+  selectedMandateTransactionArray, selectedMandate
+}) => {
+  if (selectedMandate) {
+    return (
+      <div>
+        <WholeDoughnut />
+        <DateBox selectedMandate={selectedMandate} />
+        <div className="mt-10 headline-6">Transactions</div>
+        <TransactionCard
+          selectedMandateTransactionArray={selectedMandateTransactionArray} />
+      </div>
+    )
+  } else return (<div />)
+}
+
 const SidePanel = ({ selectedMandateTransactionArray, selectedMandate }) => (
   <div className="ml-8">
-    <div className="p-4 bg-surface-elevation-1 elevation-1 rounded text-on-surface sm:max-w-full md:w-card h-full">
-      <WholeDoughnut />
-      <DateBox selectedMandate={selectedMandate} />
-      <div className="mt-10 headline-6">Transactions</div>
-      <TransactionCard selectedMandateTransactionArray={selectedMandateTransactionArray} />
+    <div className="p-4 bg-surface-elevation-1 elevation-1 rounded
+        text-on-surface sm:max-w-full md:w-card h-full">
+      <SidePanelInner
+        selectedMandateTransactionArray={selectedMandateTransactionArray}
+        selectedMandate={selectedMandate} />
     </div>
   </div>
 )
@@ -243,7 +321,9 @@ const TextInputBox = () => (
     <div className='w-full max-w-xs bg-surface flex items-center'>
       <form className='w-full max-w-xs'>
         <div className=''>
-          <TextInput name='searchFor' label='Search' style={{ position: 'relative', height: '72px' }}></TextInput>
+          <TextInput name='searchFor' label='Search' style={{
+            position: 'relative', height: '72px'
+          }} />
         </div>
       </form>
     </div>
@@ -265,7 +345,8 @@ const TopRow = () => (
 
 const List = ({ mandateArray, selectMandate }) => (
   <div className="flex flex-row">
-    <div className="flex flex-col bg-surface-elevation-1 elevation-1 rounded text-on-surface">
+    <div className="flex flex-col bg-surface-elevation-1 elevation-1 rounded
+      text-on-surface">
       <div className="flex h-10 self-end">
         <div className="flex justify-around w-listTable">
           <div className="w-5/12">Balance</div>
@@ -292,13 +373,16 @@ const MainView = ({ mandateArray, selectMandate }) => (
 const Account: NextPage<Props> = (props) => {
   const [mandateArray] = useState(props.mandateArray)
 
-  const [selectedMandate, setSelectedMandate]: [Mandate, any] = useState(props.mandateArray[0])
+  const [selectedMandate, setSelectedMandate]: [Mandate, any] = useState()
 
-  const [selectedMandateTransactionArray, setSelectedMandateTransactionArray] = useState(bb1TransactionArray)
+  const [selectedMandateTransactionArray, setSelectedMandateTransactionArray]:
+    [Array<MandateTransaction>, any] = useState()
 
   const selectMandate = async (mandate: Mandate) => {
-    setSelectedMandate(mandate)
-    setSelectedMandateTransactionArray(await MandatesService().getMandatesByMandateId(props.user.token, mandate.id))
+    await setSelectedMandateTransactionArray(
+      await MandatesService().getMandatesByMandateId(
+        props.user.token, mandate.id))
+    await setSelectedMandate(mandate)
   }
 
   return (
@@ -330,8 +414,8 @@ type Props = {
 
 Account.getInitialProps = async (ctx) => {
   const user = await checkUser(ctx)
-  const mandateArray: Mandate[] = await MandatesService().getMandates(user.token)
-
+  const mandateArray: Mandate[] =
+    await MandatesService().getMandates(user.token)
   return { user, mandateArray }
 }
 

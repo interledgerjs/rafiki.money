@@ -2,7 +2,6 @@ import { AppContext } from '../app'
 import { MandateTransaction } from '../models/mandateTransaction'
 
 export async function index (ctx: AppContext): Promise<void> {
-  console.log(ctx)
   const mandateId = ctx.params.id
 
   ctx.logger.info('Getting mandate transactions', mandateId)
