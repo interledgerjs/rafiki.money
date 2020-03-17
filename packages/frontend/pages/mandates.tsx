@@ -15,8 +15,8 @@ import { MandateTransaction } from '../../backend/src/models/mandateTransaction'
 // import "../styles/main.css";
 
 // link state to rafiki api
+// - make doughnut reactive to balance data
 // make transaction list scrollable
-// make doughnut ratio reactive
 // refine the way components display
 // re-enable linting rules (top of file)
 
@@ -182,7 +182,7 @@ const getTransactionCardDate = (DBString: string) => {
   const date = new Date(Date.parse(DBString))
   return (
     date.getDate() + ' ' +
-    months[(date.getMonth() + 1)] + ' ' +
+    months[date.getMonth()] + ' ' +
     date.getFullYear()
   )
 }
@@ -221,7 +221,7 @@ const makeMinLenTwo = (input: number) => {
 }
 
 const getDateBoxDateString = (DBString: string) => {
-  const date = new Date(Date.parse(DBString))
+  const date = new Date(DBString)
   const rawArray = [
     date.getDate(),
     (date.getMonth() + 1),
