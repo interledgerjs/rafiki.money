@@ -14,8 +14,6 @@ import { MandateTransaction } from '../../backend/src/models/mandateTransaction'
 
 // import "../styles/main.css";
 
-// link state to rafiki api
-// - make doughnut reactive to balance data
 // make transaction list scrollable
 // refine the way components display
 // re-enable linting rules (top of file)
@@ -105,18 +103,6 @@ const customStyles = {
     height: 56,
     minHeight: 56
   })
-}
-
-const data = {
-  labels: ['Used', 'Available'],
-  datasets: [
-    {
-      data: [300, 500],
-      backgroundColor: ['#FF8A65', '#21D2BF'],
-      hoverBackgroundColor: ['#FF8A65', '#21D2BF'],
-      borderWidth: 0
-    }
-  ]
 }
 
 const doughnutOptions = {
@@ -264,27 +250,42 @@ const DoughnutInner = () => (
   </div>
 )
 
-const DoughnutDisplay = () => (
-  <Doughnut
-    data={data}
-    options={doughnutOptions}
-    width={170}
-    legend={{
-      position: 'bottom',
-      display: false,
-      align: 'centre',
-      labels: {
-        fontColor: '#FF8A65',
-        usePointStyle: true
+const DoughnutDisplay = ({ selectedMandate }) => {
+  const doughnutData = {
+    labels: ['Used', 'Available'],
+    datasets: [
+      {
+        data: [
+          selectedMandate.amount - selectedMandate.balance,
+          selectedMandate.balance],
+        backgroundColor: ['#FF8A65', '#21D2BF'],
+        hoverBackgroundColor: ['#FF8A65', '#21D2BF'],
+        borderWidth: 0
       }
-    }}
-  />
-)
+    ]
+  }
 
-const WholeDoughnut = () => (
+  return (
+    <Doughnut
+      data={doughnutData}
+      options={doughnutOptions}
+      width={170}
+      legend={{
+        position: 'bottom',
+        display: false,
+        align: 'centre',
+        labels: {
+          fontColor: '#FF8A65',
+          usePointStyle: true
+        }
+      }}
+    />
+  )
+}
+
+const WholeDoughnut = ({ selectedMandate }) => (
   <div className="h-64">
-    {/* <div>help</div> */}
-    <DoughnutDisplay />
+    <DoughnutDisplay selectedMandate={selectedMandate} />
     <DoughnutInner />
   </div>
 )
@@ -295,7 +296,7 @@ const SidePanelInner = ({
   if (selectedMandate) {
     return (
       <div>
-        <WholeDoughnut />
+        <WholeDoughnut selectedMandate={selectedMandate} />
         <DateBox selectedMandate={selectedMandate} />
         <div className="mt-10 headline-6">Transactions</div>
         <TransactionCard
