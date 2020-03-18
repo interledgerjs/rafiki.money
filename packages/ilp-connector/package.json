@@ -1,0 +1,14 @@
+{
+  "name": "ilp-connector",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "ilp-connector": "^23.0.0",
+    "ilp-plugin-btp": "^1.4.2",
+    "ilp-plugin-mini-accounts": "^4.2.0"
+  }
+}
