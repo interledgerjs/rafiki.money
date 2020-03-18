@@ -30,3 +30,27 @@ export const checkUser = async (ctx) => {
   }
   return { ...user, token: cookies.token }
 }
+
+export const getCurrencySymbol = (code: string): string | undefined => {
+  return currencySymbols[code]
+}
+
+// taken from https://stackoverflow.com/questions/19373860/convert-currency-names-to-currency-symbol
+const currencySymbols = {
+  'EUR': '€', // Euro
+  'CRC': '₡', // Costa Rican Colón
+  'GBP': '£', // British Pound Sterling
+  'ILS': '₪', // Israeli New Sheqel
+  'INR': '₹', // Indian Rupee
+  'JPY': '¥', // Japanese Yen
+  'KRW': '₩', // South Korean Won
+  'NGN': '₦', // Nigerian Naira
+  'PHP': '₱', // Philippine Peso
+  'PLN': 'zł', // Polish Zloty
+  'PYG': '₲', // Paraguayan Guarani
+  'THB': '฿', // Thai Baht
+  'UAH': '₴', // Ukrainian Hryvnia
+  'USD': '$', // US Dollar
+  'VND': '₫', // Vietnamese Dong
+  'ZAR': 'R'
+};

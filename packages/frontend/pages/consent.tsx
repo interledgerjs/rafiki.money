@@ -4,6 +4,7 @@ import { NextPage } from "next"
 import { UsersService } from '../services/users'
 
 import { NormalConsent, AgreementConsent } from '../components'
+import { AccountInfo } from 'models'
 
 const usersService = UsersService()
 
@@ -13,7 +14,7 @@ type Props = {
 }
 
 export type ConsentRequest = {
-  accounts?: { id: number, name: string }[],
+  accounts?: Partial<AccountInfo>[],
   client: {
     client_id: string,
     redirect_uris: string[],
@@ -25,7 +26,8 @@ export type ConsentRequest = {
     id: string,
     assetCode: string
     assetScale: number
-    amount: string
+    amount: string,
+    description: string
   },
   redirectTo?: string
 }
@@ -39,18 +41,19 @@ const dummyMandateConsent: ConsentRequest = {
   mandate: {
     id: '123',
     assetCode: 'EUR',
-    assetScale: 6,
-    amount: '20000000'
+    assetScale: 2,
+    amount: '2000',
+    description: 'MERCHANT Premium Subscription'
   },
   requestedScopes: [
     'offline',
   ],
   accounts: [
     {
-      id: 1, name: 'Main Account',
+      id: 1, name: 'Main Account', balance: '10000', assetCode: 'USD', assetScale: 2
     },
     {
-      id: 2, name: 'Savings Account',
+      id: 2, name: 'Savings Account', balance: '5000', assetCode: 'ZAR', assetScale: 2
     }
   ]
 }
