@@ -1,10 +1,3 @@
-/* //TODO:
-    -[X] grab id from input
-    -[X] find account by id
-    -[X] get transactions array from account
-    -[] return transactions related to account
-*/
-
 import { AppContext } from '../app'
 import { Account } from '../models/account'
 import { Transaction } from '../models/transaction'

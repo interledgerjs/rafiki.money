@@ -262,14 +262,16 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
   }
 
   //FIXME: transform data
-  function GetTransactionsData(accountId: number, token: string) {
-      const retrievedTransactions = transactionsService.getTransactionsByAccountId(
-        token,
-        accountId.toString()
-  )
-
-    console.log(retrievedTransactions)
-    return  retrievedTransactions
+  async function GetTransactionsData(accountId: number, token: string) {
+    const retrievedTransactions = await transactionsService.getTransactionsByAccountId(
+      token,
+      accountId.toString()
+    );
+    const formattedTransactions = truncateTransactionBalances(
+      retrievedTransactions
+    );
+    console.log(formattedTransactions);
+    return formattedTransactions;
     // return updatedDummyAccountInfo;
   }
 
@@ -473,17 +475,8 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
   );
 };
 
-// -- Initial Functions ----------------------------------
-
-function calculateTotalBalance(accounts: AccountInfo[]) {
-  let result: number = 0;
-  accounts.forEach(element => {
-    result = result + Number(element.balance);
-  });
-  return result;
-}
-
-function truncateBalances(accounts: AccountInfo[]) {
+// -- Formatting Functions ----------------------------------
+function truncateAccountBalances(accounts: AccountInfo[]) {
   let result = accounts.map(element => {
     var truncatedAccount: AccountInfo = {
       id: element.id,
@@ -499,13 +492,39 @@ function truncateBalances(accounts: AccountInfo[]) {
   return result;
 }
 
+//FIXME: Asset scale needed for amount?
+function truncateTransactionBalances(transactions: TransactionInfo[]) {
+  let result = transactions.map(element => {
+    var truncatedAccount: TransactionInfo = {
+      id: element.id,
+      accountId: element.accountId,
+      amount: element.amount / Math.pow(10, 6),
+      description: element.description,
+      createdAt: element.createdAt,
+      updatedAt: element.updatedAt
+    };
+    return truncatedAccount;
+  });
+  return result;
+}
+
+// -- Initial Functions ----------------------------------
+
+function calculateTotalBalance(accounts: AccountInfo[]) {
+  let result: number = 0;
+  accounts.forEach(element => {
+    result = result + Number(element.balance);
+  });
+  return result;
+}
+
 // -- Services ----------------------------------
 const accountsService = AccountsService();
-const transactionsService = TransactionsService()
+const transactionsService = TransactionsService();
 
 Overview.getInitialProps = async ctx => {
   const retrievedUser = await checkUser(ctx);
-  const token = retrievedUser.token
+  const token = retrievedUser.token;
   console.log(retrievedUser);
   const retrievedAccounts = await accountsService.getAccounts(
     retrievedUser.token,
@@ -513,14 +532,10 @@ Overview.getInitialProps = async ctx => {
   );
   // console.log(retrievedAccounts);
 
-  // const retrievedTransactions = await transactionsService.getTransactionsByAccountId(
-  //   retrievedUser.token,
-  //   "1"
-  // )
   // console.log(retrievedTransactions)
 
   // Working out balances
-  const truncatedAccounts = truncateBalances(retrievedAccounts);
+  const truncatedAccounts = truncateAccountBalances(retrievedAccounts);
   const totalBalance = calculateTotalBalance(truncatedAccounts);
 
   // FIXME: Get Transactions from those accounts instead of mocking data
