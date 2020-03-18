@@ -3,7 +3,12 @@ import { App } from './app'
 import { Model } from 'objection'
 import { TokenService } from './services/token-service'
 import Knex = require('knex')
-const logger = createLogger()
+const logger = createLogger({
+  prettyPrint: {
+    translateTime: true,
+    ignore: 'pid,hostname'
+  }
+})
 logger.level = process.env.LOG_LEVEL || 'info'
 
 const PORT = process.env.PORT || 3001
