@@ -1,7 +1,7 @@
 import { Model } from 'objection'
 import { v4 } from 'uuid'
 
-const OpenPaymentsIssuer = 'localhost' || process.env.OPEN_PAYMENTS_ISSUER
+const OpenPaymentsIssuer = process.env.OPEN_PAYMENTS_ISSUER || 'localhost:3001'
 
 export type InvoiceInfo = {
   id: string;
