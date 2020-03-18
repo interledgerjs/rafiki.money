@@ -1,9 +1,10 @@
 /* 
 TODO:
-- [] colour on graph change based on darkmode
+- [] transaction card name colour change
+- [] main transactions array dynamic
 - [] graph updated on click
 - [] graph dynamic data
-- [] transactions service needed
+- [X] transactions service needed
 - [X] accounts service needed
 - [X] total balance
 - [X] dynamic payment pointer
