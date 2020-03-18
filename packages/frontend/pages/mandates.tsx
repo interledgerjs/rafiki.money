@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-unused-vars */
 import React, { useState, Component } from 'react'
 import Select from 'react-select'
 import { NextPage } from 'next'
@@ -14,9 +12,7 @@ import { MandateTransaction } from '../../backend/src/models/mandateTransaction'
 
 // import "../styles/main.css";
 
-// make transaction list scrollable
 // refine the way components display
-// re-enable linting rules (top of file)
 
 type MandateJSON = {
   id: string
@@ -181,10 +177,8 @@ const TransactionCard = ({ selectedMandateTransactionArray }) => {
           <div className="my-2">
             <Card>
               <div className="flex justify-between">
-                <div>
-                  <div className="headline-6">
-                    {getTransactionCardDate(transaction.createdAt)}
-                  </div>
+                <div className="headline-6">
+                  {getTransactionCardDate(transaction.createdAt)}
                 </div>
                 <div className="self-center headline-6 text-green">
                   {Number(transaction.amount)}
@@ -295,12 +289,14 @@ const SidePanelInner = ({
 }) => {
   if (selectedMandate) {
     return (
-      <div>
+      <div className='flex h-full flex-col'>
         <WholeDoughnut selectedMandate={selectedMandate} />
         <DateBox selectedMandate={selectedMandate} />
         <div className="mt-10 headline-6">Transactions</div>
-        <TransactionCard
-          selectedMandateTransactionArray={selectedMandateTransactionArray} />
+        <div className='overflow-y-auto'>
+          <TransactionCard
+            selectedMandateTransactionArray={selectedMandateTransactionArray} />
+        </div>
       </div>
     )
   } else return (<div />)
