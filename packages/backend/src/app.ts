@@ -15,6 +15,7 @@ import * as AccountsController from './controllers/accounts'
 import * as MandatesController from './controllers/mandatesController'
 import * as InvoicesController from './controllers/invoicesController'
 import * as CancelMandatesController from './controllers/cancelMandatesController'
+import * as TransactionsController from './controllers/transactionsController'
 import { createAuthMiddleware } from './middleware/auth'
 import { TokenService } from './services/token-service'
 import * as FaucetController from './controllers/faucet'
@@ -91,6 +92,7 @@ export class App {
     this._privateRouter.patch('/accounts/:id', AccountsController.update)
 
     this._privateRouter.post('/faucet', FaucetController.create)
+    this._privateRouter.post('/transactions', TransactionsController.create)
 
     this._publicRouter.post('/mandates', MandatesController.store)
     this._privateRouter.get('/mandates', MandatesController.index)
