@@ -33,7 +33,7 @@ const months: Array<string> = [
   "Oct",
   "Nov",
   "Dec"
-]
+];
 
 // -- Typings ----------------------------------
 // FIXME: Import types from backend?
@@ -490,6 +490,14 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
 };
 
 // -- Formatting Functions ----------------------------------
+
+function convertDate(dateString: string) {
+  const date = new Date(Date.parse(dateString));
+  return (
+    date.getDate() + " " + months[date.getMonth()] + " " + date.getFullYear()
+  );
+}
+
 function truncateAccountBalances(accounts: AccountInfo[]) {
   let result = accounts.map(element => {
     var truncatedAccount: AccountInfo = {
@@ -508,42 +516,6 @@ function truncateAccountBalances(accounts: AccountInfo[]) {
 
 //FIXME: Asset scale needed for amount?
 function truncateTransactionBalances(transactions: TransactionInfo[]) {
-  // Date functions
-  const makeMinLenTwo = (input: number) => {
-    const string = input.toString()
-    if (string.length === 1)
-      return '0' + string
-    else
-      return string
-  }
-  const getDateBoxDateString = (DBString: string) => {
-    const date = new Date(DBString)
-    const rawArray = [
-      date.getDate(),
-      (date.getMonth() + 1),
-      date.getFullYear(),
-      date.getHours(),
-      date.getMinutes()
-    ]
-    const finalArray = rawArray.map(makeMinLenTwo)
-    return (
-      finalArray[0] + '-' +
-      finalArray[1] + '-' +
-      finalArray[2] + ', ' +
-      finalArray[3] + ':' +
-      finalArray[4]
-    )
-  }
-
-  const getTransactionCardDate = (DBString: string) => {
-    const date = new Date(Date.parse(DBString))
-    return (
-      date.getDate() + ' ' +
-      months[date.getMonth()] + ' ' +
-      date.getFullYear()
-    )
-  }
-
   let result = transactions.map(element => {
     var truncatedAccount: TransactionInfo = {
       id: element.id,
@@ -553,13 +525,12 @@ function truncateTransactionBalances(transactions: TransactionInfo[]) {
       createdAt: element.createdAt,
       updatedAt: element.updatedAt
     };
-    truncatedAccount.createdAt = getTransactionCardDate(truncatedAccount.createdAt)
+    truncatedAccount.createdAt = convertDate(truncatedAccount.createdAt);
 
     return truncatedAccount;
   });
   return result;
 }
-
 
 // -- Initial Functions ----------------------------------
 
