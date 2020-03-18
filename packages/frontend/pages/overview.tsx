@@ -21,6 +21,20 @@ import { TransactionsService } from "../services/transactions";
 
 const colourValues = ["#9B51E0", "#2F80ED", "#21D2BF", "#FF8A65"];
 
+const months: Array<string> = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec"
+]
+
 // -- Typings ----------------------------------
 // FIXME: Import types from backend?
 type Props = {
@@ -494,6 +508,42 @@ function truncateAccountBalances(accounts: AccountInfo[]) {
 
 //FIXME: Asset scale needed for amount?
 function truncateTransactionBalances(transactions: TransactionInfo[]) {
+  // Date functions
+  const makeMinLenTwo = (input: number) => {
+    const string = input.toString()
+    if (string.length === 1)
+      return '0' + string
+    else
+      return string
+  }
+  const getDateBoxDateString = (DBString: string) => {
+    const date = new Date(DBString)
+    const rawArray = [
+      date.getDate(),
+      (date.getMonth() + 1),
+      date.getFullYear(),
+      date.getHours(),
+      date.getMinutes()
+    ]
+    const finalArray = rawArray.map(makeMinLenTwo)
+    return (
+      finalArray[0] + '-' +
+      finalArray[1] + '-' +
+      finalArray[2] + ', ' +
+      finalArray[3] + ':' +
+      finalArray[4]
+    )
+  }
+
+  const getTransactionCardDate = (DBString: string) => {
+    const date = new Date(Date.parse(DBString))
+    return (
+      date.getDate() + ' ' +
+      months[date.getMonth()] + ' ' +
+      date.getFullYear()
+    )
+  }
+
   let result = transactions.map(element => {
     var truncatedAccount: TransactionInfo = {
       id: element.id,
@@ -503,10 +553,13 @@ function truncateTransactionBalances(transactions: TransactionInfo[]) {
       createdAt: element.createdAt,
       updatedAt: element.updatedAt
     };
+    truncatedAccount.createdAt = getTransactionCardDate(truncatedAccount.createdAt)
+
     return truncatedAccount;
   });
   return result;
 }
+
 
 // -- Initial Functions ----------------------------------
 
