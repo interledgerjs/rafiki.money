@@ -4,10 +4,6 @@ TODO:
 - [] main transactions array dynamic
 - [] graph updated on click
 - [] graph dynamic data
-- [X] transactions service needed
-- [X] accounts service needed
-- [X] total balance
-- [X] dynamic payment pointer
 */
 
 import React, { useState, useEffect, Fragment } from "react";
@@ -276,20 +272,6 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
     setAccountData(updatedData);
   }
 
-  //FIXME: transform data
-  async function GetTransactionsData(accountId: number, token: string) {
-    const retrievedTransactions = await transactionsService.getTransactionsByAccountId(
-      token,
-      accountId.toString()
-    );
-    const formattedTransactions = truncateTransactionBalances(
-      retrievedTransactions
-    );
-    console.log(formattedTransactions);
-    return formattedTransactions;
-    // return updatedDummyAccountInfo;
-  }
-
   function retrieveAccountName(data: AccountData, accountId: number) {
     //FIXME: Find a way to not pass the whole data object around
     let name: string;
@@ -547,6 +529,21 @@ function calculateTotalBalance(accounts: AccountInfo[]) {
 const accountsService = AccountsService();
 const transactionsService = TransactionsService();
 
+async function GetTransactionsData(accountId: number, token: string) {
+  const retrievedTransactions = await transactionsService.getTransactionsByAccountId(
+    token,
+    accountId.toString()
+  );
+  const formattedTransactions = truncateTransactionBalances(
+    retrievedTransactions
+  );
+  return formattedTransactions;
+}
+
+async function IndexTransactions(accountId: number, token: string) {
+  //account ids -> getTransactionsData -> put them together (splice?)
+}
+
 Overview.getInitialProps = async ctx => {
   const retrievedUser = await checkUser(ctx);
   const token = retrievedUser.token;
@@ -557,16 +554,21 @@ Overview.getInitialProps = async ctx => {
   );
   // console.log(retrievedAccounts);
 
-  // console.log(retrievedTransactions)
-
   // Working out balances
   const truncatedAccounts = truncateAccountBalances(retrievedAccounts);
   const totalBalance = calculateTotalBalance(truncatedAccounts);
 
   // FIXME: Get Transactions from those accounts instead of mocking data
   const accountData = dummyAccountInfo;
+
+  let transactionArray: TransactionInfo[]
+
+  // console.log(retrievedTransactions)
+  // accountData.transactions = retrievedTransactions
   accountData.accounts = truncatedAccounts;
   accountData.user = retrievedUser;
+  
+
 
   return { accountData, totalBalance, token };
 };
