@@ -1,5 +1,4 @@
 import ky from 'ky-universal'
-import { parseCookies } from 'nookies'
 import getConfig from 'next/config'
 
 const { publicRuntimeConfig } = getConfig()
