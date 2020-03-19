@@ -58,6 +58,24 @@ exports.seed = function(knex) {
           createdAt: '3030-03-03 03:33:30.333333+00',
           updatedAt: '3030-03-03 03:33:30.333333+00',
           cancelledAt: null
+        },
+        {
+          id: '88c5e8db-e9fb-4263-9c8e-083e2ea8b188', 
+          userId: '2',
+          accountId: '2',
+          description: 'Big Burger 4',
+          assetCode: '444',
+          assetScale: '6',
+          amount: '4000',
+          balance: '3500',
+          startAt: '4040-04-04 04:44:40.444444+00',
+          expireAt: '4040-04-04 04:44:40.444444+00',
+          interval: 'Yearly',
+          cap: true,
+          scope: 'Scope',
+          createdAt: '4040-04-04 04:44:40.444444+00',
+          updatedAt: '4040-04-04 04:44:40.444444+00',
+          cancelledAt: null
         }
       ]);
     });
