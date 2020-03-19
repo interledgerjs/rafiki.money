@@ -13,8 +13,8 @@ const sendMoney = async (ilpAddress: string, sharedSecret: string, amount: strin
   })
 
   const connection = await createConnection({
-    destinationAccount: 'ilpAddress',
-    sharedSecret: Buffer.from('sharedSecret'),
+    destinationAccount: ilpAddress,
+    sharedSecret: Buffer.from(sharedSecret),
     plugin: client
   })
 

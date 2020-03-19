@@ -4,7 +4,7 @@ import Router from '@koa/router'
 import bodyParser from 'koa-bodyparser'
 import cors from '@koa/cors'
 import { Server } from 'http'
-import { Server as StreamServer } from 'ilp-protocol-stream'
+import { Connection, DataAndMoneyStream, Server as StreamServer } from 'ilp-protocol-stream'
 import * as CredentialsController from './controllers/credentials'
 import { ConnectionTag } from './services/connectionTag'
 
@@ -28,6 +28,7 @@ export class App {
     this._koa.use(cors())
 
     this._setupRoutes()
+    this._setupStream(streamServer)
 
     this._koa.use(bodyParser())
     this._koa.use(this._publicRouter.middleware())
@@ -57,5 +58,28 @@ export class App {
     })
 
     this._publicRouter.post('/credentials', CredentialsController.create)
+  }
+
+  private _setupStream (server: StreamServer): void {
+    server.on('connection', (conn: Connection) => {
+
+      // const data = JSON.parse(this._koa.context.connectionTag.decode(conn.connectionTag || ''))
+
+      conn.on('stream', (stream: DataAndMoneyStream) => {
+        stream.setReceiveMax(String(2 ** 56))
+
+        stream.on('money', (amount: string) => {
+
+        })
+
+        stream.on('error', (err: Error) => {
+          this._koa.context.logger.warn('payout stream error. err="%s"', err)
+        })
+      })
+
+      conn.on('error', (err) => {
+        this._koa.context.logger.warn('payout connection error. err="%s"', err)
+      })
+    })
   }
 }
