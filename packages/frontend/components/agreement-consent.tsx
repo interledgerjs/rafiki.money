@@ -53,7 +53,7 @@ const humanizeInterval = (interval: string): string => {
 const FieldEntry: React.FC<{ description: string, value: string, className: string }> = ({ description, value, className }) => {
   return value ? (
     <div className={className}>
-      <div className="overline">{description}</div>
+      <div className="overline text-on-surface-disabled">{description}</div>
       <div className="headline-6">{value}</div>
     </div>
   ) : null
@@ -98,36 +98,42 @@ const AgreementConsent: React.FC<AgreementConsentProps> = ({consentRequest, chal
       alert('Please choose an account')
       return
     }
-    try {
-      const acceptConsent = await users.handleConsent(challenge, {
-        accepts: true,
-        accountId: chosenAccount.id,
-        scopes: consentRequest.requestedScopes
-      })
-      window.location.href = acceptConsent.redirectTo
-    } catch (error) {
-      if (error.response.status === 401) {
-        const rejectConsent = await users.handleConsent(challenge, {
-          accepts: false,
+    if(!handlingConsent) {
+      setHandlingConsent(true)
+      try {
+        const acceptConsent = await users.handleConsent(challenge, {
+          accepts: true,
+          accountId: chosenAccount.id,
           scopes: consentRequest.requestedScopes
         })
-        alert(error.response.data)
-        window.location.href = rejectConsent.redirectTo
-        return
+        window.location.href = acceptConsent.redirectTo
+      } catch (error) {
+        if (error.response.status === 401) {
+          const rejectConsent = await users.handleConsent(challenge, {
+            accepts: false,
+            scopes: consentRequest.requestedScopes
+          })
+          alert(error.response.data)
+          window.location.href = rejectConsent.redirectTo
+          return
+        }
+        console.log('error accepting consent', error.response)
+        alert('An error occurred whilst trying to authorize the agreement.')
       }
-      console.log('error accepting consent', error.response)
-      alert('An error occurred whilst trying to authorize the agreement.')
+      setHandlingConsent(false)
     }
   }
 
   async function handleRejectConsent() {
     if (!handlingConsent) {
-    const rejectConsent = await users.handleConsent(challenge, {
-      accepts: false,
-      scopes: consentRequest.requestedScopes
-    })
+      setHandlingConsent(true)
+      const rejectConsent = await users.handleConsent(challenge, {
+        accepts: false,
+        scopes: consentRequest.requestedScopes
+      })
 
-    window.location.href = rejectConsent.redirectTo
+      window.location.href = rejectConsent.redirectTo
+      setHandlingConsent(false)
     }
   }
 
@@ -150,7 +156,7 @@ const AgreementConsent: React.FC<AgreementConsentProps> = ({consentRequest, chal
                 <div className="w-8">
                   <i className={`material-icons w-5 h-5 text-on-surface-disabled`}>{'info'}</i>
                 </div>
-                <div className='flex-1 caption'>{merchantName} will be able to debit your account for <span>{formatCurrency(Number(mandate.amount), mandate.assetScale)} {mandate.assetCode.toUpperCase()}</span></div>
+                <div className='flex-1 caption text-on-surface-medium'>{merchantName} will be able to debit your account for <span>{getCurrencySymbol(mandate.assetCode)}{formatCurrency(Number(mandate.amount), mandate.assetScale)} {mandate.assetCode.toUpperCase()}</span></div>
               </div>
 
               <FieldEntry description="amount" value={ getCurrencySymbol(mandate.assetCode) + " " + formatCurrency(Number(mandate.amount), mandate.assetScale) + " " + mandate.assetCode.toUpperCase()} className="mt-3"/>

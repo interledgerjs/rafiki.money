@@ -91,11 +91,6 @@ const Consent: NextPage<Props> = ({consentChallenge, consent}) => {
 Consent.getInitialProps = async ({query, res}) => {
   const { consent_challenge } = query
 
-  return {
-    consentChallenge: consent_challenge.toString(),
-    consent: dummyMandateConsent
-  }
-
   if(!consent_challenge) {
     res.writeHead(302, {
       Location: '/'
