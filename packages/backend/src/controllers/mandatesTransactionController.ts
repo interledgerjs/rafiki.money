@@ -6,7 +6,9 @@ export async function index (ctx: AppContext): Promise<void> {
 
   ctx.logger.info('Getting mandate transactions', mandateId)
 
-  const mandateTransactions = await MandateTransaction.query().where('mandateId', mandateId)
+  const mandateTransactions = await MandateTransaction.query()
+    .where('mandateId', mandateId)
+    .orderBy('createdAt', 'desc')
 
   ctx.body = mandateTransactions.map(transaction => {
     return transaction.toJSON()
