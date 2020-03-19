@@ -63,8 +63,12 @@ module.exports = {
           '400': 'var(--color-secondary-400)',
           '500': 'var(--color-secondary-500)',
         },
-        'on-surface': 'var(--color-on-surface)',
-        'on-surface-trans': 'var(--color-on-surface-trans)',
+        'on-surface': {
+          default: 'var(--color-on-surface)',
+          medium: 'var(--color-on-surface-medium)',
+          disabled: 'var(--color-on-surface-disabled)',
+          trans: 'var(--color-on-surface-trans)'
+        },
         surface: {
           default: 'var(--color-surface)',
           // Note: elevations only available in dark mode. https://material.io/design/color/dark-theme.html#properties
