@@ -46,11 +46,12 @@ const base64url = (buffer: Buffer) => {
 
 export async function show (ctx: AppContext): Promise<void> {
   ctx.logger.debug('Payment pointer request', { path: ctx.request.path })
-  const username = ctx.params.username
-  const user = await User.query().where('username', username).first()
-  ctx.assert(user, 404, 'No user found.')
 
   if (ctx.get('Accept').indexOf('application/spsp4+json') !== -1) {
+    const username = ctx.params.username
+    const user = await User.query().where('username', username).first()
+    ctx.assert(user, 404, 'No user found.')
+
     // Determine the payment pointer used and find the account its correlated with
     const token = base64url(generateToken())
     const sharedSecret = generateSharedSecretFromToken(STREAM_SERVER_SECRET, Buffer.from(token, 'ascii'))

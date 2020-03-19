@@ -15,8 +15,7 @@ export async function pay(paymentPointer: string, amount: any, account: any, tok
         subject: paymentPointer
     }
 
-    const user = paymentPointer.slice(1)
-    let url = new URL('http://' + `${user}`)
+    let url = new URL('/.well-known/open-payments', USERS_API_URL)
     const getPaymentPointerMetadata = await ky.get(url.toString()).then(resp => resp.json())
     const invoices_endpoint = getPaymentPointerMetadata.invoices_endpoint
     const createInvoice = await ky.post(invoices_endpoint, { json: body, headers: { authorization: `Bearer ${token}` } }).then(resp => resp.json())
