@@ -16,7 +16,7 @@ export async function create (ctx: AppContext): Promise<void> {
   ctx.logger.info('Creating an account', { body })
 
   const account = await Account.query().insertAndFetch({
-    userId: 1,
+    userId: ctx.state.user.sub,
     name: body.name,
     assetCode: 'USD',
     assetScale: 6,
