@@ -5,7 +5,7 @@ import { randomBytes } from 'crypto'
 
 const INVOICES_URL = process.env.INVOICES_URL || 'http://localhost:3001/invoices'
 const MANDATES_URL = process.env.MANDATES_URL || 'http://localhost:3001/mandates'
-const SUPPORTED_ASSETS = process.env.SUPPORTED_ASSETS || JSON.stringify(['USD'])
+const SUPPORTED_ASSETS = process.env.SUPPORTED_ASSETS || JSON.stringify([{ 'code': 'USD', 'scale': 2 }])
 const AUTHORIZATION_URL = process.env.AUTHORIZATION_URL || 'http://localhost:9000/oauth2/auth'
 const ISSUER_URL = process.env.ISSUER_URL || 'http://localhost:9000/'
 const TOKEN_URL = process.env.TOKEN_URL || 'http://localhost:9000/oauth2/token'
@@ -17,7 +17,7 @@ export type OAuthServerMetaData = {
   // Ilp extension to meta data
   payment_intents_endpoint: string;
   payment_mandates_endpoint: string;
-  payment_assets_supported: string[];
+  assets_supported: string[];
   default_account_id: string;
   // Subset of current meta data specified in RFC8414
   issuer: string;
