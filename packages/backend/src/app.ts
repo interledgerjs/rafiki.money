@@ -92,7 +92,9 @@ export class App {
     this._privateRouter.patch('/accounts/:id', AccountsController.update)
 
     this._privateRouter.post('/faucet', FaucetController.create)
-    this._privateRouter.post('/transactions', TransactionsController.create)
+
+    this._privateRouter.get('/transactions', TransactionsController.index)
+    this._privateRouter.post('/transactions', TransactionsController.store)
 
     this._publicRouter.post('/mandates', MandatesController.store)
     this._privateRouter.get('/mandates', MandatesController.index)
