@@ -34,7 +34,7 @@ const Transact: NextPage<Props> = ({user}) => {
 
   const onSubmit = async data => {
     const receiver = data.paymentPointer.slice(1)
-    const url = new URL('http://' + `${receiver}`)
+    const url = new URL(USERS_API_URL.split('/', 1) + `${receiver}`)
     if (url.origin + '/' == USERS_API_URL) {
       const getUser = await ky.get(url.toString()).catch((error) => { })
       if (getUser) {
@@ -76,7 +76,7 @@ const Transact: NextPage<Props> = ({user}) => {
   }
 
   const validateAmount = e => {
-    const amountRegex = RegExp(/^[0-9]+(\.[0-9]{1,2})?$/)
+    const amountRegex = RegExp(/^[0-9]+(\.[0-9]{1,6})?$/)
     if (!amountRegex.test(e.target.value)) {
       setError("amount", "invalidAmount", "Please submit a valid amount")
       return (false)
