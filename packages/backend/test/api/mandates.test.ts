@@ -3,26 +3,33 @@ import { createTestApp, TestAppContainer } from '../helpers/app'
 import { mockAuth } from '../helpers/auth'
 import { Mandate } from '../../src/models/mandate'
 import { User } from '../../src/models/user'
+import { Model } from 'objection'
+import Knex, { Transaction } from 'knex'
 
 describe('Create mandate', () => {
   let appContainer: TestAppContainer
+  let trx: Transaction
   mockAuth()
 
   beforeAll(async () => {
     appContainer = createTestApp()
-  })
-
-  beforeEach(async () => {
     await appContainer.knex.migrate.latest()
   })
 
-  afterEach(async () => {
-    await appContainer.knex.migrate.rollback()
+  beforeEach(async () => {
+    trx = await appContainer.knex.transaction()
+    Model.knex(trx as Knex)
   })
 
-  afterAll(() => {
+  afterEach(async () => {
+    await trx.rollback()
+    await trx.destroy()
+  })
+
+  afterAll(async () => {
+    await appContainer.knex.migrate.rollback()
     appContainer.app.shutdown()
-    appContainer.knex.destroy()
+    await appContainer.knex.destroy()
   })
 
   test('can create mandate without user and account', async () => {
@@ -106,20 +113,23 @@ describe('Get mandate', () => {
   let appContainer: TestAppContainer
   let mandate: Mandate
   let user: User
+  let trx: Transaction
   mockAuth()
 
   beforeAll(async () => {
     appContainer = createTestApp()
+    await appContainer.knex.migrate.latest()
   })
 
   beforeEach(async () => {
-    await appContainer.knex.migrate.latest()
+    trx = await appContainer.knex.transaction()
+    Model.knex(trx)
     user = await User.query().insertAndFetch({
       username: 'alice'
     })
     mandate = await Mandate.query().insertAndFetch({
       // @ts-ignore
-      description: "mandate",
+      description: 'mandate',
       userId: user.id,
       assetCode: 'USD',
       assetScale: 2,
@@ -131,18 +141,20 @@ describe('Get mandate', () => {
   })
 
   afterEach(async () => {
-    await appContainer.knex.migrate.rollback()
+    trx.rollback()
+    await trx.destroy()
   })
 
-  afterAll(() => {
+  afterAll(async () => {
+    await appContainer.knex.migrate.rollback()
     appContainer.app.shutdown()
-    appContainer.knex.destroy()
+    await appContainer.knex.destroy()
   })
 
   test('User can get their mandate', async () => {
     expect(mandate.cancelledAt).toBeNull()
 
-    const { status, data } = await axios.get(`http://localhost:${appContainer.port}/mandates/${mandate.id}`,{
+    const { status, data } = await axios.get(`http://localhost:${appContainer.port}/mandates/${mandate.id}`, {
       headers: {
         authorization: `Bearer user_${user.id}`
       }
@@ -177,7 +189,7 @@ describe('Get mandate', () => {
   test('User can a list of their mandates', async () => {
     expect(mandate.cancelledAt).toBeNull()
 
-    const { status, data } = await axios.get(`http://localhost:${appContainer.port}/mandates`,{
+    const { status, data } = await axios.get(`http://localhost:${appContainer.port}/mandates`, {
       headers: {
         authorization: `Bearer user_${user.id}`
       }
@@ -190,7 +202,7 @@ describe('Get mandate', () => {
   test('User can a list of their mandates', async () => {
     expect(mandate.cancelledAt).toBeNull()
 
-    const { status, data } = await axios.get(`http://localhost:${appContainer.port}/mandates`,{
+    const { status, data } = await axios.get(`http://localhost:${appContainer.port}/mandates`, {
       headers: {
         authorization: `Bearer user_${user.id}`
       }
@@ -203,7 +215,7 @@ describe('Get mandate', () => {
   test('User can filter list for active mandates', async () => {
     expect(mandate.cancelledAt).toBeNull()
 
-    const { status, data } = await axios.get(`http://localhost:${appContainer.port}/mandates?state=active`,{
+    const { status, data } = await axios.get(`http://localhost:${appContainer.port}/mandates?state=active`, {
       headers: {
         authorization: `Bearer user_${user.id}`
       }
@@ -216,7 +228,7 @@ describe('Get mandate', () => {
   test('User can filter list for expired mandates', async () => {
     expect(mandate.cancelledAt).toBeNull()
 
-    const { status, data } = await axios.get(`http://localhost:${appContainer.port}/mandates?state=expired`,{
+    const { status, data } = await axios.get(`http://localhost:${appContainer.port}/mandates?state=expired`, {
       headers: {
         authorization: `Bearer user_${user.id}`
       }
@@ -229,7 +241,7 @@ describe('Get mandate', () => {
   test('User can filter list for cancelled mandates', async () => {
     expect(mandate.cancelledAt).toBeNull()
 
-    const { status, data } = await axios.get(`http://localhost:${appContainer.port}/mandates?state=cancelled`,{
+    const { status, data } = await axios.get(`http://localhost:${appContainer.port}/mandates?state=cancelled`, {
       headers: {
         authorization: `Bearer user_${user.id}`
       }
@@ -244,20 +256,23 @@ describe('Cancel mandate', () => {
   let appContainer: TestAppContainer
   let mandate: Mandate
   let user: User
+  let trx: Transaction
   mockAuth()
 
   beforeAll(async () => {
     appContainer = createTestApp()
+    await appContainer.knex.migrate.latest()
   })
 
   beforeEach(async () => {
-    await appContainer.knex.migrate.latest()
+    trx = await appContainer.knex.transaction()
+    Model.knex(trx)
     user = await User.query().insertAndFetch({
       username: 'alice'
     })
     mandate = await Mandate.query().insertAndFetch({
       // @ts-ignore
-      description: "mandate",
+      description: 'mandate',
       userId: user.id,
       assetCode: 'USD',
       assetScale: 2,
@@ -269,12 +284,14 @@ describe('Cancel mandate', () => {
   })
 
   afterEach(async () => {
-    await appContainer.knex.migrate.rollback()
+    await trx.rollback()
+    await trx.destroy()
   })
 
-  afterAll(() => {
+  afterAll(async () => {
+    await appContainer.knex.migrate.rollback()
     appContainer.app.shutdown()
-    appContainer.knex.destroy()
+    await appContainer.knex.destroy()
   })
 
   test('User can cancel their mandate', async () => {

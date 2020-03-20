@@ -7,19 +7,13 @@ describe('Payment pointer', function () {
 
   beforeAll(async () => {
     appContainer = createTestApp()
-  })
-
-  beforeEach(async () => {
     await appContainer.knex.migrate.latest()
   })
 
-  afterEach(async () => {
+  afterAll(async () => {
     await appContainer.knex.migrate.rollback()
-  })
-
-  afterAll(() => {
     appContainer.app.shutdown()
-    appContainer.knex.destroy()
+    await appContainer.knex.destroy()
   })
 
   describe('Get', function () {

@@ -4,6 +4,7 @@ import { NextPage } from "next"
 import { UsersService } from '../services/users'
 
 import { NormalConsent, AgreementConsent } from '../components'
+import { AccountInfo } from 'models'
 
 const usersService = UsersService()
 
@@ -13,7 +14,7 @@ type Props = {
 }
 
 export type ConsentRequest = {
-  accounts?: { id: number, name: string }[],
+  accounts?: Partial<AccountInfo>[],
   client: {
     client_id: string,
     redirect_uris: string[],
@@ -21,26 +22,38 @@ export type ConsentRequest = {
     client_name?: string
   },
   requestedScopes: string[],
-  agreementUrl?: string,
+  mandate?: {
+    id: string,
+    assetCode: string
+    assetScale: number
+    amount: string,
+    description: string
+  },
   redirectTo?: string
 }
 
-const dummyConsent: ConsentRequest = {
+const dummyMandateConsent: ConsentRequest = {
   client: {
     client_id: 'Test',
     redirect_uris: [],
     client_name: 'Merchant'
   },
-  agreementUrl: '123',
+  mandate: {
+    id: '123',
+    assetCode: 'EUR',
+    assetScale: 2,
+    amount: '2000',
+    description: 'MERCHANT Premium Subscription'
+  },
   requestedScopes: [
-    'intents', 'offline', 'openid'
+    'offline',
   ],
   accounts: [
     {
-      id: 1, name: 'Main Account',
+      id: 1, name: 'Main Account', balance: '10000', assetCode: 'USD', assetScale: 2
     },
     {
-      id: 2, name: 'Savings Account',
+      id: 2, name: 'Savings Account', balance: '5000', assetCode: 'ZAR', assetScale: 2
     }
   ]
 }
@@ -70,7 +83,7 @@ const Consent: NextPage<Props> = ({consentChallenge, consent}) => {
   }
 
   return consent ?
-    consent.agreementUrl ?
+    consent.mandate ?
       <AgreementConsent challenge={consentChallenge} consentRequest={consent} /> :
       <NormalConsent consentRequest={consent}  acceptConsent={handleConsent.bind(this)} /> : null
 }
