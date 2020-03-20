@@ -53,7 +53,7 @@ describe('Create invoice', () => {
     const invoice = await Invoice.query().first()
 
     expect(status).toEqual(201)
-    expect(data.name).toEqual(`//localhost/invoices/${invoice.id}`)
+    expect(data.name).toEqual(`//localhost:3001/invoices/${invoice.id}`)
     expect(data.subject).toEqual('$wallet.example/alice')
     expect(data.amount).toEqual('500')
     expect(data.assetCode).toEqual('USD')
@@ -117,7 +117,7 @@ describe('Get an invoice', () => {
     const { status, data } = await axios.get(`http://localhost:${appContainer.port}/invoices/${invoice.id}`)
 
     expect(status).toEqual(200)
-    expect(data.name).toEqual(`//localhost/invoices/${invoice.id}`)
+    expect(data.name).toEqual(`//localhost:3001/invoices/${invoice.id}`)
     expect(data.subject).toEqual('$wallet.example/alice')
     expect(data.amount).toEqual('500')
     expect(data.assetCode).toEqual('USD')
