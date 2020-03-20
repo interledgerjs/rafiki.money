@@ -4,7 +4,9 @@
   "private": true,
   "useWorkspaces": true,
   "workspaces": [
-    "packages/backend"
+    "packages/backend",
+    "packages/stream-service",
+    "packages/ilp-connector"
   ],
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.22.0",
