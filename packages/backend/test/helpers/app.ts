@@ -11,6 +11,7 @@ export type TestAppContainer = {
   port: number,
   app: App,
   knex: Knex,
+  streamService: StreamService
 }
 
 export const createTestApp = (): TestAppContainer => {
@@ -37,6 +38,7 @@ export const createTestApp = (): TestAppContainer => {
   return {
     app,
     knex,
-    port: app.getPort()
+    port: app.getPort(),
+    streamService
   }
 }

@@ -1,4 +1,5 @@
 import { Model } from 'objection'
+import { Account } from './account'
 
 export type UserInfo = {
   id: number;
@@ -18,6 +19,17 @@ export class User extends Model {
   username !: string
   password !: string
   defaultAccountId !: string
+
+  static relationMappings = {
+    accounts: {
+      relation: Model.HasManyRelation,
+      modelClass: Account,
+      join: {
+        from: 'users.id',
+        to: 'accounts.userId'
+      }
+    }
+  }
 
   $beforeInsert () {
     this.createdAt = new Date().toISOString()
