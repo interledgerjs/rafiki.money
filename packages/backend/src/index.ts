@@ -2,6 +2,9 @@ import createLogger from 'pino'
 import { App } from './app'
 import { Model } from 'objection'
 import { TokenService } from './services/token-service'
+import { StreamService } from './services/stream'
+import BtpPlugin from 'ilp-plugin-btp'
+import { randomBytes } from 'crypto'
 import Knex = require('knex')
 const logger = createLogger({
   prettyPrint: {
@@ -26,6 +29,17 @@ const knex = Knex({
   }
 })
 
+const plugin = new BtpPlugin({
+  server: process.env.BTP_UPLINK || 'btp+ws://localhost:8000',
+  btpToken: randomBytes(4).toString()
+})
+
+const streamService = new StreamService({
+  key: process.env.STREAM_KEY || '716343aed8ac20ef1853e04c11ed9a0e',
+  logger: logger,
+  plugin: plugin
+})
+
 const tokenService = new TokenService({
   clientId: process.env.OAUTH_CLIENT_ID || 'wallet-users-service',
   clientSecret: process.env.OAUTH_CLIENT_SECRET || '',
@@ -33,12 +47,14 @@ const tokenService = new TokenService({
   tokenRefreshTime: 0
 })
 
-const app = new App(logger, tokenService)
+const app = new App(logger, tokenService, streamService)
 
 export const gracefulShutdown = async (): Promise<void> => {
   logger.info('shutting down.')
   app.shutdown()
   await knex.destroy()
+  await streamService.close()
+  await plugin.disconnect()
 }
 
 export const start = async (): Promise<void> => {
@@ -48,7 +64,6 @@ export const start = async (): Promise<void> => {
       if (shuttingDown) {
         logger.warn('received second SIGINT during graceful shutdown, exiting forcefully.')
         process.exit(1)
-        return
       }
 
       shuttingDown = true
@@ -67,6 +82,7 @@ export const start = async (): Promise<void> => {
   await knex.migrate.latest()
   Model.knex(knex)
 
+  await streamService.listen()
   app.listen(PORT)
   logger.info(`Listening on ${PORT}`)
 }

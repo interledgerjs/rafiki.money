@@ -19,9 +19,12 @@ import { createAuthMiddleware } from './middleware/auth'
 import { TokenService } from './services/token-service'
 import * as FaucetController from './controllers/faucet'
 import { createAttemptAuthMiddleware } from './middleware/attemptAuth'
+import { StreamService } from './services/stream'
 
 export interface AppContext extends Context {
   logger: Logger;
+  tokenService: TokenService;
+  streamService: StreamService;
 }
 
 export class App {
@@ -30,9 +33,10 @@ export class App {
   private _privateRouter: Router<any, AppContext>
   private _server: Server | undefined
 
-  constructor (logger: Logger, tokenService: TokenService) {
+  constructor (logger: Logger, tokenService: TokenService, streamService: StreamService) {
     this._koa = new Koa<any, AppContext>()
     this._koa.context.tokenService = tokenService
+    this._koa.context.streamService = streamService
     this._koa.context.logger = logger
     this._privateRouter = new Router<any, AppContext>()
     this._publicRouter = new Router<any, AppContext>()
