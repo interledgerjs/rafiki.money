@@ -2,9 +2,12 @@ import axios from 'axios'
 import { createTestApp, TestAppContainer } from '../helpers/app'
 import { hydra } from '../../src/services/hydra'
 import { Account } from '../../src/models/account'
+import { Transaction } from 'knex'
+import { Model } from 'objection'
 
 describe('Faucet API Test', () => {
   let appContainer: TestAppContainer
+  let trx: Transaction
 
   beforeAll(async () => {
     appContainer = createTestApp()
@@ -31,19 +34,23 @@ describe('Faucet API Test', () => {
         active: false
       }
     })
-  })
-
-  beforeEach(async () => {
     await appContainer.knex.migrate.latest()
   })
 
-  afterEach(async () => {
-    await appContainer.knex.migrate.rollback()
+  beforeEach(async () => {
+    trx = await appContainer.knex.transaction()
+    Model.knex(trx)
   })
 
-  afterAll(() => {
+  afterEach(async () => {
+    await trx.rollback()
+    await trx.destroy()
+  })
+
+  afterAll(async () => {
+    await appContainer.knex.migrate.rollback()
     appContainer.app.shutdown()
-    appContainer.knex.destroy()
+    await appContainer.knex.destroy()
   })
 
   describe('Add from faucet', () => {

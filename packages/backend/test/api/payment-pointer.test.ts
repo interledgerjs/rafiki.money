@@ -7,19 +7,13 @@ describe('Payment pointer', function () {
 
   beforeAll(async () => {
     appContainer = createTestApp()
-  })
-
-  beforeEach(async () => {
     await appContainer.knex.migrate.latest()
   })
 
-  afterEach(async () => {
+  afterAll(async () => {
     await appContainer.knex.migrate.rollback()
-  })
-
-  afterAll(() => {
     appContainer.app.shutdown()
-    appContainer.knex.destroy()
+    await appContainer.knex.destroy()
   })
 
   describe('Get', function () {
@@ -30,7 +24,7 @@ describe('Payment pointer', function () {
 
       expect(status).toEqual(200)
       expect(data).toEqual({
-        invoices_endpoint: 'http://localhost:3001/intents',
+        invoices_endpoint: 'http://localhost:3001/invoices',
         mandates_endpoint: 'http://localhost:3001/mandates',
         assets_supported: ['USD'],
         authorization_endpoint: 'http://localhost:9000/oauth2/auth',

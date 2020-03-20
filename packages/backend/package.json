@@ -31,15 +31,16 @@
     "koa": "^2.8.1",
     "koa-bodyparser": "^4.2.1",
     "koa-joi-router": "^6.0.0",
+    "ky-universal": "latest",
     "mysql": "^2.17.1",
+    "nookies": "latest",
     "objection": "^2.1.2",
     "openid-client": "latest",
     "pg": "^7.18.1",
     "pino": "^5.13.3",
+    "pino-pretty": "^3.6.1",
     "sqlite3": "^4.1.0",
-    "uuid": "^3.3.3",
-    "nookies": "latest",
-    "ky-universal": "latest"
+    "uuid": "^3.3.3"
   },
   "devDependencies": {
     "@types/jest": "^24.0.18",

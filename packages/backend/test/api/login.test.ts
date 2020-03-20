@@ -1,28 +1,34 @@
-import Knex from 'knex'
+import Knex, { Transaction } from 'knex'
 import axios from 'axios'
 import bcrypt from 'bcrypt'
 import { hydra } from '../../src/services/hydra'
 import { User } from '../../src/models/user'
 import { createTestApp, TestAppContainer } from '../helpers/app'
+import { Model } from 'objection'
 
 describe('Login', function () {
   let appContainer: TestAppContainer
+  let trx: Transaction
 
   beforeAll(async () => {
     appContainer = createTestApp()
-  })
-
-  beforeEach(async () => {
     await appContainer.knex.migrate.latest()
   })
 
-  afterEach(async () => {
-    await appContainer.knex.migrate.rollback()
+  beforeEach(async () => {
+    trx = await appContainer.knex.transaction()
+    Model.knex(trx)
   })
 
-  afterAll(() => {
+  afterEach(async () => {
+    await trx.rollback()
+    await trx.destroy()
+  })
+
+  afterAll(async () => {
+    await appContainer.knex.migrate.rollback()
     appContainer.app.shutdown()
-    appContainer.knex.destroy()
+    await appContainer.knex.destroy()
   })
 
   describe('Get login request', function () {
