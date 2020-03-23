@@ -540,9 +540,20 @@ async function GetTransactionsData(accountId: number, token: string) {
   return formattedTransactions;
 }
 
-async function IndexTransactions(accountId: number, token: string) {
-  //account ids -> getTransactionsData -> put them together (splice?)
+async function IndexTransactionsData(accountId: number[], token: string) {
+  const retrievedTransactions = await transactionsService.getTransactionsByAccountId(
+    token,
+    accountId.toString()
+  );
+  const formattedTransactions = truncateTransactionBalances(
+    retrievedTransactions
+  );
+  return formattedTransactions;
 }
+
+// async function IndexTransactions(accountId: number, token: string) {
+//   //account ids -> getTransactionsData -> put them together (splice?)
+// }
 
 Overview.getInitialProps = async ctx => {
   const retrievedUser = await checkUser(ctx);
@@ -561,8 +572,16 @@ Overview.getInitialProps = async ctx => {
   // FIXME: Get Transactions from those accounts instead of mocking data
   const accountData = dummyAccountInfo;
 
-  let transactionArray: TransactionInfo[]
+  let accountIdList:number[] = []
 
+  truncatedAccounts.forEach(function(account) {
+    accountIdList.push(account.id)
+  })
+  console.log(accountIdList)
+  // const retrievedTransactions = IndexTransactionsData()
+  // console.log(retrievedTransactions)
+  // if retrieved -> go else error log
+  
   // console.log(retrievedTransactions)
   // accountData.transactions = retrievedTransactions
   accountData.accounts = truncatedAccounts;
