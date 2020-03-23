@@ -540,15 +540,41 @@ async function GetTransactionsData(accountId: number, token: string) {
   return formattedTransactions;
 }
 
-async function IndexTransactionsData(accountId: number[], token: string) {
-  const retrievedTransactions = await transactionsService.getTransactionsByAccountId(
-    token,
-    accountId.toString()
-  );
-  const formattedTransactions = truncateTransactionBalances(
-    retrievedTransactions
-  );
-  return formattedTransactions;
+async function IndexTransactionsData(accountIdList: number[], token: string) {
+  let transactionList: TransactionInfo[] = [];
+
+  // accountIdList.forEach(async item => {
+  //   let result = await GetTransactionsData(item, token);
+  //   console.log(result)
+
+  //   if (result) {
+  //     transactionList.push(result);
+  //   }
+  // });
+
+  // const start = async () => {
+  //   await asyncForEach(accountIdList, async (account) => {
+  //     let data = await GetTransactionsData(account, token);
+  //     console.log(data);
+  //   });
+  //   console.log("done")
+  // }
+  // start()
+
+  await asyncForEach(accountIdList, async account => {
+    let data = await GetTransactionsData(account, token);
+    console.log(data);
+  });
+  console.log("done");
+
+  return transactionList;
+}
+
+// -- Helpers ----------------------------------
+async function asyncForEach(array, callback) {
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array);
+  }
 }
 
 // async function IndexTransactions(accountId: number, token: string) {
@@ -572,22 +598,23 @@ Overview.getInitialProps = async ctx => {
   // FIXME: Get Transactions from those accounts instead of mocking data
   const accountData = dummyAccountInfo;
 
-  let accountIdList:number[] = []
+  let accountIdList: number[] = [];
 
   truncatedAccounts.forEach(function(account) {
-    accountIdList.push(account.id)
-  })
-  console.log(accountIdList)
-  // const retrievedTransactions = IndexTransactionsData()
-  // console.log(retrievedTransactions)
+    accountIdList.push(account.id);
+  });
+  console.log(accountIdList);
+  const retrievedTransactions = await IndexTransactionsData(
+    accountIdList,
+    token
+  );
+  console.log(retrievedTransactions);
   // if retrieved -> go else error log
-  
+
   // console.log(retrievedTransactions)
   // accountData.transactions = retrievedTransactions
   accountData.accounts = truncatedAccounts;
   accountData.user = retrievedUser;
-  
-
 
   return { accountData, totalBalance, token };
 };
