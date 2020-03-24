@@ -1,7 +1,7 @@
 /* 
 TODO:
 - [] transaction card name colour change
-- [] main transactions array dynamic
+- [X] main transactions array dynamic
 - [] graph updated on click
 - [] graph dynamic data
 */
@@ -281,7 +281,9 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
     return name;
   }
 
+  //Graph rendering
   function RenderGraph(data: AccountInfo[]) {
+    console.log({data})
     let nameList: string[] = data.map(element => {
       return element.name;
     });
@@ -309,7 +311,7 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
 
   //Renders the right card
   function RightCard(data: AccountData) {
-    let graphData = RenderGraph(data.accounts);
+    let graphData = RenderGraph(accountDataState.accounts);
 
     if (data.accounts.length <= 0) {
       return (
@@ -543,29 +545,12 @@ async function GetTransactionsData(accountId: number, token: string) {
 async function IndexTransactionsData(accountIdList: number[], token: string) {
   let transactionList: TransactionInfo[] = [];
 
-  // accountIdList.forEach(async item => {
-  //   let result = await GetTransactionsData(item, token);
-  //   console.log(result)
-
-  //   if (result) {
-  //     transactionList.push(result);
-  //   }
-  // });
-
-  // const start = async () => {
-  //   await asyncForEach(accountIdList, async (account) => {
-  //     let data = await GetTransactionsData(account, token);
-  //     console.log(data);
-  //   });
-  //   console.log("done")
-  // }
-  // start()
-
   await asyncForEach(accountIdList, async account => {
-    let data = await GetTransactionsData(account, token);
-    console.log(data);
+    let retrievedData = await GetTransactionsData(account, token);
+    if (retrievedData[0] != undefined) {
+      transactionList.push(retrievedData[0]);
+    }
   });
-  console.log("done");
 
   return transactionList;
 }
@@ -589,13 +574,11 @@ Overview.getInitialProps = async ctx => {
     retrievedUser.token,
     retrievedUser.id
   );
-  // console.log(retrievedAccounts);
 
   // Working out balances
   const truncatedAccounts = truncateAccountBalances(retrievedAccounts);
   const totalBalance = calculateTotalBalance(truncatedAccounts);
 
-  // FIXME: Get Transactions from those accounts instead of mocking data
   const accountData = dummyAccountInfo;
 
   let accountIdList: number[] = [];
@@ -603,18 +586,18 @@ Overview.getInitialProps = async ctx => {
   truncatedAccounts.forEach(function(account) {
     accountIdList.push(account.id);
   });
-  console.log(accountIdList);
+
   const retrievedTransactions = await IndexTransactionsData(
     accountIdList,
     token
   );
-  console.log(retrievedTransactions);
-  // if retrieved -> go else error log
+  // FIXME: if retrieved -> go, else error log
 
-  // console.log(retrievedTransactions)
-  // accountData.transactions = retrievedTransactions
+  // Currently this is where dummy data is overwritten with real data
+  // FIXME: have tests & checks in place to remove this step
   accountData.accounts = truncatedAccounts;
   accountData.user = retrievedUser;
+  accountData.transactions = retrievedTransactions;
 
   return { accountData, totalBalance, token };
 };
