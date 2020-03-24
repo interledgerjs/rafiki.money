@@ -9,7 +9,8 @@ import * as UsersController from './controllers/userController'
 import * as LoginController from './controllers/loginController'
 import * as LogoutController from './controllers/logoutController'
 import * as ConsentController from './controllers/consentController'
-import * as PaymentPointerController from './controllers/payment-pointer'
+import * as MonetizationController from './controllers/monetizationController'
+import * as OpenPaymentsMetadataController from './controllers/openPaymentsMetadataController'
 import * as Oauth2ClientController from './controllers/oauth2ClientController'
 import * as AccountsController from './controllers/accounts'
 import * as MandatesController from './controllers/mandatesController'
@@ -84,8 +85,8 @@ export class App {
 
     this._publicRouter.post('/logout', LogoutController.store)
 
-    this._publicRouter.get('/p/:username', PaymentPointerController.show)
-    this._publicRouter.get('/.well-known/open-payments', PaymentPointerController.show)
+    this._publicRouter.get('/p/:username', MonetizationController.show)
+    this._publicRouter.get('/.well-known/open-payments', OpenPaymentsMetadataController.show)
 
     this._privateRouter.post('/oauth2/clients', Oauth2ClientController.store)
 
