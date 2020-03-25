@@ -70,7 +70,7 @@ const Transact: NextPage = () => {
               </div>
               <TextInput inputType="text" name="" label="Amount"></TextInput>
               <div className="pb-10">
-                <Selector></Selector>
+                {/*<Selector></Selector>*/}
               </div>
               <div className="flex justify-center pt-4 pb-6">
                 <Button type="solid" buttonType="submit">

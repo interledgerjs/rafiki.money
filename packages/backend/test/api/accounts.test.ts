@@ -47,7 +47,7 @@ describe('Accounts API Test', () => {
         return resp.data
       })
 
-      expect(response.userId).toBe(1)
+      expect(response.userId).toBe(user.id)
       expect(response.name).toBe('test')
     })
 

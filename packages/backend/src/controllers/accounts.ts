@@ -13,10 +13,10 @@ export async function create (ctx: AppContext): Promise<void> {
   const { logger } = ctx
   const { body } = ctx.request
 
-  ctx.logger.info('Creating an account', { body })
+  logger.info('Creating an account', { body })
 
   const account = await Account.query().insertAndFetch({
-    userId: 1,
+    userId: ctx.state.user.sub,
     name: body.name,
     assetCode: 'USD',
     assetScale: 6,
