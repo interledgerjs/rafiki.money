@@ -43,9 +43,14 @@ const sideBar = (account: Account, token, refreshAccounts) => {
     refreshAccounts()
   }
 
+  const formatDate = (date: string) => {
+    const jsDate = new Date(date)
+    return jsDate.getDay() + '-' + jsDate.getMonth() + '-' + jsDate.getUTCFullYear()
+  }
+
   if(account) {
     return (
-      <Card width="w-full">
+      <Card width="w-full" className="flex flex-col">
         <div className="flex justify-between">
           <div className="text-headline-4 flex-1 truncate">
             {account.name}
@@ -59,7 +64,7 @@ const sideBar = (account: Account, token, refreshAccounts) => {
         <div className="text-headline-5 truncate">
           $ {formatCurrency(Number(account.balance), 6)}
         </div>
-        <div className="mt-4">
+        <div className="mt-4 flex-1 overflow-y-auto">
           <div className="text-headline-6">
             Transactions
           </div>
@@ -67,8 +72,18 @@ const sideBar = (account: Account, token, refreshAccounts) => {
             {
               transactions.map(transaction => {
                 return (
-                  <div>
-                    {transaction.amount}
+                  <div className="flex w-full my-4 py-2 px-2 border rounded">
+                    <div className="leading-tight">
+                      <div className="overline text-purple">
+                        {account.name}
+                      </div>
+                      <div className="text-headline-6">
+                        {formatDate(transaction.createdAt)}
+                      </div>
+                    </div>
+                    <div className={`flex-1 text-right my-auto text-headline-6 ${transaction.amount < 0 ? 'text-red' : 'text-green'}`}>
+                      $ {formatCurrency(transaction.amount, 6)}
+                    </div>
                   </div>
                 )
               })
@@ -139,7 +154,7 @@ const Overview: NextPage<Props> = ({user, accounts, token}) => {
                 localAccounts.map(account => {
                   return (
                     <div key={account.id} onClick={() => setSelectedAccountId(account.id)}>
-                      <Card className="my-4 h-32 pointer-cursor">
+                      <Card className="my-4 h-32 cursor-pointer">
                         <div className="text-headline-5">
                           {account.name}
                         </div>
