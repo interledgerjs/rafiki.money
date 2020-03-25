@@ -18,10 +18,6 @@ const Navigation: React.FC<props> = (props) => {
       icon: 'description' 
     },
     {
-      name: 'invoices',
-      icon: 'description'
-    },
-    {
       name: 'transact',
       icon: 'near_me'
     },

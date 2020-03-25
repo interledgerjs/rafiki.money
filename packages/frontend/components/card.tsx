@@ -6,9 +6,9 @@ type props = {
 }
 
 const Card: React.FC<props> = (props) => {
-  let className = 'p-4 bg-surface-elevation-1 elevation-1 rounded text-on-surface sm:max-w-full md:'
+  let className = 'p-4 bg-surface elevation-1 rounded text-on-surface sm:max-w-full md:'
   className += props.width || 'w-card'
-  className += ' ' + props.className
+  className += props.className ?  ' ' + props.className : ''
   return (
     <div className={className}>
       {props.children}

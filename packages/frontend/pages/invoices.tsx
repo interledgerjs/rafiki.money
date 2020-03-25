@@ -59,8 +59,6 @@ const Invoices: NextPage<Props> = ({invoices}) => {
           </div>
         </div>
 
-
-
       </Content>
     </div>
   )
