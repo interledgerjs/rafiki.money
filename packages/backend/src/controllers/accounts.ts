@@ -83,7 +83,7 @@ export async function index (ctx: AppContext): Promise<void> {
     return
   }
 
-  const userAccounts = await Account.query().where({ userId: userId })
+  const userAccounts = await Account.query().where({ userId: userId }).orderBy('id')
 
   ctx.body = userAccounts.map(account => {
     return account.toJSON()

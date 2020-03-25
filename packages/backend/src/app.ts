@@ -13,6 +13,7 @@ import * as MonetizationController from './controllers/monetizationController'
 import * as OpenPaymentsMetadataController from './controllers/openPaymentsMetadataController'
 import * as Oauth2ClientController from './controllers/oauth2ClientController'
 import * as AccountsController from './controllers/accounts'
+import * as AccountTransactionsController from './controllers/accountTransactionController'
 import * as MandatesController from './controllers/mandatesController'
 import * as InvoicesController from './controllers/invoicesController'
 import * as CancelMandatesController from './controllers/cancelMandatesController'
@@ -94,6 +95,8 @@ export class App {
     this._privateRouter.get('/accounts', AccountsController.index)
     this._privateRouter.post('/accounts', AccountsController.create)
     this._privateRouter.patch('/accounts/:id', AccountsController.update)
+
+    this._privateRouter.get('/accounts/:id/transactions', AccountTransactionsController.index)
 
     this._privateRouter.post('/faucet', FaucetController.create)
 

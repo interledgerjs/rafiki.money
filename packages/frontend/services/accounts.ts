@@ -18,7 +18,19 @@ export const AccountsService = (authErrorCallback?: () => void) => {
           name
         },
         headers: { authorization: `Bearer ${token}` } }).then(resp => resp.json())
-    }
+    },
+    faucet: async (accountId: number, token: string) => {
+      const url = new URL('/faucet', USERS_API_URL)
+      return ky.post(url.toString(), {
+        json: {
+          accountId
+        },
+        headers: { authorization: `Bearer ${token}` } })
+    },
+    transactions: async (accountId: string, token: string) => {
+      const url = new URL(`/accounts/${accountId}/transactions`, USERS_API_URL)
+      return ky.get(url.toString(), { headers: { authorization: `Bearer ${token}` } }).then(resp => resp.json())
+    },
   }
 }
 
