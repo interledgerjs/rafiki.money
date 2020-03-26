@@ -33,6 +33,7 @@
     "tailwindcss": "^1.2.0",
     "tailwindcss-dark-mode": "^1.1.2",
     "tailwindcss-elevation": "^0.3.3",
+    "tsconfig-paths-webpack-plugin": "^3.2.0",
     "typescript": "^3.7.5"
   }
 }

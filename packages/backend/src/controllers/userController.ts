@@ -5,6 +5,7 @@ import { Config, Joi } from 'koa-joi-router'
 import { AppContext } from '../app'
 import { SignupSession } from '../models/signupSession'
 import { ValidationError } from 'joi'
+import { Account, PaymentPointer } from '../models'
 
 export async function show (ctx: AppContext): Promise<void> {
   ctx.logger.debug('Get me request')
@@ -61,6 +62,19 @@ export async function store (ctx: AppContext): Promise<void> {
   }
 
   const user = await User.query().insertAndFetch({ username, password: hashedPassword })
+  const account = await Account.query().insert({
+    userId: user.id,
+    name: 'Default',
+    assetCode: 'USD',
+    assetScale: 6,
+    limit: 0n
+  })
+  await PaymentPointer.query().insert({
+    identifier: user.username,
+    userId: user.id,
+    accountId: account.id,
+    name: 'Default'
+  })
   const expiresAt = BigInt((new Date(Date.now() + 1000 * 30)).getTime())
   const signupSession = await SignupSession.query().insertAndFetch({ userId: user.id, expiresAt })
   ctx.body = {
