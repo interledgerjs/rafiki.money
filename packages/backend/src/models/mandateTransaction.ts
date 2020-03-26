@@ -4,7 +4,7 @@ import { Mandate } from './mandate'
 export type MandateTransactionInfo = {
   id: number;
   accountId: number;
-  amount: bigint;
+  amount: string;
   description: string;
   createdAt: string;
   updatedAt: string;
@@ -48,7 +48,7 @@ export class MandateTransaction extends Model {
       id: this.id,
       accountId: this.accountId,
       description: this.description,
-      amount: this.amount,
+      amount: this.amount.toString(),
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       mandateId: this.mandateId

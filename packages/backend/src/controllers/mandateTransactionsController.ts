@@ -11,16 +11,12 @@ export async function index (ctx: AppContext): Promise<void> {
 
   ctx.logger.info('Getting mandate transactions', mandateId)
 
-  // fetch mandate (mandate id)
-
   const mandate: Mandate = await Mandate.query()
     .where('id', mandateId)
     .first()
 
-  // enforce should be run against mandate owner id
-
   if (!enforce(ctx.state.user.sub, mandate)) {
-    ctx.status = 403
+    ctx.status = 404
     return
   }
 
