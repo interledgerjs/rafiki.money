@@ -1,6 +1,7 @@
 /* 
 TODO:
 - [] transaction card name colour change
+- [] transactions change back to all 'off' click
 - [X] main transactions array dynamic
 - [X] graph updated on click
 - [X] graph dynamic data
@@ -109,7 +110,7 @@ const dummyAccountInfo: AccountData = {
     {
       id: 5,
       name: "Swiss Bank Account",
-      balance: 100000
+      balance: 150
     }
   ],
   transactions: [
@@ -140,7 +141,7 @@ const dummyAccountInfo: AccountData = {
     {
       id: 4,
       accountId: 2,
-      amount: -16,
+      amount: -160,
       description: "Test",
       createdAt: "2 Feb 2020",
       updatedAt: "2 Feb 2020"
@@ -176,37 +177,11 @@ const dummyGraphData = {
   ]
 };
 
-//dummy for getTransactions
-const updatedDummyAccountInfo: TransactionInfo[] = [
-  {
-    id: 1,
-    accountId: 2,
-    amount: 50,
-    description: "Test",
-    createdAt: "1 Feb 2020",
-    updatedAt: "1 Feb 2020"
-  },
-  {
-    id: 2,
-    accountId: 2,
-    amount: 100,
-    description: "Test",
-    createdAt: "1 Feb 2020",
-    updatedAt: "1 Feb 2020"
-  },
-  {
-    id: 4,
-    accountId: 2,
-    amount: -16,
-    description: "Test",
-    createdAt: "2 Feb 2020",
-    updatedAt: "2 Feb 2020"
-  }
-];
-
 // -- Main ----------------------------------
 const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
   const router = useRouter();
+
+  //State Variables
   const [accountDataState, setAccountData] = useState(accountData);
   const [clickCount, setCount] = useState(0);
 
@@ -401,6 +376,12 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
       );
   }
 
+  //Reset on account card outer div click
+  function resetRightCard(){
+    setCount(0)
+    setAccountData(accountData)
+  }
+
   // Renders Transaction Cards
   function TransactionCard(name: string, date: string, amount: number) {
     //TODO: colors change based on account
@@ -513,7 +494,7 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
               </div>
             </div>
             {/* Accounts*/}
-            <div onClick={() => setCount(0)}>
+            <div onClick={() => resetRightCard()}>
               {renderAccountCards(accountData)}
             </div>
           </div>
@@ -625,7 +606,7 @@ Overview.getInitialProps = async ctx => {
   const truncatedAccounts = truncateAccountBalances(retrievedAccounts);
   const totalBalance = calculateTotalBalance(truncatedAccounts);
 
-  const accountData = dummyAccountInfo;
+  let accountData = dummyAccountInfo;
 
   let accountIdList: number[] = [];
 
