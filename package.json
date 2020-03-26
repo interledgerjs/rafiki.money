@@ -4,7 +4,9 @@
   "private": true,
   "useWorkspaces": true,
   "workspaces": [
-    "packages/backend"
+    "packages/backend",
+    "packages/stream-service",
+    "packages/ilp-connector"
   ],
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.22.0",
@@ -35,6 +37,7 @@
     "test-quick": "lerna run test --parallel",
     "lint": "eslint --cache --cache-location node_modules/.cache/eslint",
     "lint:all": "yarn lint 'packages/*/src/**/*.ts*'",
-    "lint:staged": "lint-staged"
+    "lint:staged": "lint-staged",
+    "guake-serve": "guake -n $(pwd)/packages/backend -e 'yarn build && yarn start' && guake -n $(pwd)/packages/frontend -e 'yarn dev' && guake -n $(pwd)/packages/ilp-connector -e 'yarn start-local'"
   }
 }

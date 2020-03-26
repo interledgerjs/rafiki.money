@@ -41,6 +41,8 @@ export class Invoice extends Model {
 
   $beforeInsert (): void {
     this.id = v4()
+    this.balance = 0n
+    this.received = 0n
     this.createdAt = new Date().toISOString()
     this.updatedAt = new Date().toISOString()
   }

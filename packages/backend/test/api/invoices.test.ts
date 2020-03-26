@@ -3,30 +3,37 @@ import { createTestApp, TestAppContainer } from '../helpers/app'
 import { mockAuth } from '../helpers/auth'
 import { Invoice } from '../../src/models/invoice'
 import { User } from '../../src/models/user'
+import { Transaction } from 'knex'
+import { Model } from 'objection'
 
 describe('Create invoice', () => {
   let appContainer: TestAppContainer
   let user: User
+  let trx: Transaction
   mockAuth()
 
   beforeAll(async () => {
     appContainer = createTestApp()
+    await appContainer.knex.migrate.latest()
   })
 
   beforeEach(async () => {
-    await appContainer.knex.migrate.latest()
+    trx = await appContainer.knex.transaction()
+    Model.knex(trx)
     user = await User.query().insert({
       username: 'alice'
     })
   })
 
   afterEach(async () => {
-    await appContainer.knex.migrate.rollback()
+    await trx.rollback()
+    await trx.destroy()
   })
 
-  afterAll(() => {
+  afterAll(async () => {
+    await appContainer.knex.migrate.rollback()
     appContainer.app.shutdown()
-    appContainer.knex.destroy()
+    await appContainer.knex.destroy()
   })
 
   test('can create invoice', async () => {
@@ -46,7 +53,7 @@ describe('Create invoice', () => {
     const invoice = await Invoice.query().first()
 
     expect(status).toEqual(201)
-    expect(data.name).toEqual(`//localhost/invoices/${invoice.id}`)
+    expect(data.name).toEqual(`//localhost:3001/invoices/${invoice.id}`)
     expect(data.subject).toEqual('$wallet.example/alice')
     expect(data.amount).toEqual('500')
     expect(data.assetCode).toEqual('USD')
@@ -70,14 +77,17 @@ describe('Get an invoice', () => {
   let appContainer: TestAppContainer
   let user: User
   let invoice: Invoice
+  let trx: Transaction
   mockAuth()
 
   beforeAll(async () => {
     appContainer = createTestApp()
+    await appContainer.knex.migrate.latest()
   })
 
   beforeEach(async () => {
-    await appContainer.knex.migrate.latest()
+    trx = await appContainer.knex.transaction()
+    Model.knex(trx)
     user = await User.query().insert({
       username: 'alice'
     })
@@ -93,19 +103,21 @@ describe('Get an invoice', () => {
   })
 
   afterEach(async () => {
-    await appContainer.knex.migrate.rollback()
+    await trx.rollback()
+    await trx.destroy()
   })
 
-  afterAll(() => {
+  afterAll(async () => {
+    await appContainer.knex.migrate.rollback()
     appContainer.app.shutdown()
-    appContainer.knex.destroy()
+    await appContainer.knex.destroy()
   })
 
   test('Can get an invoice', async () => {
     const { status, data } = await axios.get(`http://localhost:${appContainer.port}/invoices/${invoice.id}`)
 
     expect(status).toEqual(200)
-    expect(data.name).toEqual(`//localhost/invoices/${invoice.id}`)
+    expect(data.name).toEqual(`//localhost:3001/invoices/${invoice.id}`)
     expect(data.subject).toEqual('$wallet.example/alice')
     expect(data.amount).toEqual('500')
     expect(data.assetCode).toEqual('USD')

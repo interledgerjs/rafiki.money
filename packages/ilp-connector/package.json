@@ -4,7 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "start-local": "node index.local.js"
   },
   "dependencies": {
     "ilp-connector": "^23.0.0",

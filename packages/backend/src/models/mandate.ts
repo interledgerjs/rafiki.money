@@ -35,20 +35,21 @@ export class Mandate extends Model {
   assetCode: string;
   assetScale: number;
   amount: bigint;
-  balance: bigint;
-  startAt: string;
-  expireAt!: string;
+  balance !: bigint;
+  startAt !: string;
+  expireAt !: string;
   scope !: string;
-  interval!: string;
-  cap!: boolean;
-  createdAt: string;
-  updatedAt: string;
-  cancelledAt!: string;
+  interval !: string;
+  cap !: boolean;
+  createdAt !: string;
+  updatedAt !: string;
+  cancelledAt !: string;
 
   $beforeInsert (): void {
     this.id = v4()
     this.createdAt = new Date().toISOString()
     this.updatedAt = new Date().toISOString()
+    this.balance = 0n
   }
 
   $beforeUpdate (): void {

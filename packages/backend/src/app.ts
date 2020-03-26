@@ -9,7 +9,8 @@ import * as UsersController from './controllers/userController'
 import * as LoginController from './controllers/loginController'
 import * as LogoutController from './controllers/logoutController'
 import * as ConsentController from './controllers/consentController'
-import * as PaymentPointerController from './controllers/payment-pointer'
+import * as MonetizationController from './controllers/monetizationController'
+import * as OpenPaymentsMetadataController from './controllers/openPaymentsMetadataController'
 import * as Oauth2ClientController from './controllers/oauth2ClientController'
 import * as AccountsController from './controllers/accounts'
 import * as MandatesController from './controllers/mandatesController'
@@ -20,9 +21,12 @@ import { createAuthMiddleware } from './middleware/auth'
 import { TokenService } from './services/token-service'
 import * as FaucetController from './controllers/faucet'
 import { createAttemptAuthMiddleware } from './middleware/attemptAuth'
+import { StreamService } from './services/stream'
 
 export interface AppContext extends Context {
   logger: Logger;
+  tokenService: TokenService;
+  streamService: StreamService;
 }
 
 export class App {
@@ -31,9 +35,10 @@ export class App {
   private _privateRouter: Router<any, AppContext>
   private _server: Server | undefined
 
-  constructor (logger: Logger, tokenService: TokenService) {
+  constructor (logger: Logger, tokenService: TokenService, streamService: StreamService) {
     this._koa = new Koa<any, AppContext>()
     this._koa.context.tokenService = tokenService
+    this._koa.context.streamService = streamService
     this._koa.context.logger = logger
     this._privateRouter = new Router<any, AppContext>()
     this._publicRouter = new Router<any, AppContext>()
@@ -81,8 +86,8 @@ export class App {
 
     this._publicRouter.post('/logout', LogoutController.store)
 
-    this._publicRouter.get('/p/:username', PaymentPointerController.show)
-    this._publicRouter.get('/.well-known/open-payments', PaymentPointerController.show)
+    this._publicRouter.get('/p/:username', MonetizationController.show)
+    this._publicRouter.get('/.well-known/open-payments', OpenPaymentsMetadataController.show)
 
     this._privateRouter.post('/oauth2/clients', Oauth2ClientController.store)
 

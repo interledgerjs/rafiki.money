@@ -1,30 +1,37 @@
 import axios from 'axios'
 import bcrypt from 'bcrypt'
 import { User } from '../../src/models/user'
-import { hydra } from '../../src/services/hydra'
 import { SignupSession } from '../../src/models/signupSession'
 import { createTestApp, TestAppContainer } from '../helpers/app'
 import { mockAuth } from '../helpers/auth'
+import { Transaction } from 'knex'
+import { Model } from 'objection'
+import { Account, PaymentPointer } from '../../src/models'
 
 describe('Users Service', function () {
   let appContainer: TestAppContainer
+  let trx: Transaction
   mockAuth()
 
   beforeAll(async () => {
     appContainer = createTestApp()
-  })
-
-  beforeEach(async () => {
     await appContainer.knex.migrate.latest()
   })
 
-  afterEach(async () => {
-    await appContainer.knex.migrate.rollback()
+  beforeEach(async () => {
+    trx = await appContainer.knex.transaction()
+    Model.knex(trx)
   })
 
-  afterAll(() => {
+  afterEach(async () => {
+    await trx.rollback()
+    await trx.destroy()
+  })
+
+  afterAll(async () => {
+    await appContainer.knex.migrate.rollback()
     appContainer.app.shutdown()
-    appContainer.knex.destroy()
+    await appContainer.knex.destroy()
   })
 
   describe('create', function () {
@@ -43,7 +50,21 @@ describe('Users Service', function () {
 
       const session = await SignupSession.query().where('id', data.signupSessionId).first()
 
-      expect(session!.userId).toBe(data.id.toString())
+      expect(session).toBeDefined()
+      expect(session.userId).toBe(data.id.toString())
+    })
+
+    test('creating a user creates a default account and payment pointer', async () => {
+      const { data } = await axios.post(`http://localhost:${appContainer.port}/users`, { username: 'alice', password: 'test' })
+
+      const account = await Account.query().where('userId', data.id).first()
+      const paymentPointer = await PaymentPointer.query().where('userId', data.id).first()
+
+      expect(account).toBeDefined()
+      expect(account.userId).toEqual(data.id)
+      expect(paymentPointer).toBeDefined()
+      expect(paymentPointer.accountId).toEqual(account.id)
+      expect(paymentPointer.identifier).toEqual(data.username)
     })
 
     test('does not return password', async () => {
