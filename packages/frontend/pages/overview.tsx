@@ -19,6 +19,8 @@ import { TransactionsService } from "../services/transactions";
 
 // -- Setup Variables ----------------------------------
 const colourValues = ["#9B51E0", "#2F80ED", "#21D2BF", "#FF8A65"];
+// purple | blue | teal |orange
+const textColourValues = ["purple", "blue", "secondary", "primary"]
 
 const months: Array<string> = [
   "Jan",
@@ -385,8 +387,12 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
   // Renders Transaction Cards
   function TransactionCard(name: string, date: string, amount: number) {
     //TODO: colors change based on account
-
+    //maybe account index array??
     var nameColor: string = "overline text-purple";
+    
+    // var nameColor: string = "overline text-" + textColourValues[index % 4];
+    // console.log(index)
+
     var amountColor: string = "self-center headline-6 text-green";
     var amountSign: string = "";
 
