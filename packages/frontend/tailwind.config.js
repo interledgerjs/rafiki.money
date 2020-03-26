@@ -82,6 +82,7 @@ module.exports = {
           'elevation-16': 'var(--color-surface-elevation-16)',
           'elevation-24': 'var(--color-surface-elevation-24)'
         },
+        border: 'var(--color-border)',
         error: 'var(--color-error)',
         red: 'var(--color-red)',
         orange: 'var(--color-orange)',

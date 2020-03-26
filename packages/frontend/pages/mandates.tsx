@@ -3,6 +3,7 @@ import { NextPage } from "next"
 import { Button, Card, Content, Navigation } from '../components'
 import { checkUser, formatCurrency } from '../utils'
 import { AccountsService } from '../services/accounts'
+import { DonutChart } from '../components/donutChart'
 
 type Mandate = {
   id: string
@@ -44,16 +45,19 @@ const sideBar = (mandate: Mandate, token) => {
   if(mandate) {
     return (
       <Card width="w-full" className="flex flex-col">
-        <div className="flex justify-between">
-          <div className="text-headline-4 flex-1 truncate">
-            {mandate.id}
-          </div>
+        <div className="flex justify-end">
           <Button type="text" textColour="red">
             Cancel
           </Button>
         </div>
+        <div>
+          <DonutChart
+            available={Number(formatCurrency(mandate.balance,mandate.assetScale))}
+            used={Number(formatCurrency(mandate.amount - mandate.balance,mandate.assetScale))}
+          />
+        </div>
         <div className="text-headline-5 truncate">
-          $ {formatCurrency(Number(mandate.amount), 6)}
+          $ {formatCurrency(Number(mandate.amount), mandate.assetScale)}
         </div>
         <div className="mt-4 flex-1 overflow-y-auto">
           <div className="text-headline-6">
@@ -118,20 +122,20 @@ const Mandates: NextPage<Props> = ({mandates, token}) => {
                 Selector
               </div>
             </div>
-            <Card width="w-full" className="mt-8 px-0 pt-2 pb-0">
+            <Card width="w-full" className="mt-8 px-0 pt-0 pb-0">
               <table className="w-full">
                 <thead>
                 <tr>
-                  <th className="px-4 py-2"></th>
-                  <th className="px-4 py-2 text-body-2 text-right">Balance</th>
-                  <th className="px-4 py-2 text-body-2">Interval</th>
-                  <th className="px-4 py-2 text-body-2">Currency</th>
+                  <th className="px-4 py-4"></th>
+                  <th className="px-4 py-4 text-body-2 text-right">Balance</th>
+                  <th className="px-4 py-4 text-body-2">Interval</th>
+                  <th className="px-4 py-4 text-body-2">Currency</th>
                 </tr>
                 </thead>
                 <tbody>
                 {mandates ? mandates.map(mandate => {
                   return (
-                    <tr key={mandate.id} onClick={() => selectMandate(mandate.id)} className="border-t border-on-surface-disabled cursor-pointer">
+                    <tr key={mandate.id} onClick={() => selectMandate(mandate.id)} className={"border-t border-border cursor-pointer" + (selectedMandateId === mandate.id ? ' bg-border' : '')}>
                       <td className="w-full px-4 py-2">
                         {mandate.description}
                       </td>
@@ -188,7 +192,7 @@ Mandates.getInitialProps = async (ctx) => {
       assetCode: "USD",
       assetScale: 6,
       amount: 10000000,
-      balance: 5000000,
+      balance: 4999999,
       startAt: '2019-01-01',
       scope: "$paymentPointer"
     },
