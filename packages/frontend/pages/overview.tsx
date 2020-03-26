@@ -209,6 +209,8 @@ const updatedDummyAccountInfo: TransactionInfo[] = [
 const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
   const router = useRouter();
   const [accountDataState, setAccountData] = useState(accountData);
+  const [clickCount, setCount] = useState(0);
+
   const paymentPointer: string = `$rafiki.money/p/${accountData.user.username}`;
 
   // setInterval(() => {
@@ -273,6 +275,7 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
       transactions: retrievedTransactions
     };
 
+    setCount(clickCount + 1)
     setAccountData(updatedData);
   }
 
@@ -325,16 +328,15 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
       return element.amount;
     });
     */
-    const accountId: number = 1
     let nameList: String[] = ["Income", "Expenditure"]
 
     let incomeTotal : number = 0
     let expenditureTotal: number = 0
     data.forEach(element => {
-      if (element.amount > 0 && element.accountId == accountId){
+      if (element.amount > 0){
         incomeTotal += element.amount
       }
-      else if (element.amount < 0 && element.accountId == accountId){
+      else if (element.amount < 0){
         expenditureTotal += element.amount
       }
     });
@@ -357,30 +359,35 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
   }
 
   function renderGraph(data: AccountData) {
-    console.log(data.accounts)
     let graphData = compileGraphData(data.accounts);
     let transactionGraphData = compileTransactionGraphData(data.transactions)
 
-    // return (
-    //   <Doughnut
-    //     data={graphData}
-    //     width={170}
-    //     legend={{
-    //       position: "left",
-    //       display: false
-    //     }}
-    //   />
-    // );
-    return (
-      <Doughnut
-        data={transactionGraphData}
-        width={170}
-        legend={{
-          position: "bottom",
-          display: true
-        }}
-      />
-    );
+    if (clickCount == 0){
+      return (
+        <Doughnut
+          data={graphData}
+          width={170}
+          legend={{
+            position: "left",
+            display: false
+          }}
+        />
+      );
+
+    }
+    else {
+      return (
+        <Doughnut
+          data={transactionGraphData}
+          width={170}
+          legend={{
+            position: "bottom",
+            display: true
+          }}
+        />
+      )
+
+    }
 
   }
 
