@@ -211,6 +211,10 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
   const [accountDataState, setAccountData] = useState(accountData);
   const paymentPointer: string = `$rafiki.money/p/${accountData.user.username}`;
 
+  // setInterval(() => {
+  //   console.log(accountData)
+  // }, 5000)
+
   // Renders Accounts cards
   function AccountCard(name: String, balance: String) {
     // TODO: currency symbols
@@ -282,8 +286,8 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
   }
 
   //Graph rendering
-  function RenderGraph(data: AccountInfo[]) {
-    console.log({data})
+  function compileGraphData(data: AccountInfo[]) {
+    // console.log({data})
     let nameList: string[] = data.map(element => {
       return element.name;
     });
@@ -309,10 +313,23 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
     return graphData;
   }
 
+  function renderGraph(data: AccountData) {
+    let graphData = compileGraphData(data.accounts);
+
+    return (
+      <Doughnut
+        data={graphData}
+        width={170}
+        legend={{
+          position: "left",
+          display: false
+        }}
+      />
+    );
+  }
+
   //Renders the right card
   function RightCard(data: AccountData) {
-    let graphData = RenderGraph(accountDataState.accounts);
-
     if (data.accounts.length <= 0) {
       return (
         <div className="ml-8 hidden md:flex">
@@ -331,16 +348,8 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
           {/* Graph Card */}
           <Card>
             <div className="h-64">
-              <Doughnut
-                data={graphData}
-                width={170}
-                legend={{
-                  position: "left",
-                  display: false
-                }}
-              />
-            </div>
-
+              {renderGraph(accountDataState)}
+              </div>
             {/* Headline */}
             <div className="mt-10 headline-6">Transactions</div>
             {/* Transactions in sidebar */}
