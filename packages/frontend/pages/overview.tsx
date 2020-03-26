@@ -313,6 +313,7 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
     return graphData;
   }
 
+//  FIXME: take transactions based on account card clicked
   function compileTransactionGraphData(data: TransactionInfo[]) {
     // console.log({data})
 
@@ -324,9 +325,21 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
       return element.amount;
     });
     */
-
+    const accountId: number = 1
     let nameList: String[] = ["Income", "Expenditure"]
-    let balancesList : number[] = [100, 200]
+
+    let incomeTotal : number = 0
+    let expenditureTotal: number = 0
+    data.forEach(element => {
+      if (element.amount > 0 && element.accountId == accountId){
+        incomeTotal += element.amount
+      }
+      else if (element.amount < 0 && element.accountId == accountId){
+        expenditureTotal += element.amount
+      }
+    });
+    let balancesList : number[] = [incomeTotal, expenditureTotal]
+
     let colourList: String[] = ["#27AE60", "#EB5757"]
 
     let graphData = {
@@ -363,8 +376,8 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
         data={transactionGraphData}
         width={170}
         legend={{
-          position: "left",
-          display: false
+          position: "bottom",
+          display: true
         }}
       />
     );
