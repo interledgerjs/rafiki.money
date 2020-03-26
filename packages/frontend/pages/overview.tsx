@@ -313,12 +313,54 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
     return graphData;
   }
 
-  function renderGraph(data: AccountData) {
-    let graphData = compileGraphData(data.accounts);
+  function compileTransactionGraphData(data: TransactionInfo[]) {
+    // console.log({data})
 
+    /*
+    let nameList: string[] = data.map(element => {
+      return element.description;
+    });
+    let balancesList: number[] = data.map(element => {
+      return element.amount;
+    });
+    */
+
+    let nameList: String[] = ["Income", "Expenditure"]
+    let balancesList : number[] = [100, 200]
+    let colourList: String[] = ["#27AE60", "#EB5757"]
+
+    let graphData = {
+      labels: nameList,
+      datasets: [
+        {
+          data: balancesList,
+          backgroundColor: colourList,
+          borderWidth: 0
+        }
+      ],
+      options: {}
+    };
+    return graphData;
+  }
+
+  function renderGraph(data: AccountData) {
+    console.log(data.accounts)
+    let graphData = compileGraphData(data.accounts);
+    let transactionGraphData = compileTransactionGraphData(data.transactions)
+
+    // return (
+    //   <Doughnut
+    //     data={graphData}
+    //     width={170}
+    //     legend={{
+    //       position: "left",
+    //       display: false
+    //     }}
+    //   />
+    // );
     return (
       <Doughnut
-        data={graphData}
+        data={transactionGraphData}
         width={170}
         legend={{
           position: "left",
@@ -326,6 +368,7 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
         }}
       />
     );
+
   }
 
   //Renders the right card
