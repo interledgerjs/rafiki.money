@@ -2,8 +2,8 @@
 TODO:
 - [] transaction card name colour change
 - [X] main transactions array dynamic
-- [] graph updated on click
-- [] graph dynamic data
+- [X] graph updated on click
+- [X] graph dynamic data
 */
 
 import React, { useState, useEffect, Fragment } from "react";
@@ -16,6 +16,7 @@ import { checkUser } from "../utils";
 import { AccountsService } from "../services/accounts";
 import { TransactionsService } from "../services/transactions";
 
+// -- Setup Variables ----------------------------------
 const colourValues = ["#9B51E0", "#2F80ED", "#21D2BF", "#FF8A65"];
 
 const months: Array<string> = [
@@ -33,7 +34,6 @@ const months: Array<string> = [
 ];
 
 // -- Typings ----------------------------------
-// FIXME: Import types from backend?
 type Props = {
   accountData: AccountData;
   totalBalance: number;
@@ -79,7 +79,6 @@ type AccountData = {
 };
 
 // -- Mocking ----------------------------------
-//dummy for main account info in getInitialProps
 const dummyAccountInfo: AccountData = {
   user: {
     client_id: "1",
@@ -213,10 +212,6 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
 
   const paymentPointer: string = `$rafiki.money/p/${accountData.user.username}`;
 
-  // setInterval(() => {
-  //   console.log(accountData)
-  // }, 5000)
-
   // Renders Accounts cards
   function AccountCard(name: String, balance: String) {
     // TODO: currency symbols
@@ -275,12 +270,11 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
       transactions: retrievedTransactions
     };
 
-    setCount(clickCount + 1)
+    setCount(clickCount + 1);
     setAccountData(updatedData);
   }
 
   function retrieveAccountName(data: AccountData, accountId: number) {
-    //FIXME: Find a way to not pass the whole data object around
     let name: string;
     data.accounts.forEach(element => {
       if (element.id === accountId) name = element.name;
@@ -316,33 +310,22 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
     return graphData;
   }
 
-//  FIXME: take transactions based on account card clicked
+  //  Graph rendered on account card click
   function compileTransactionGraphData(data: TransactionInfo[]) {
-    // console.log({data})
+    let nameList: String[] = ["Income", "Expenditure"];
 
-    /*
-    let nameList: string[] = data.map(element => {
-      return element.description;
-    });
-    let balancesList: number[] = data.map(element => {
-      return element.amount;
-    });
-    */
-    let nameList: String[] = ["Income", "Expenditure"]
-
-    let incomeTotal : number = 0
-    let expenditureTotal: number = 0
+    let incomeTotal: number = 0;
+    let expenditureTotal: number = 0;
     data.forEach(element => {
-      if (element.amount > 0){
-        incomeTotal += element.amount
-      }
-      else if (element.amount < 0){
-        expenditureTotal += element.amount
+      if (element.amount > 0) {
+        incomeTotal += element.amount;
+      } else if (element.amount < 0) {
+        expenditureTotal += element.amount;
       }
     });
-    let balancesList : number[] = [incomeTotal, expenditureTotal]
+    let balancesList: number[] = [incomeTotal, expenditureTotal];
 
-    let colourList: String[] = ["#27AE60", "#EB5757"]
+    let colourList: String[] = ["#27AE60", "#EB5757"];
 
     let graphData = {
       labels: nameList,
@@ -360,35 +343,31 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
 
   function renderGraph(data: AccountData) {
     let graphData = compileGraphData(data.accounts);
-    let transactionGraphData = compileTransactionGraphData(data.transactions)
+    let transactionGraphData = compileTransactionGraphData(data.transactions);
 
-    if (clickCount == 0){
+    if (clickCount == 0) {
       return (
         <Doughnut
           data={graphData}
           width={170}
           legend={{
-            position: "left",
+            position: "bottom",
             display: false
           }}
         />
       );
-
-    }
-    else {
+    } else {
       return (
         <Doughnut
           data={transactionGraphData}
           width={170}
           legend={{
             position: "bottom",
-            display: true
+            display: false
           }}
         />
-      )
-
+      );
     }
-
   }
 
   //Renders the right card
@@ -410,9 +389,7 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
         <div className="ml-8 hidden md:flex">
           {/* Graph Card */}
           <Card>
-            <div className="h-64">
-              {renderGraph(accountDataState)}
-              </div>
+            <div className="h-64">{renderGraph(accountDataState)}</div>
             {/* Headline */}
             <div className="mt-10 headline-6">Transactions</div>
             {/* Transactions in sidebar */}
@@ -536,7 +513,9 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
               </div>
             </div>
             {/* Accounts*/}
-            <div>{renderAccountCards(accountData)}</div>
+            <div onClick={() => setCount(0)}>
+              {renderAccountCards(accountData)}
+            </div>
           </div>
           {/* Right Card */}
           {RightCard(accountData)}
@@ -547,7 +526,6 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
 };
 
 // -- Formatting Functions ----------------------------------
-
 function convertDate(dateString: string) {
   const date = new Date(Date.parse(dateString));
   return (
@@ -590,7 +568,6 @@ function truncateTransactionBalances(transactions: TransactionInfo[]) {
 }
 
 // -- Initial Functions ----------------------------------
-
 function calculateTotalBalance(accounts: AccountInfo[]) {
   let result: number = 0;
   accounts.forEach(element => {
@@ -634,10 +611,7 @@ async function asyncForEach(array, callback) {
   }
 }
 
-// async function IndexTransactions(accountId: number, token: string) {
-//   //account ids -> getTransactionsData -> put them together (splice?)
-// }
-
+// -- GetInitialProps ----------------------------------
 Overview.getInitialProps = async ctx => {
   const retrievedUser = await checkUser(ctx);
   const token = retrievedUser.token;
