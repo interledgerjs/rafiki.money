@@ -120,7 +120,7 @@ const sideBar = (mandate: Mandate, token, openModal) => {
 const Mandates: NextPage<Props> = ({mandates, token}) => {
 
   const [localMandates, setLocalMandates] = useState<Array<Mandate>>(mandates)
-  const [selectedMandateId, setSelectedMandateId] = useState<string>(mandates.length > 0 ? mandates[0].id : undefined)
+  const [selectedMandateId, setSelectedMandateId] = useState<string>()
   const [modalIsOpen,setIsOpen] = React.useState(false);
   const [mandatesSelectedState, setMandatesSelectedState] = useState(mandateStates[0])
 
