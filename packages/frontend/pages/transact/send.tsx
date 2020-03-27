@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { NextPage } from "next"
 import { Card, Content, Navigation, Button, TextInput, Selector, ToggleSwitch } from "./../../components"
 import useForm from 'react-hook-form'
@@ -7,6 +7,7 @@ import { pay } from '../../services/pay'
 import { checkUser, formatCurrency } from '../../utils'
 import ky from 'ky-universal'
 import getConfig from 'next/config'
+import AmountInput from '../../components/amountInput'
 
 const {publicRuntimeConfig} = getConfig()
 const USERS_API_URL = publicRuntimeConfig.REACT_APP_USERS_API_URL
@@ -100,7 +101,7 @@ const PaymentCard = (props: PaymentCardProps) => {
       })
       setAccounts(normalizedAccounts)
     })
-  })
+  }, [])
 
   const onSend = async data => {
     if (selected) {
@@ -147,14 +148,12 @@ const PaymentCard = (props: PaymentCardProps) => {
           label="Amount"
           hint={errors.amount ? errors.amount.type === 'required' ? 'Amount required' : (errors.amount.message) as string : undefined}
         />
-        <div className="pb-10">
-          <Selector
-            options={accounts}
-            onChange={(e) => setSelected(e)}
-            hint={errors.selectAccount ? (errors.selectAccount.message) as string : undefined}
-          />
-        </div>
-        <div className="flex justify-center pt-4 pb-6">
+        <Selector
+          options={accounts}
+          onChange={(e) => setSelected(e)}
+          hint={errors.selectAccount ? (errors.selectAccount.message) as string : undefined}
+        />
+        <div className="flex justify-center pt-2 pb-6">
           <Button type="solid" buttonType="submit">
             SEND
           </Button>
@@ -165,7 +164,10 @@ const PaymentCard = (props: PaymentCardProps) => {
 }
 
 const Transact: NextPage<Props> = ({user}) => {
-  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>()
+  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>({
+    paymentPointer: 'http://localhost:3001/p/matt',
+    type: 'open-payments'
+  })
 
   return (
     <div className="flex">

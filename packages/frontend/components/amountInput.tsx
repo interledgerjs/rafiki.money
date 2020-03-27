@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 type props = {
-  inputType?: 'text'|'password'|'email'|'number'
+  inputType?: 'text'|'password'|'email'
   className?: string
   errorState?: boolean
   inputRef?: any
@@ -19,7 +19,7 @@ type props = {
   validationFunction?: (e: any) => void
 }
 
-const TextInput: React.FC<props> = (props) => {
+const AmountInput: React.FC<props> = (props) => {
   const textColour = props.textColour? props.textColour : 'on-surface'
   let blurColour = props.blurColour? props.blurColour : 'on-surface-trans'
   let focusColour = 'primary'
@@ -46,7 +46,10 @@ const TextInput: React.FC<props> = (props) => {
         {props.label? props.label: ''}
       </label>
 
-      <input 
+      <div className="w-1/5">
+        $
+      </div>
+      <input
         onFocus={() => {setFocussed(true)}} onBlur={() => {setFocussed(false)}} ref={props.inputRef? props.inputRef: undefined} name={props.name} type={inputType} className={`inputText focus:outline-none bg-transparent text-${textColour} max-w-${maxWidth} w-5/6 focus:`} onKeyPress={props.onKeyPress? e => props.onKeyPress(e) : () => {}} onChange={e => {setValue(e.target.value);if (props.validationFunction) props.validationFunction(e)}}>
       </input>
 
@@ -59,4 +62,4 @@ const TextInput: React.FC<props> = (props) => {
   )
 }
 
-export default TextInput
+export default AmountInput
