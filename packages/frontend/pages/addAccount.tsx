@@ -36,7 +36,7 @@ const AddAccount: NextPage<Props> = props => {
         <div className="w-full h-screen max-w-xs mx-auto bg-surface flex items-center flex flex-col">
           <form ref={formRef} onSubmit={handleSubmit(onSubmit)}>
             <div className="h-32"></div>
-            <div className="p-5 headline-4 text-center">
+            <div className="p-5 headline-4 text-center text-on-surface">
               Give your new <br></br> account a name.
             </div>
 
@@ -82,7 +82,6 @@ const AddAccount: NextPage<Props> = props => {
 
 AddAccount.getInitialProps = async ctx => {
   const user = await checkUser(ctx);
-  console.log(user);
   return user;
 };
 

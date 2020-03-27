@@ -1,10 +1,7 @@
 /* 
 TODO:
 - [] transaction card name colour change
-- [] transactions change back to all 'off' click
-- [X] main transactions array dynamic
-- [X] graph updated on click
-- [X] graph dynamic data
+- [] default picture on no accounts loaded
 */
 
 import React, { useState, useEffect, Fragment } from "react";
@@ -261,7 +258,6 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
 
   //Graph rendering
   function compileGraphData(data: AccountInfo[]) {
-    // console.log({data})
     let nameList: string[] = data.map(element => {
       return element.name;
     });
@@ -390,9 +386,6 @@ const Overview: NextPage<Props> = ({ accountData, totalBalance, token }) => {
     //maybe account index array??
     var nameColor: string = "overline text-purple";
     
-    // var nameColor: string = "overline text-" + textColourValues[index % 4];
-    // console.log(index)
-
     var amountColor: string = "self-center headline-6 text-green";
     var amountSign: string = "";
 
@@ -602,7 +595,7 @@ async function asyncForEach(array, callback) {
 Overview.getInitialProps = async ctx => {
   const retrievedUser = await checkUser(ctx);
   const token = retrievedUser.token;
-  console.log(retrievedUser);
+  console.log(retrievedUser.token);
   const retrievedAccounts = await accountsService.getAccounts(
     retrievedUser.token,
     retrievedUser.id
