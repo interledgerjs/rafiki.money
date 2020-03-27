@@ -12,7 +12,7 @@ export async function show (ctx: AppContext): Promise<void> {
     invoices_endpoint: INVOICES_URL,
     mandates_endpoint: MANDATES_URL,
     assets_supported: JSON.parse(SUPPORTED_ASSETS),
-    issuer_endpoint: ISSUER_URL,
+    issuer: ISSUER_URL,
     authorization_endpoint: AUTHORIZATION_URL,
     token_endpoint: TOKEN_URL
   }
