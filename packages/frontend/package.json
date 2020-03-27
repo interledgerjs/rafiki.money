@@ -24,6 +24,7 @@
     "react-chartjs-2": "^2.9.0",
     "react-dom": "16.12.0",
     "react-hook-form": "^3.29.4",
+    "react-modal": "^3.11.2",
     "react-select": "^3.0.8"
   },
   "devDependencies": {

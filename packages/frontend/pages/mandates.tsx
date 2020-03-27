@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { NextPage } from "next"
-import { Button, Card, Content, Navigation } from '../components'
+import { Button, Card, Content, Navigation, Selector } from '../components'
 import { checkUser, formatCurrency } from '../utils'
 import { AccountsService } from '../services/accounts'
 import { DonutChart } from '../components/donutChart'
+import Modal from 'react-modal'
+import { MandatesService } from '../services/mandates'
 
 type Mandate = {
   id: string
@@ -24,9 +26,24 @@ type Props = {
   token: string
 }
 
-const accountService = AccountsService()
+const mandateStates = [
+  {
+    value: 'active',
+    label: 'Active'
+  },
+  {
+    value: 'expired',
+    label: 'Expired'
+  },
+  {
+    value: 'cancelled',
+    label: 'Cancelled'
+  }
+]
 
-const sideBar = (mandate: Mandate, token) => {
+const mandatesService = MandatesService()
+
+const sideBar = (mandate: Mandate, token, openModal) => {
   const [transactions, setTransactions] = useState([])
 
   const getTransactions = () => {
@@ -46,7 +63,7 @@ const sideBar = (mandate: Mandate, token) => {
     return (
       <Card width="w-full" className="flex flex-col">
         <div className="flex justify-end">
-          <Button type="text" textColour="red">
+          <Button onClick={openModal} type="text" textColour="red">
             Cancel
           </Button>
         </div>
@@ -102,10 +119,42 @@ const sideBar = (mandate: Mandate, token) => {
 
 const Mandates: NextPage<Props> = ({mandates, token}) => {
 
-  const [selectedMandateId, setSelectedMandateId] = useState<string>(mandates ? mandates[0].id : undefined)
+  const [localMandates, setLocalMandates] = useState<Array<Mandate>>(mandates)
+  const [selectedMandateId, setSelectedMandateId] = useState<string>(mandates.length > 0 ? mandates[0].id : undefined)
+  const [modalIsOpen,setIsOpen] = React.useState(false);
+  const [mandatesSelectedState, setMandatesSelectedState] = useState(mandateStates[0])
+
+  const openModal = () => {
+    setIsOpen(true)
+  }
+
+  useEffect(() => {
+    getMandates()
+  }, [mandatesSelectedState])
+
+  const getMandates = async () => {
+    const mandates = await mandatesService.getUserMandates(mandatesSelectedState.value, token)
+    setLocalMandates(mandates)
+    setSelectedMandateId('')
+  }
+
+  function closeModal(){
+    setIsOpen(false);
+  }
 
   const selectMandate = (id: string) => {
     setSelectedMandateId(id)
+  }
+
+  const setMandatesState = (option) => {
+    setMandatesSelectedState(option)
+  }
+
+  const cancelMandate = (mandateId: string) => {
+    mandatesService.cancelMandate(mandateId, token).then(() => {
+      getMandates()
+      closeModal()
+    })
   }
 
   return (
@@ -114,12 +163,9 @@ const Mandates: NextPage<Props> = ({mandates, token}) => {
       <Content>
         <div className="w-full flex flex-row h-full">
           <div className="w-2/3 flex flex-col">
-            <div className="flex justify-between">
-              <div>
-                Search
-              </div>
-              <div>
-                Selector
+            <div className="flex justify-end">
+              <div className="w-48">
+                <Selector options={mandateStates} defaultValue={mandateStates[0]} onChange={setMandatesState}/>
               </div>
             </div>
             <Card width="w-full" className="mt-8 px-0 pt-0 pb-0">
@@ -133,7 +179,7 @@ const Mandates: NextPage<Props> = ({mandates, token}) => {
                 </tr>
                 </thead>
                 <tbody>
-                {mandates ? mandates.map(mandate => {
+                {localMandates ? localMandates.map(mandate => {
                   return (
                     <tr key={mandate.id} onClick={() => selectMandate(mandate.id)} className={"border-t border-border cursor-pointer" + (selectedMandateId === mandate.id ? ' bg-border' : '')}>
                       <td className="w-full px-4 py-2">
@@ -161,11 +207,42 @@ const Mandates: NextPage<Props> = ({mandates, token}) => {
             </Card>
           </div>
           <div className="flex h-full w-1/3 ml-12">
-            {sideBar(mandates.filter(mandate => mandate.id === selectedMandateId)[0],token)}
+            {sideBar(mandates.filter(mandate => mandate.id === selectedMandateId)[0],token, openModal)}
           </div>
         </div>
       </Content>
-
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        contentLabel="Example Modal"
+        style={{
+          content : {
+            top                   : '50%',
+            left                  : '50%',
+            right                 : 'auto',
+            bottom                : 'auto',
+            marginRight           : '-50%',
+            transform             : 'translate(-50%, -50%)'
+          }
+        }}
+      >
+        <div className="max-w-xs w-full flex flex-col">
+          <div className="headline-6">
+            Cancel Mandate?
+          </div>
+          <div className="body-1 my-6">
+            By cancelling this mandate you will no longer allow the holder to debit your account.
+          </div>
+          <div className="flex justify-end">
+            <Button type='text' className="mr-2" onClick={closeModal}>
+              Disagree
+            </Button>
+            <Button type='text' onClick={() => cancelMandate(selectedMandateId)}>
+              Agree
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   )
 }
@@ -173,41 +250,43 @@ const Mandates: NextPage<Props> = ({mandates, token}) => {
 Mandates.getInitialProps = async (ctx) => {
   const user = await checkUser(ctx)
 
-  const mandates: Array<Mandate> = [
-    {
-      id: '123',
-      name: '//123',
-      description: "ILP Flix Subscription",
-      assetCode: "USD",
-      assetScale: 6,
-      amount: 10000000,
-      balance: 0,
-      startAt: '2019-01-01',
-      scope: "$paymentPointer"
-    },
-    {
-      id: '321',
-      name: '//321',
-      description: "Coil Tipping",
-      assetCode: "USD",
-      assetScale: 6,
-      amount: 10000000,
-      balance: 4999999,
-      startAt: '2019-01-01',
-      scope: "$paymentPointer"
-    },
-    {
-      id: '231',
-      name: '//231',
-      description: "Random Org",
-      assetCode: "USD",
-      assetScale: 6,
-      amount: 10000000,
-      balance: 10000000,
-      startAt: '2019-01-01',
-      scope: "$paymentPointer"
-    }
-  ]
+  const mandates = await mandatesService.getUserMandates('active', user.token)
+
+  // const mandates: Array<Mandate> = [
+  //   {
+  //     id: '123',
+  //     name: '//123',
+  //     description: "ILP Flix Subscription",
+  //     assetCode: "USD",
+  //     assetScale: 6,
+  //     amount: 10000000,
+  //     balance: 0,
+  //     startAt: '2019-01-01',
+  //     scope: "$paymentPointer"
+  //   },
+  //   {
+  //     id: '321',
+  //     name: '//321',
+  //     description: "Coil Tipping",
+  //     assetCode: "USD",
+  //     assetScale: 6,
+  //     amount: 10000000,
+  //     balance: 4999999,
+  //     startAt: '2019-01-01',
+  //     scope: "$paymentPointer"
+  //   },
+  //   {
+  //     id: '231',
+  //     name: '//231',
+  //     description: "Random Org",
+  //     assetCode: "USD",
+  //     assetScale: 6,
+  //     amount: 10000000,
+  //     balance: 10000000,
+  //     startAt: '2019-01-01',
+  //     scope: "$paymentPointer"
+  //   }
+  // ]
 
   return {
     mandates,

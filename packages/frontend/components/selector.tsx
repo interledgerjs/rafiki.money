@@ -1,4 +1,5 @@
 import Select from "react-select"
+import React from 'react'
 
 // light mode only
 const customStyles = {
@@ -24,23 +25,25 @@ const customStyles = {
   })
 }
 
-interface Options{
-  value: number,
-  label: string
+interface Options {
+  value: number | string,
+  label: string,
 }
 
 type props = {
   options: Options[],
   onChange: (event: any) => void
+  defaultValue?: Options
 }
 
 const Selector: React.FC<props> = props => {
   
   return(
     <Select
-    options={props.options}
-    styles={customStyles}
-    onChange={props.onChange}
+      options={props.options}
+      styles={customStyles}
+      onChange={props.onChange}
+      defaultValue={props.defaultValue}
     />
     )
 }

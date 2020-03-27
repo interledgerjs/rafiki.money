@@ -13,9 +13,7 @@ class MyDocument extends Document {
   render() {
     return (
       <Html>
-        <Head>
-          <title>Rafiki Money</title>
-        </Head>
+        <Head/>
         <body style={{backgroundColor: '#F0F2F5'}}>
           <Main />
           <NextScript />
