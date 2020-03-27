@@ -4,7 +4,7 @@ import { Account } from './account'
 export type TransactionInfo = {
   id: number;
   accountId: number;
-  amount: bigint;
+  amount: string;
   description: string;
   createdAt: string;
   updatedAt: string;
@@ -46,7 +46,7 @@ export class Transaction extends Model {
       id: this.id,
       accountId: this.accountId,
       description: this.description,
-      amount: this.amount,
+      amount: this.amount.toString(),
       createdAt: this.createdAt,
       updatedAt: this.updatedAt
     }

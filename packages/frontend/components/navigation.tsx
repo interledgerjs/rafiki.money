@@ -27,7 +27,6 @@ const Navigation: React.FC<props> = (props) => {
     },
   ]
   return (
-    <div>
       <div className="flex z-50 left-0 bottom-0 h-16 md:h-32 w-full md:top-0 md:h-full md:w-32 fixed bg-surface">
         <div className="flex flex-wrap content-center text-center justify-center items-center left-0 bottom-0 md:top-0 md:w-32 bg-surface w-full md:h-full elevation-8 bg-surface-elevation-8 md:elevation-0 md:bg-surface">
           <div className="hidden md:flex flex-wrap w-full h-32 content-center text-center justify-center">
@@ -42,7 +41,6 @@ const Navigation: React.FC<props> = (props) => {
         </div>
         <div className="border-t md:border-r border-on-surface opacity-12 top-0 md:h-full"/>
       </div>
-    </div>
   )
 }
 

@@ -96,9 +96,6 @@ const Settings: NextPage = () => {
           <Card>
             <div className="text-headline-5 pb-10">Default account</div>
             <div className="pb-10">
-              {/* <Selector
-                options="[]"
-              ></Selector> */}
             </div>
           </Card>
           <div className="pb-10"></div>

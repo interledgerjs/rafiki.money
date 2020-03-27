@@ -11,6 +11,8 @@
     "@zeit/next-css": "^1.0.1",
     "axios": "^0.19.2",
     "chart.js": "^2.9.3",
+    "highcharts": "^8.0.4",
+    "highcharts-react-official": "^3.0.0",
     "humanize-duration": "^3.21.0",
     "iso8601-duration": "^1.2.0",
     "ky": "^0.16.2",
@@ -22,6 +24,7 @@
     "react-chartjs-2": "^2.9.0",
     "react-dom": "16.12.0",
     "react-hook-form": "^3.29.4",
+    "react-modal": "^3.11.2",
     "react-select": "^3.0.8"
   },
   "devDependencies": {

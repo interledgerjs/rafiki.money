@@ -13,8 +13,8 @@ class MyDocument extends Document {
   render() {
     return (
       <Html>
-        <Head />
-        <body className="bg-surface">
+        <Head/>
+        <body style={{backgroundColor: '#F0F2F5'}}>
           <Main />
           <NextScript />
         </body>
