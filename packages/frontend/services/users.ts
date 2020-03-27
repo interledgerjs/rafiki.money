@@ -22,7 +22,7 @@ export const UsersService = (authErrorCallback?: () => void) => {
       url.searchParams.set('login_challenge', challenge)
       return ky.post(url.toString(), {
         json: { username, password }
-    }).then(resp => resp.json())
+      }).then(resp => resp.json())
     },
     getConsent: async (challenge: string) => {
       const url = new URL('consent', USERS_API_URL)
@@ -47,7 +47,7 @@ export const UsersService = (authErrorCallback?: () => void) => {
     },
     update: async (id: number, body: any, token: string) => {
       const url = new URL(`users/${id}`, USERS_API_URL)
-      return ky.patch(url.toString(),{
+      return ky.patch(url.toString(), {
         headers: { authorization: `Bearer ${token}` },
         json: body
       }).then(resp => resp.json())
@@ -55,16 +55,29 @@ export const UsersService = (authErrorCallback?: () => void) => {
     registerOauth2Client: async (clientDetails: any, token: string) => {
       const url = new URL(`oauth2/clients`, USERS_API_URL)
       console.log('client data posting', clientDetails)
-      return ky.post(url.toString(),{
+      return ky.post(url.toString(), {
         json: clientDetails,
+        headers: { authorization: `Bearer ${token}` }
+      }).then(resp => resp.json())
+    },
+    getAccounts: async (token: string, userId: string) => {
+      const url = new URL('accounts/', USERS_API_URL)
+      url.searchParams.set('userId', userId)
+      return ky.get(url.toString(), {
+        headers: { authorization: `Bearer ${token}` }
+      }).then(resp => resp.json())
+    },
+    getAccount: async (token: string, id: number) => {
+      const url = new URL(`accounts/${id}`, USERS_API_URL)
+      return ky.get(url.toString(), {
         headers: { authorization: `Bearer ${token}` }
       }).then(resp => resp.json())
     }
   }
 }
 
-function handleError(statusCode: number, authErrorCallback?: () => void) {
-  if((statusCode === 401 || statusCode === 403) && authErrorCallback) {
+function handleError (statusCode: number, authErrorCallback?: () => void) {
+  if ((statusCode === 401 || statusCode === 403) && authErrorCallback) {
     authErrorCallback()
   }
 }
