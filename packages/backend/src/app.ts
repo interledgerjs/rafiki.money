@@ -17,6 +17,7 @@ import * as AccountsController from './controllers/accounts'
 import * as AccountTransactionsController from './controllers/accountTransactionController'
 import * as MandatesController from './controllers/mandatesController'
 import * as InvoicesController from './controllers/invoicesController'
+import * as PeerPaymentController from './controllers/peerPaymentController'
 import * as CancelMandatesController from './controllers/cancelMandatesController'
 import * as TransactionsController from './controllers/transactionsController'
 import { createAuthMiddleware } from './middleware/auth'
@@ -114,5 +115,7 @@ export class App {
 
     this._publicRouter.post('/invoices', InvoicesController.store)
     this._publicRouter.get('/invoices/:id', InvoicesController.show)
+
+    this._privateRouter.post('/payments/peer', PeerPaymentController.store)
   }
 }

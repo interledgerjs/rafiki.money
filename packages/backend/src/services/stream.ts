@@ -7,7 +7,7 @@ import { Invoice } from '../models/invoice'
 import { InvoiceTransaction } from '../models/invoiceTransaction'
 import { Transaction } from 'objection'
 
-const BTP_UPLINK = process.env.BTP_UPLINK || 'btp+ws://:secret@localhost:7770/accounts/stream/ilp/btp'
+const BTP_UPLINK = process.env.BTP_UPLINK || 'btp+ws://localhost:7770/accounts/stream/ilp/btp'
 
 export type StreamServiceOptions = {
   key: string

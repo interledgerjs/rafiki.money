@@ -72,7 +72,7 @@ const sideBar = (account: Account, token, refreshAccounts) => {
             {
               transactions.map(transaction => {
                 return (
-                  <div className="flex w-full my-4 py-2 px-2 border border-border rounded">
+                  <div key={transaction.id} className="flex w-full my-4 py-2 px-2 border border-border rounded">
                     <div className="leading-tight">
                       <div className="overline text-purple">
                         {account.name}

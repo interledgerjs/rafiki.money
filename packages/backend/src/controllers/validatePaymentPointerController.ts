@@ -1,16 +1,6 @@
 import { AppContext } from '../app'
 import got from 'got'
-
-const paymentPointerToURL = (paymentPointer: string): string => {
-  if (paymentPointer.startsWith('http') || paymentPointer.startsWith('https')) {
-    return paymentPointer
-  }
-
-  if (paymentPointer.startsWith('$')) {
-    return paymentPointer.replace('$', 'https://')
-  }
-  throw new Error('Invalid Payment Pointer format')
-}
+import { paymentPointerToURL } from '../utils'
 
 const isOpenPaymentsUrl = async (paymentPointer: string): Promise<boolean> => {
   try {

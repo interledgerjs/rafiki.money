@@ -88,8 +88,8 @@ type PaymentCardProps = {
 
 const PaymentCard = (props: PaymentCardProps) => {
   const [accounts, setAccounts] = useState<any>()
-  const [selected, setSelected] = useState<Options>()
-  const {register, handleSubmit, errors, setError, clearError} = useForm()
+  const [selectedAccount, setSelectedAccount] = useState<Options>()
+  const {register, handleSubmit, errors, setError} = useForm()
 
   useEffect(() => {
     usersService.getAccounts(props.token, props.userId).then(accounts => {
@@ -104,32 +104,18 @@ const PaymentCard = (props: PaymentCardProps) => {
   }, [])
 
   const onSend = async data => {
-    if (selected) {
-      if (validateAmount({target: {value: data.amount}})) {
-        const getAccount = await usersService.getAccount(props.token, selected.value)
-        const amount = data.amount * Math.pow(10, getAccount.assetScale)
-        if (getAccount.balance >= amount) {
-          pay(props.paymentPointer, amount, getAccount, props.token)
-          // TO DO resolve PP
-        } else {
-          setError("amount", "invalidAmount", "Not enough funds in account")
-        }
-      }
+    if (selectedAccount) {
+      console.log(data)
+      await pay(props.paymentPointer, data.amount, selectedAccount.value, props.token).then((response) => {
+
+      }).catch((error) => {
+
+      })
     } else {
       setError("selectAccount", "noAccountSelected", "Please select an account")
     }
   }
 
-  const validateAmount = e => {
-    const amountRegex = RegExp(/^[0-9]+(\.[0-9]{1,6})?$/)
-    if (!amountRegex.test(e.target.value)) {
-      setError("amount", "invalidAmount", "Please submit a valid amount")
-      return (false)
-    } else if (errors.amount) {
-      clearError('amount')
-    }
-    return (true)
-  }
 
   return (
     <Card>
@@ -142,15 +128,14 @@ const PaymentCard = (props: PaymentCardProps) => {
         <TextInput
           inputType="text"
           errorState={errors.amount != undefined}
-          validationFunction={validateAmount}
-          inputRef={(register({required: true}))}
+          inputRef={(register({required: true, pattern: /^[0-9]+(\.[0-9]{1,6})?$/}))}
           name="amount"
           label="Amount"
           hint={errors.amount ? errors.amount.type === 'required' ? 'Amount required' : (errors.amount.message) as string : undefined}
         />
         <Selector
           options={accounts}
-          onChange={(e) => setSelected(e)}
+          onChange={(e) => setSelectedAccount(e)}
           hint={errors.selectAccount ? (errors.selectAccount.message) as string : undefined}
         />
         <div className="flex justify-center pt-2 pb-6">

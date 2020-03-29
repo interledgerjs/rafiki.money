@@ -11,7 +11,7 @@ export type InvoiceInfo = {
   description: string;
   assetCode: string;
   assetScale: number;
-  amount: string;
+  amount: string | null;
   received: string;
   balance: string;
   expiresAt: string;
@@ -31,7 +31,7 @@ export class Invoice extends Model {
   description: string;
   assetCode: string;
   assetScale: number;
-  amount: bigint;
+  amount!: bigint;
   received: bigint;
   balance: bigint;
   expiresAt!: string;
@@ -58,7 +58,7 @@ export class Invoice extends Model {
       description: this.description,
       assetCode: this.assetCode,
       assetScale: this.assetScale,
-      amount: this.amount.toString(),
+      amount: this.amount ? this.amount.toString() : null,
       balance: this.balance.toString(),
       expiresAt: this.expiresAt,
       subject: this.subject,
