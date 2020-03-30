@@ -75,6 +75,9 @@ describe('User Peer Payment API Test', () => {
     })
 
     it('User can make an open payments peer payment', async () => {
+      appContainer.streamService.sendMoney = jest.fn(async () => {
+        return 1000000
+      })
       const response = await axios.post(`http://localhost:${appContainer.port}/payments/peer`, {
         accountId: account.id,
         amount: 1000000,
@@ -88,9 +91,11 @@ describe('User Peer Payment API Test', () => {
         return resp.data
       })
 
-      const transaction = response[0]
-      expect(transaction).toBeDefined()
-      expect(transaction.accountId).toEqual(account.id)
+      account = await account.$query()
+      expect(response).toEqual({
+        sent: 1000000
+      })
+      expect(account.balance).toEqual(9000000n)
     })
   })
 })

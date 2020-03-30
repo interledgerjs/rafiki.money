@@ -64,9 +64,11 @@ export async function store (ctx: AppContext): Promise<void> {
         amount: -BigInt(sent),
         description: body.description
       })
+      ctx.body = {
+        sent
+      }
+      ctx.status = 201
     })
-
-    ctx.status = 201
   } catch (error) {
     console.log(error)
   }
