@@ -105,9 +105,8 @@ const PaymentCard = (props: PaymentCardProps) => {
 
   const onSend = async data => {
     if (selectedAccount) {
-      console.log(data)
       await pay(props.paymentPointer, data.amount, selectedAccount.value, props.token).then((response) => {
-
+        console.log(response)
       }).catch((error) => {
 
       })
@@ -150,7 +149,7 @@ const PaymentCard = (props: PaymentCardProps) => {
 
 const Transact: NextPage<Props> = ({user}) => {
   const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>({
-    paymentPointer: 'http://localhost:3001/p/matt',
+    paymentPointer: '$localhost:3001/p/matt@rafiki.test',
     type: 'open-payments'
   })
 

@@ -16,14 +16,14 @@ describe('User Peer Payment API Test', () => {
   beforeAll(async () => {
     appContainer = await createTestApp()
     await appContainer.knex.migrate.latest()
-    nock('https://wallet.com')
+    nock('http://wallet.com')
       .defaultReplyHeaders({
         'Content-Type': 'application/json'
       })
       .get('/.well-known/open-payments')
       .reply(200, {
-        issuer: 'https://wallet.com',
-        invoices_endpoint: 'https://wallet.com/invoices'
+        issuer: 'http://wallet.com',
+        invoices_endpoint: 'http://wallet.com/invoices'
       })
       .post('/invoices')
       .reply(201, {
@@ -76,7 +76,7 @@ describe('User Peer Payment API Test', () => {
 
     it('User can make an open payments peer payment', async () => {
       appContainer.streamService.sendMoney = jest.fn(async () => {
-        return 1000000
+        return 1000000n
       })
       const response = await axios.post(`http://localhost:${appContainer.port}/payments/peer`, {
         accountId: account.id,
@@ -93,7 +93,7 @@ describe('User Peer Payment API Test', () => {
 
       account = await account.$query()
       expect(response).toEqual({
-        sent: 1000000
+        sent: '1000000'
       })
       expect(account.balance).toEqual(9000000n)
     })

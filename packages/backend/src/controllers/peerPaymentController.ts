@@ -7,6 +7,53 @@ const enforce = (subject: string, account: Account): boolean => {
   return account.userId.toString() === subject
 }
 
+const checkSufficientBalance = async (accountId: number, amount: bigint): Promise<boolean> => {
+  return Account.transaction(async trx => {
+    const trxAccount = await Account.query(trx).findById(accountId).forUpdate()
+
+    if (!trxAccount) {
+      await trx.rollback()
+      throw new Error('Account not found')
+    }
+
+    const balance = BigInt(trxAccount.balance)
+    const limit = trxAccount.limit
+    const newBalance = balance + amount
+
+    return (newBalance > limit)
+  })
+}
+
+
+const modifyBalance = async (accountId: number, amount: bigint, description = '') => {
+  await Account.transaction(async trx => {
+    const trxAccount = await Account.query(trx).findById(accountId).forUpdate()
+
+    if (!trxAccount) {
+      await trx.rollback()
+      throw new Error('Account not found')
+    }
+
+    const balance = BigInt(trxAccount.balance)
+    const limit = trxAccount.limit
+    const newBalance = balance + amount
+
+    if (newBalance < limit) {
+      trx.rollback()
+      throw new Error('Insufficient Funds')
+    }
+
+    await Account.query(trx).findById(trxAccount.id).patch({
+      balance: newBalance
+    })
+
+    await trxAccount.$relatedQuery('transactions', trx).insert({
+      amount: amount,
+      description: description
+    })
+  })
+}
+
 const createReceiverInvoice = async (paymentPointer: string, description = '') => {
   const url = await getOpenPaymentsInvoiceURL(paymentPointer)
   return got.post(url, {
@@ -18,11 +65,19 @@ const createReceiverInvoice = async (paymentPointer: string, description = '') =
 }
 
 export async function store (ctx: AppContext): Promise<void> {
-  const { streamService } = ctx
+  const { streamService, logger } = ctx
   const { body } = ctx.request
   const account = await Account.query().findById(body.accountId)
 
   if (!account) {
+    return
+  }
+
+  if (!body.amount) {
+    ctx.status = 422
+    ctx.body = {
+      message: 'Amount must be specified'
+    }
     return
   }
 
@@ -31,44 +86,51 @@ export async function store (ctx: AppContext): Promise<void> {
     return
   }
 
+  const amount = BigInt(body.amount)
+  if (amount <= 0n) {
+    ctx.status = 422
+    ctx.body = {
+      message: 'Amount must be a positive integer'
+    }
+    return
+  }
+
+  // Take out money to send
+  const isSufficientFunds = await checkSufficientBalance(account.id, -amount)
+
+  if (!isSufficientFunds) {
+    ctx.status = 422
+    ctx.body = {
+      message: 'Insufficient Funds'
+    }
+    return
+  }
+
   // Create Invoice at Receiver
   const invoice: any = await createReceiverInvoice(body.receiverPaymentPointer)
 
   // Get Payment details for invoice
-  const invoiceUrl = 'https:' + invoice.name
+  const invoiceUrl = 'http:' + invoice.name
   const paymentDetails: {ilpAddress: string, sharedSecret: string} = await got(invoiceUrl, {
     method: 'OPTIONS'
   }).json()
 
-  // TODO how do we make this portion resilient?
+  // TODO this code needs to be made more resilient
   try {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    // @ts-ignore
-    await Account.transaction(async trx => {
-      const trxAccount = await Account.query(trx).findById(account.id).forUpdate()
+    await modifyBalance(account.id, -amount, `Payment to ${invoice.subject}`)
 
-      if (!trxAccount) {
-        throw new Error('Account not found')
-      }
+    const sent = await streamService.sendMoney(paymentDetails.ilpAddress, paymentDetails.sharedSecret, amount.toString())
 
-      const sent = await streamService.sendMoney(paymentDetails.ilpAddress, paymentDetails.sharedSecret, body.amount)
+    if (sent !== amount) {
+      logger.error('Failed to send full amount', { amount: amount.toString(), sent })
+      const amountNotSent = amount - sent
+      await modifyBalance(account.id, amountNotSent, `Refund for amount not sent to ${invoice.subject}`)
+    }
 
-      const balance = trxAccount.balance
-      const newBalance = balance - BigInt(sent)
-
-      await Account.query(trx).findById(trxAccount.id).patch({
-        balance: newBalance
-      })
-
-      await trxAccount.$relatedQuery('transactions', trx).insert({
-        amount: -BigInt(sent),
-        description: body.description
-      })
-      ctx.body = {
-        sent
-      }
-      ctx.status = 201
-    })
+    ctx.body = {
+      sent: sent.toString()
+    }
+    ctx.status = 201
   } catch (error) {
     console.log(error)
   }

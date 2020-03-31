@@ -7,7 +7,7 @@ import { Invoice } from '../models/invoice'
 import { InvoiceTransaction } from '../models/invoiceTransaction'
 import { Transaction } from 'objection'
 
-const BTP_UPLINK = process.env.BTP_UPLINK || 'btp+ws://localhost:7770/accounts/stream/ilp/btp'
+const BTP_UPLINK = process.env.BTP_UPLINK || 'btp+ws://localhost:8000'
 
 export type StreamServiceOptions = {
   key: string
@@ -82,7 +82,6 @@ export class StreamService {
       }
 
       conn.on('stream', async (stream: DataAndMoneyStream) => {
-
         // Todo, potentially limit this to the amount still needed for the Invoice.
         //  This would mean only a singular Invoice can be paid at once
         stream.setReceiveMax(String(2 ** 56))
@@ -91,7 +90,7 @@ export class StreamService {
           await Invoice.transaction(async (trx: Transaction) => {
             const inv = await Invoice.query(trx).findById(invoice.id).forUpdate()
             await Invoice.query(trx).where('id', inv.id).patch({
-              received: inv.received += BigInt(amount)
+              received: (BigInt(inv.received) + BigInt(amount))
             })
             await InvoiceTransaction.query(trx).insert({
               invoiceId: invoice.id,
@@ -107,53 +106,41 @@ export class StreamService {
 
       conn.on('error', (err: Error) => {
         this.logger.warn('connection error', { err: err })
+        conn.destroy()
       })
     })
   }
 
-  async sendMoney (ilpAddress: string, sharedSecret: string, amount: string): Promise<number> {
+  async sendMoney (ilpAddress: string, sharedSecret: string, amount: string): Promise<bigint> {
+    this.logger.trace('Sending funds to', { ilpAddress, amount })
     const btpToken = randomBytes(16).toString('hex')
     const client = new BtpPlugin({
       server: BTP_UPLINK,
       btpToken
     })
 
+    this.logger.trace('Creating STREAM connection')
+
     const connection = await createConnection({
       destinationAccount: ilpAddress,
-      sharedSecret: Buffer.from(sharedSecret),
+      sharedSecret: Buffer.from(sharedSecret, 'base64'),
       plugin: client
     })
+    this.logger.trace('STREAM connection created')
 
     const stream = await connection.createStream()
+    this.logger.trace('STREAM stream created')
 
-    return new Promise((resolve) => {
-      let totalAmount: 0
-      const onOutgoingMoney = (amount: string) => {
-        totalAmount += Number(amount)
-      }
+    this.logger.trace('Sending funds')
+    await stream.sendTotal(amount)
 
-      const cleanUp = () => {
-        setImmediate(() => {
-          stream.removeListener('error', cleanUp)
-          stream.removeListener('close', cleanUp)
-          stream.removeListener('outgoing_money', onOutgoingMoney)
-          connection.removeListener('error', cleanUp)
-          connection.removeListener('close', cleanUp)
-
-          client.disconnect()
-          stream.destroy()
-          connection.destroy()
-          resolve(totalAmount)
-        })
-      }
-
-      stream.on('error', cleanUp)
-      stream.on('close', cleanUp)
-      stream.on('outgoing_money', onOutgoingMoney)
-      connection.on('error', cleanUp)
-      connection.on('close', cleanUp)
-      stream.setSendMax(amount)
-    })
+    this.logger.trace('Funds sent, closing STREAM')
+    await stream.end()
+    await connection.end()
+    const total = stream.totalSent
+    this.logger.trace('Total sent', { total })
+    await connection.destroy()
+    return BigInt(total)
   }
 
   generateStreamCredentials (invoiceId: string) {

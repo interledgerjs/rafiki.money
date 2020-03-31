@@ -115,6 +115,7 @@ export class App {
 
     this._publicRouter.post('/invoices', InvoicesController.store)
     this._publicRouter.get('/invoices/:id', InvoicesController.show)
+    this._publicRouter.options('/invoices/:id', InvoicesController.options)
 
     this._privateRouter.post('/payments/peer', PeerPaymentController.store)
   }

@@ -6,7 +6,7 @@ export const paymentPointerToURL = (paymentPointer: string): string => {
   }
 
   if (paymentPointer.startsWith('$')) {
-    return paymentPointer.replace('$', 'https://')
+    return paymentPointer.replace('$', 'http://')
   }
   throw new Error('Invalid Payment Pointer format')
 }
