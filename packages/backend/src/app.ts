@@ -18,6 +18,7 @@ import * as Oauth2ClientController from './controllers/oauth2ClientController'
 import * as AccountsController from './controllers/accounts'
 import * as AccountTransactionsController from './controllers/accountTransactionController'
 import * as MandatesController from './controllers/mandatesController'
+import * as MandatesTransactionController from './controllers/mandateTransactionsController'
 import * as InvoicesController from './controllers/invoicesController'
 import * as PeerPaymentController from './controllers/peerPaymentController'
 import * as CancelMandatesController from './controllers/cancelMandatesController'
@@ -117,6 +118,7 @@ export class App {
     this._privateRouter.get('/mandates', MandatesController.index)
     this._privateRouter.get('/mandates/:id', MandatesController.show)
     this._privateRouter.put('/mandates/:id/cancel', CancelMandatesController.store)
+    this._privateRouter.get('/mandates/:id/transactions', MandatesTransactionController.index)
 
     this._publicRouter.post('/invoices', InvoicesController.store)
     this._publicRouter.get('/invoices/:id', InvoicesController.show)

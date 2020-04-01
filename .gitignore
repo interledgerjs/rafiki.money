@@ -9,3 +9,4 @@ node_modules/
 /logs
 
 packages/frontend/pages/sandbox.tsx
+packages/backend/test.db

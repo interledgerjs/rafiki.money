@@ -12,15 +12,15 @@ module.exports = {
     }
   },
   development: {
-    client: 'sqlite3',
-    useNullAsDefault: true,
+    client: 'postgresql',
     connection: {
-      filename: './test.db'
+      user: 'postgres',
+      password: 'password',
+      database: 'development'
     },
     pool: {
-      afterCreate: (conn, cb) => {
-        conn.run('PRAGMA foreign_keys = ON', cb)
-      }
+      min: 2,
+      max: 10
     }
   },
   production: {
