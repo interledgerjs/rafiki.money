@@ -1,11 +1,12 @@
 {
-  "short_name": "http://localhost:3000/",
-  "name": "http://localhost:3000/",
+  "name": "Pay with Rafiki Money",
+  "short_name": "Rafiki Money",
+  "display": "minimal-ui",
   "icons": [
     {
-      "src": "icon_ilp.png",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
     }
   ],
   "serviceworker": {

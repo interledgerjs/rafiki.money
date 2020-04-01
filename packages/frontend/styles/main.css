@@ -158,7 +158,6 @@ html {
 .logo>svg>g>circle{
   mix-blend-mode: var(--logo-blend);
   fill: var(--color-primary);
-/* component definitions */
 }
 
 .inputText {
