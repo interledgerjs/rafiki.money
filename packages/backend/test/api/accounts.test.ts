@@ -28,6 +28,7 @@ describe('Accounts API Test', () => {
   })
 
   afterAll(async () => {
+    await appContainer.knex.migrate.rollback()
     appContainer.app.shutdown()
     await appContainer.knex.destroy()
   })

@@ -14,7 +14,7 @@ describe('Validate Payment Pointer', function () {
     app.use(async (ctx) => {
       console.log()
     })
-    nock('https://paymentpointer.com')
+    nock('http://paymentpointer.com')
       .defaultReplyHeaders({
         'Content-Type': 'application/json'
       })
@@ -22,7 +22,7 @@ describe('Validate Payment Pointer', function () {
       .reply(200, {
         issuer: 'https://paymentpointer.com'
       })
-    nock('https://spsp.com')
+    nock('http://spsp.com')
       .defaultReplyHeaders({
         'Content-Type': 'application/spsp4+json'
       })

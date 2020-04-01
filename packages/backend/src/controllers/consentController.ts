@@ -1,14 +1,7 @@
-import { Config, Joi } from 'koa-joi-router'
 import { AppContext } from '../app'
 import { hydra } from '../../src/services/hydra'
-import { Context } from 'koa'
-import { User } from '../models/user'
 import { Mandate } from '../models/mandate'
 import { Account } from '../models/account'
-
-const INTENTS_URL = process.env.INTENTS_URL || 'http://localhost:3001/intents'
-const MANDATES_URL = process.env.MANDATES_URL || 'http://localhost:3001/mandates'
-const BASE_PAYMENT_POINTER_URL = process.env.BASE_PAYMENT_POINTER_URL || '$rafiki.money/p'
 
 export async function getMandateFromAuthorizationDetails (authorizationDetails: Array<AuthorizationDetail>): Promise<Mandate | undefined> {
   const mandates = authorizationDetails.filter(item => {
