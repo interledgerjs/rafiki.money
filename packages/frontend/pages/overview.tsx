@@ -4,8 +4,10 @@ import { Button, Card, Content, Navigation } from '../components'
 import { checkUser, formatCurrency } from '../utils'
 import {AccountsService} from '../services/accounts'
 import Link from 'next/link'
+import { UsersService } from '../services/users'
 
 const accountService = AccountsService()
+const usersService = UsersService()
 
 type User = {
   id: string
@@ -21,6 +23,8 @@ type Props = {
   user: User
   accounts: Array<any>
   token: string
+  balance: number
+  paymentPointer: string
 }
 
 const sideBar = (account: Account, token, refreshAccounts) => {
@@ -95,14 +99,18 @@ const sideBar = (account: Account, token, refreshAccounts) => {
   }
 }
 
-const Overview: NextPage<Props> = ({user, accounts, token}) => {
+const Overview: NextPage<Props> = ({user, accounts, token, balance, paymentPointer}) => {
 
   const [localAccounts, setLocalAccounts] = useState<Array<Account>>(accounts)
+  const [localBalance, setLocalBalance] = useState<number>(balance)
   const [selectedAccountId, setSelectedAccountId] = useState<number>(accounts[0].id)
 
   const refreshAccounts = () => {
     accountService.getUserAccounts(user.id, token).then(accounts => {
       setLocalAccounts(accounts)
+    })
+    usersService.getBalance(token).then(balance => {
+      setLocalBalance(balance.balance)
     })
   }
 
@@ -117,8 +125,8 @@ const Overview: NextPage<Props> = ({user, accounts, token}) => {
                 <div className="text-headline-5">
                   Total Balance
                 </div>
-                <div className="text-headline-3">
-                  $ 10.000000
+                <div className="text-headline-4">
+                  $ {formatCurrency(localBalance, 6)}
                 </div>
               </Card>
               <Card>
@@ -126,7 +134,7 @@ const Overview: NextPage<Props> = ({user, accounts, token}) => {
                   Payment Pointer
                 </div>
                 <div>
-                  $pp@coil.com/p
+                  { paymentPointer }
                 </div>
                 <div className="flex justify-end">
                   <Button type="text">
@@ -180,11 +188,15 @@ const Overview: NextPage<Props> = ({user, accounts, token}) => {
 Overview.getInitialProps = async (ctx) => {
   const user = await checkUser(ctx)
   const accounts = await accountService.getUserAccounts(user.id, user.token)
+  const balance = await usersService.getBalance(user.token)
+  const paymentPointer = await usersService.getPaymentPointer(user.token)
 
   return {
     user,
     accounts,
-    token: user.token
+    token: user.token,
+    balance: balance.balance,
+    paymentPointer: paymentPointer.paymentPointer
   }
 }
 

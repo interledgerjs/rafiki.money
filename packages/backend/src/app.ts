@@ -6,6 +6,8 @@ import cors from '@koa/cors'
 import { Server } from 'http'
 import { hydra } from './services/hydra'
 import * as UsersController from './controllers/userController'
+import * as UsersBalanaceController from './controllers/userTotalBalanceController'
+import * as UsersPaymentPointerController from './controllers/userDefaultPaymentPointer'
 import * as LoginController from './controllers/loginController'
 import * as LogoutController from './controllers/logoutController'
 import * as ConsentController from './controllers/consentController'
@@ -80,7 +82,10 @@ export class App {
 
     this._publicRouter.post('/users', UsersController.store)
     this._privateRouter.patch('/users/:id', UsersController.update)
+
     this._privateRouter.get('/users/me', UsersController.show)
+    this._privateRouter.get('/users/me/balance', UsersBalanaceController.show)
+    this._privateRouter.get('/users/me/paymentpointer', UsersPaymentPointerController.show)
 
     this._publicRouter.get('/login', LoginController.show)
     this._publicRouter.post('/login', LoginController.store)

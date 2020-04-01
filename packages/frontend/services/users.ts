@@ -72,6 +72,14 @@ export const UsersService = (authErrorCallback?: () => void) => {
       return ky.get(url.toString(), {
         headers: { authorization: `Bearer ${token}` }
       }).then(resp => resp.json())
+    },
+    getBalance: async (token: string) => {
+      const url = new URL('users/me/balance', USERS_API_URL)
+      return ky.get(url.toString(), { headers: { authorization: `Bearer ${token}` } }).then(resp => resp.json())
+    },
+    getPaymentPointer: async (token: string) => {
+      const url = new URL('users/me/paymentpointer', USERS_API_URL)
+      return ky.get(url.toString(), { headers: { authorization: `Bearer ${token}` } }).then(resp => resp.json())
     }
   }
 }
