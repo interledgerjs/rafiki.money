@@ -3,6 +3,8 @@ import { Account } from '../models/account'
 import { getOpenPaymentsInvoiceURL } from '../utils'
 import got from 'got'
 
+const HTTP_PROTOCOL = process.env.HTTP_PROTOCOL || 'http'
+
 const enforce = (subject: string, account: Account): boolean => {
   return account.userId.toString() === subject
 }
@@ -110,7 +112,7 @@ export async function store (ctx: AppContext): Promise<void> {
   const invoice: any = await createReceiverInvoice(body.receiverPaymentPointer)
 
   // Get Payment details for invoice
-  const invoiceUrl = 'http:' + invoice.name
+  const invoiceUrl = `${HTTP_PROTOCOL}:${invoice.name}`
   const paymentDetails: {ilpAddress: string, sharedSecret: string} = await got(invoiceUrl, {
     method: 'OPTIONS'
   }).json()

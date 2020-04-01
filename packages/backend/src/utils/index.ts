@@ -1,12 +1,14 @@
 import got from 'got'
 
+const HTTP_PROTOCOL = process.env.HTTP_PROTOCOL || 'http'
+
 export const paymentPointerToURL = (paymentPointer: string): string => {
   if (paymentPointer.startsWith('http') || paymentPointer.startsWith('https')) {
     return paymentPointer
   }
 
   if (paymentPointer.startsWith('$')) {
-    return paymentPointer.replace('$', 'http://')
+    return paymentPointer.replace('$', `${HTTP_PROTOCOL}://`)
   }
   throw new Error('Invalid Payment Pointer format')
 }

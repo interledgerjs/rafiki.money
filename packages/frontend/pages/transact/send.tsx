@@ -7,7 +7,7 @@ import { pay } from '../../services/pay'
 import { checkUser, formatCurrency } from '../../utils'
 import ky from 'ky-universal'
 import getConfig from 'next/config'
-import AmountInput from '../../components/amountInput'
+import SquareLoader from "react-spinners/SquareLoader";
 
 const {publicRuntimeConfig} = getConfig()
 const USERS_API_URL = publicRuntimeConfig.REACT_APP_USERS_API_URL
@@ -84,12 +84,20 @@ type PaymentCardProps = {
   paymentPointer: string
   token: string,
   userId: string
+  setPaymentDetails: (any) => void
+}
+
+type PaymentStatus = {
+  success: boolean
+  sent?: string
 }
 
 const PaymentCard = (props: PaymentCardProps) => {
   const [accounts, setAccounts] = useState<any>()
   const [selectedAccount, setSelectedAccount] = useState<Options>()
   const {register, handleSubmit, errors, setError} = useForm()
+  const [isSending, setIsSending] = useState<boolean>(false)
+  const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>()
 
   useEffect(() => {
     usersService.getAccounts(props.token, props.userId).then(accounts => {
@@ -105,24 +113,42 @@ const PaymentCard = (props: PaymentCardProps) => {
 
   const onSend = async data => {
     if (selectedAccount) {
-      await pay(props.paymentPointer, data.amount, selectedAccount.value, props.token).then((response) => {
-        console.log(response)
-      }).catch((error) => {
-
-      })
+      if(!isSending) {
+        setIsSending(true)
+        await pay(props.paymentPointer, data.amount, selectedAccount.value, props.token).then(async (response) => {
+          const body = await response.json()
+          setPaymentStatus({
+            success: true,
+            sent: body.sent
+          })
+        }).catch((error) => {
+          setPaymentStatus({
+            success: false
+          })
+        }).finally(() => {
+          setIsSending(false)
+        })
+      }
     } else {
       setError("selectAccount", "noAccountSelected", "Please select an account")
     }
   }
 
-
-  return (
-    <Card>
-      <div className="flex justify-center pt-10 pb-8">
-        <div className="flex content-center flex-wrap text-headline-5 truncate">
-          {props.paymentPointer}
+  const RenderLoading = () => {
+    return (
+      <div className="h-64 flex">
+        <div className="content-center mx-auto my-auto justify-center w-24">
+          <SquareLoader
+            size={75}
+            color={"#21D2BF"}
+          />
         </div>
       </div>
+    )
+  }
+
+  const RenderPaymentDetails = () => {
+    return (
       <form onSubmit={handleSubmit(onSend)}>
         <TextInput
           inputType="text"
@@ -143,15 +169,62 @@ const PaymentCard = (props: PaymentCardProps) => {
           </Button>
         </div>
       </form>
+    )
+  }
+
+  const resetPayment = () => {
+    props.setPaymentDetails(undefined)
+  }
+
+
+  const RenderPaymentStatus = () => {
+    if(paymentStatus.success) {
+      return (
+        <div className="h-64 flex flex-col">
+          <div className="text-center text-primary headline-6">
+            Successfully sent!
+          </div>
+          <div className="flex mx-auto headline-3">
+            {formatCurrency(Number(paymentStatus.sent), 6)}
+          </div>
+          <div className="flex mx-auto body-1  text-on-surface-disabled">
+            USD
+          </div>
+          <Button onClick={resetPayment} type='solid' className="w-32 mx-auto mt-8">
+            Done
+          </Button>
+        </div>
+      )
+    } else {
+      return (
+        <div className="h-64 flex flex-col">
+          <div className="text-center text-primary headline-6">
+            Failed to send
+          </div>
+          <Button onClick={resetPayment} type='solid' className="w-32 mx-auto mt-8">
+            Try Again
+          </Button>
+        </div>
+      )
+    }
+  }
+
+  return (
+    <Card>
+      <div className="flex justify-center pt-10 pb-8">
+        <div className="flex content-center flex-wrap text-headline-5 truncate">
+          {props.paymentPointer}
+        </div>
+      </div>
+      {!(isSending || paymentStatus) ? RenderPaymentDetails() : null}
+      {isSending ? RenderLoading() : null}
+      {paymentStatus ? RenderPaymentStatus() : null}
     </Card>
   )
 }
 
 const Transact: NextPage<Props> = ({user}) => {
-  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>({
-    paymentPointer: '$localhost:3001/p/matt@rafiki.test',
-    type: 'open-payments'
-  })
+  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>()
 
   return (
     <div className="flex">
@@ -168,7 +241,11 @@ const Transact: NextPage<Props> = ({user}) => {
         <div className="flex justify-center mt-10">
           {
             paymentDetails ?
-              <PaymentCard paymentPointer={paymentDetails.paymentPointer} token={user.token} userId={user.id}/>
+              <PaymentCard paymentPointer={paymentDetails.paymentPointer}
+                           token={user.token}
+                           userId={user.id}
+                           setPaymentDetails={setPaymentDetails}
+              />
               :
               <PaymentPointerCard setPaymentDetails={setPaymentDetails}/>
           }
