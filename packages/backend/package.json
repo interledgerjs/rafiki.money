@@ -31,7 +31,6 @@
     "koa": "^2.8.1",
     "koa-bodyparser": "^4.2.1",
     "koa-joi-router": "^6.0.0",
-    "ky-universal": "latest",
     "mysql": "^2.17.1",
     "nookies": "latest",
     "objection": "^2.1.2",

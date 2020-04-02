@@ -5,6 +5,7 @@ import { checkUser, formatCurrency } from '../utils'
 import {AccountsService} from '../services/accounts'
 import Link from 'next/link'
 import { UsersService } from '../services/users'
+import Clipboard from 'react-clipboard.js'
 
 const accountService = AccountsService()
 const usersService = UsersService()
@@ -137,9 +138,9 @@ const Overview: NextPage<Props> = ({user, accounts, token, balance, paymentPoint
                   { paymentPointer }
                 </div>
                 <div className="flex justify-end">
-                  <Button type="text">
+                  <Clipboard className="button min-w-64 py-2 px-4 rounded focus:outline-none text-primary hover:bg-primary-100 active:bg-primary-200" data-clipboard-text={paymentPointer}>
                     Copy
-                  </Button>
+                  </Clipboard>
                 </div>
               </Card>
             </div>

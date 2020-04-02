@@ -13,11 +13,11 @@ class MyDocument extends Document {
   render() {
     return (
       <Html>
-        </Head>
+        <Head>
           <link rel="manifest" href="manifest.json"/>
           <link rel="icon" href="/favicon.ico"/>
-        <Head>
-        <body className="bg-surface">
+        </Head>
+        <body style={{backgroundColor: '#F0F2F5'}}>
           <Main />
           <NextScript />
         </body>

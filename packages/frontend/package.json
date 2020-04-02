@@ -22,6 +22,7 @@
     "openid-client": "^3.12.2",
     "react": "16.12.0",
     "react-chartjs-2": "^2.9.0",
+    "react-clipboard.js": "^2.0.16",
     "react-dom": "16.12.0",
     "react-hook-form": "^3.29.4",
     "react-modal": "^3.11.2",
