@@ -87,7 +87,7 @@ const sideBar = (account: Account, token, refreshAccounts) => {
                         {formatDate(transaction.createdAt)}
                       </div>
                     </div>
-                    <div className={`flex-1 text-right my-auto text-headline-6 ${transaction.amount < 0 ? 'text-red' : 'text-green'}`}>
+                    <div className={`flex-1 self-center text-right my-auto text-headline-6 ${transaction.amount < 0 ? 'text-red' : 'text-green'}`}>
                       $ {formatCurrency(transaction.amount, 6)}
                     </div>
                   </div>
@@ -160,7 +160,7 @@ const Overview: NextPage<Props> = ({user, accounts, token, balance, paymentPoint
                 </Link>
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row justify-between w-full flex-wrap mt-8">
+            <div className="flex sm:hidden flex-col sm:flex-row justify-between w-full flex-wrap mt-8">
               {
                 localAccounts.map(account => {
                   return (
@@ -178,8 +178,25 @@ const Overview: NextPage<Props> = ({user, accounts, token, balance, paymentPoint
                 })
               }
             </div>
+            <div className="hidden sm:flex flex-col sm:flex-row justify-between w-full flex-wrap mt-8">
+              {
+                localAccounts.map(account => {
+                  return (
+                    <div key={account.id} onClick={() => setSelectedAccountId(account.id)}>
+                      <Card className="mb-4 h-32 cursor-pointer">
+                        <div className="text-headline-5">
+                          {account.name}
+                        </div>
+                        <div className="text-headline-6">
+                          $ {formatCurrency(Number(account.balance), 6)}
+                        </div>
+                      </Card>
+                    </div>
+                  )
+                })
+              }
+            </div>
           </div>
-          {/* TODO: make empty state */}
           <div className="hidden sm:flex h-full w-1/3 ml-12">
             {selectedAccountId ? sideBar(localAccounts.filter(acc => acc.id === selectedAccountId)[0], token, refreshAccounts.bind(this)) : null}
           </div>
