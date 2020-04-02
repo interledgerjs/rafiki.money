@@ -1,9 +1,10 @@
 import axios from 'axios'
 import { User } from '../../src/models/user'
 import { createTestApp, TestAppContainer } from '../helpers/app'
-import { Account, PaymentPointer } from '../../src/models'
+import { Account, Invoice, PaymentPointer } from '../../src/models'
 import { Model } from 'objection'
 import Knex, { Transaction } from 'knex'
+import { identifierToPaymentPointer } from '../../src/utils'
 
 describe('Monetization', function () {
   let appContainer: TestAppContainer
@@ -49,6 +50,41 @@ describe('Monetization', function () {
 
       const { data, status } = await axios.get(`http://localhost:${appContainer.port}/p/${user.username}`)
 
+      expect(status).toEqual(200)
+      expect(data.ilpAddress).toBeDefined()
+      expect(data.sharedSecret).toBeDefined()
+    })
+
+    test('create a new invoice for monetization if current one has expired', async () => {
+      const user = await User.query().insertAndFetch({ username: 'alice' })
+      const account = await Account.query().insertAndFetch({
+        name: 'main',
+        userId: user.id,
+        assetCode: 'USD',
+        assetScale: 6,
+        limit: 0n
+      })
+      const invoice = await Invoice.query().insertAndFetch({
+        assetCode: 'USD',
+        assetScale: 6,
+        subject: identifierToPaymentPointer('alice'),
+        accountId: account.id,
+        userId: user.id,
+        description: 'Monetization',
+        expiresAt: (new Date(Date.now() - 1 * 60 * 60 * 1000)).toISOString()
+      })
+      const paymentPointer = await PaymentPointer.query().insertAndFetch({
+        userId: user.id,
+        accountId: account.id,
+        identifier: 'alice',
+        name: 'default',
+        currentMonetizationInvoiceId: invoice.id
+      })
+
+      const { data, status } = await axios.get(`http://localhost:${appContainer.port}/p/${user.username}`)
+
+      const refreshedPaymentPointer = await paymentPointer.$query()
+      // expect(refreshedPaymentPointer.currentMonetizationInvoiceId).not
       expect(status).toEqual(200)
       expect(data.ilpAddress).toBeDefined()
       expect(data.sharedSecret).toBeDefined()

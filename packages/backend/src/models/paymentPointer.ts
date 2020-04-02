@@ -6,7 +6,7 @@ export type PaymentPointerInfo = {
   identifier: string;
   userId: number;
   accountId: number;
-  currentMonetizationInvoiceId: number;
+  currentMonetizationInvoiceId: string;
 }
 
 export class PaymentPointer extends Model {
@@ -19,7 +19,7 @@ export class PaymentPointer extends Model {
   identifier: string
   userId !: number
   accountId !: number
-  currentMonetizationInvoiceId !: number
+  currentMonetizationInvoiceId !: string
 
   $formatJson (): Partial<PaymentPointerInfo> {
     return {
