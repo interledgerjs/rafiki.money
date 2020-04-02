@@ -36,7 +36,8 @@ module.exports = {
         'dark-mode': {'raw': '(prefers-color-scheme: dark)'},
       },
       width: {
-        card: '344px'
+        card: '344px',
+        listTable: '287px'
       },
       height: {
         '18': '4.5rem',
@@ -82,6 +83,7 @@ module.exports = {
           'elevation-16': 'var(--color-surface-elevation-16)',
           'elevation-24': 'var(--color-surface-elevation-24)'
         },
+        border: 'var(--color-border)',
         error: 'var(--color-error)',
         red: 'var(--color-red)',
         orange: 'var(--color-orange)',

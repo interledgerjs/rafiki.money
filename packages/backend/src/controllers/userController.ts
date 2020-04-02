@@ -1,5 +1,4 @@
 import bcrypt from 'bcrypt'
-import { Context } from 'koa'
 import { User } from '../models/user'
 import { Config, Joi } from 'koa-joi-router'
 import { AppContext } from '../app'

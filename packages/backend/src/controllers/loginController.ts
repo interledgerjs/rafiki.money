@@ -6,7 +6,6 @@ import { hydra } from '../../src/services/hydra'
 import { AppContext } from '../app'
 import { SignupSession } from '../models/signupSession'
 import { ValidationError } from 'joi'
-import { postUserSchema } from './userController'
 
 export async function show (ctx: AppContext): Promise<void> {
   const challenge = ctx.query.login_challenge

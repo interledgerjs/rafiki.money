@@ -1,0 +1,9 @@
+tunnels:
+  wallet:
+    proto: http
+    addr: 3000
+    bind_tls: true
+  shop:
+    proto: http
+    addr: 3006
+    bind_tls: true

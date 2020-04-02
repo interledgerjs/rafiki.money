@@ -2,7 +2,7 @@ import { StreamService } from '../../src/services/stream'
 import MockPlugin from '../mocks/plugin'
 import createLogger from 'pino'
 import { createTestApp, TestAppContainer } from '../helpers/app'
-import { createConnection, Server } from 'ilp-protocol-stream'
+import { createConnection } from 'ilp-protocol-stream'
 import { Invoice } from '../../src/models/invoice'
 import { InvoiceTransaction } from '../../src/models/invoiceTransaction'
 
@@ -69,7 +69,7 @@ describe('STREAM Service Test', () => {
         total += Number(amount)
         if (total === 1000000) {
           // We have sent it but other side hasn't receive it yet
-          await new Promise(resolve => setTimeout(resolve, 100))
+          await new Promise(resolve => setTimeout(resolve, 150))
           const totalReceived = await InvoiceTransaction.query().where('invoiceId', invoice.id).sum('amount').then(data => {
             return Number(data[0]['sum'])
           })

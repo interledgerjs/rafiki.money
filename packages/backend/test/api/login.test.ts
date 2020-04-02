@@ -1,4 +1,4 @@
-import Knex, { Transaction } from 'knex'
+import { Transaction } from 'knex'
 import axios from 'axios'
 import bcrypt from 'bcrypt'
 import { hydra } from '../../src/services/hydra'

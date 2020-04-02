@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 type props = {
-  inputType?: 'text'|'password'|'email'
+  inputType?: 'text'|'password'|'email'|'number'
   className?: string
   errorState?: boolean
   inputRef?: any

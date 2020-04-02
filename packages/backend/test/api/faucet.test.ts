@@ -88,7 +88,7 @@ describe('Faucet API Test', () => {
     })
 
     it('User cant add a transaction for an account not theirs', async () => {
-      const response = axios.post(`http://localhost:${appContainer.port}/transactions`, {
+      const response = axios.post(`http://localhost:${appContainer.port}/faucet`, {
         accountId: account.id,
         amount: '100'
       }, {
@@ -97,7 +97,7 @@ describe('Faucet API Test', () => {
         }
       })
 
-      await expect(response).rejects.toEqual(Error('Request failed with status code 404'))
+      await expect(response).rejects.toEqual(Error('Request failed with status code 403'))
     })
   })
 })
