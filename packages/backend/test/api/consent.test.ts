@@ -1,11 +1,8 @@
 import axios from 'axios'
 import { hydra } from '../../src/services/hydra'
-import { accounts } from '../../src/services/accounts'
-import { User } from '../../src/models/user'
+import { User, Account, Mandate } from '../../src/models'
 import { createTestApp, TestAppContainer } from '../helpers/app'
 import { mockAuth } from '../helpers/auth'
-import { Account } from '../../src/models/account'
-import { Mandate } from '../../src/models/mandate'
 import Knex, { Transaction } from 'knex'
 import { Model } from 'objection'
 
@@ -51,13 +48,11 @@ describe('Consent', function () {
   describe('Get consent request', function () {
     test('returns client, user and requested_scope', async () => {
       hydra.getConsentRequest = jest.fn().mockResolvedValue({ skip: false, subject: user.id.toString(), client: 'test-client', requested_scope: ['offline', 'openid'], request_url: 'http://localhost' })
-      accounts.getUserAccounts = jest.fn()
 
       const { status, data } = await axios.get(`http://localhost:${appContainer.port}/consent?consent_challenge=test`)
 
       expect(status).toEqual(200)
       expect(hydra.getConsentRequest).toHaveBeenCalled()
-      expect(accounts.getUserAccounts).not.toHaveBeenCalled()
       expect(data).toEqual({
         requestedScopes: ['offline', 'openid'],
         client: 'test-client',
@@ -151,7 +146,6 @@ describe('Consent', function () {
         error_description: 'The resource owner denied the request'
       })
     })
-
 
     test('binds accountId, userId to mandate if user gives consent for mandate', async () => {
       const mandate = await Mandate.query().insert({

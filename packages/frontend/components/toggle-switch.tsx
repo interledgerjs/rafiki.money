@@ -10,7 +10,7 @@ const ToggleSwitch: React.FC<props> = props => {
   let textLength = props.text.length
   let longest = 0
 
-  for (var i = 0; i < textLength; i++) {
+  for (let i = 0; i < textLength; i++) {
     if (props.text[i].length >= longest) longest = props.text[i].length
   }
 

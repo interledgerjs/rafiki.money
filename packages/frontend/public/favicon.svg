@@ -1,0 +1,24 @@
+<svg width="584" height="584" viewBox="0 0 584 584" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    rect {
+      mix-blend-mode: multiply;
+      fill: #21D2BF;
+    }
+    circle {
+      mix-blend-mode: multiply;
+      fill: #FF8A65;
+    }
+    @media (prefers-color-scheme: dark) {
+      rect {
+        mix-blend-mode: screen;
+        fill: #7AE4D9;
+      }
+      circle {
+        mix-blend-mode: screen;
+        fill: #FEB9A3;
+      }
+    }
+  </style>
+  <circle cx="409" cy="292" r="150"/>
+  <rect x="25" y="243" width="270" height="270" transform="rotate(-30 25 243)"/>
+</svg>

@@ -31,7 +31,7 @@ export async function create (ctx: AppContext): Promise<void> {
         throw new Error('Account not found')
       }
 
-      const balance = trxAccount.balance
+      const balance = BigInt(trxAccount.balance)
       const limit = trxAccount.limit
       const newBalance = balance + FAUCET_AMOUNT
 

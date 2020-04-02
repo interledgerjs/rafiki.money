@@ -1,31 +1,41 @@
-const methodName = 'http://localhost:3000/'
+let methodName = 'http://localhost:3000/'
 let checkoutURL = ''
 let resolver
 let payment_request_event
+let minimalUI = true
 
-self.addEventListener('canmakepayment', async (e) => {
-  // console.log('can make payment called')
-  // if (e.respondWith2 && e.currency) {
-  //   return e.respondWith2({
-  //     canMakePayment: true
-  //   })
-  // } else {
-  //   const rafikiData = getMethodData( e, methodName)
-  //   e.respondWith(rafikiData !== undefined)
-  // }
-  e.respondwith(true)
+self.addEventListener('canmakepayment', e => {
+  console.log('canMakePayment event: ', e)
+  if (e.respondWithMinimalUI && e.currency) { 
+    return e.respondWithMinimalUI({
+      canMakePayment: true,
+      readyForMinimalUI: e.currency === 'USD',
+      accountBalance: '15.00',
+    })
+  } else {
+    minimalUI = false
+    console.log('Minimal UI feature is not enabled. Is ' + 'chrome://flags/#enable-web-payments-minimal-ui flag enabled?')
+    e.respondWith(true)
+  }
 })
 
 self.addEventListener('paymentrequest', e => {
-  payment_request_event = e
-  console.log('A->', e)
+  if (minimalUI) {
+    e.respondWith({
+      methodName: methodName,
+      details: {
+        token: '1234567890',
+      },
+    })
+  } else {
+    payment_request_event = e
+    console.log('A->', e)
+    console.log('B->', getMethodData( e, methodName))
+    checkoutURL = `${methodName}checkout?name=${e.methodData[0].data.invoice.name}`
 
-  console.log('B->',getMethodData( e, methodName))
-  checkoutURL = `http://localhost:3000/checkout?name=${e.methodData[0].data.invoice.name}`
+    resolver = new PromiseResolver()
 
-  resolver = new PromiseResolver()
-
-  e.respondWith(resolver.promise)
+    e.respondWith(resolver.promise)
 
     e.openWindow(checkoutURL).then(client => {
       console.log('opening window')
@@ -35,6 +45,7 @@ self.addEventListener('paymentrequest', e => {
     }).catch(err => {
       resolver.reject(err)
     })
+  }
 })
 
 self.addEventListener('message', e => {
@@ -49,9 +60,6 @@ self.addEventListener('message', e => {
     resolver.reject(e.data)
   } else if (e.data && e.data.methodName === methodName) {
     try {
-      // make payment here?
-      // force failure
-      // throw new Error('forced failure')
       resolver.resolve(e.data)
     } catch (error) {
       console.log('caught error', error)

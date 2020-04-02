@@ -21,7 +21,8 @@ const knex = Knex({
   connection: {
     user: 'postgres',
     password: 'password',
-    database: 'development'
+    database: 'development',
+    statement_timeout: 2500
   },
   pool: {
     min: 2,

@@ -28,6 +28,7 @@ describe('Accounts API Test', () => {
   })
 
   afterAll(async () => {
+    await appContainer.knex.migrate.rollback()
     appContainer.app.shutdown()
     await appContainer.knex.destroy()
   })
@@ -47,7 +48,7 @@ describe('Accounts API Test', () => {
         return resp.data
       })
 
-      expect(response.userId).toBe(1)
+      expect(response.userId).toBe(user.id)
       expect(response.name).toBe('test')
     })
 

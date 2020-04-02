@@ -2,6 +2,11 @@ import React, { useState, useEffect } from "react"
 import { NextPage } from "next"
 import { Card, Content, Navigation, Button, Selector, ToggleSwitch } from "../components"
 
+interface Options{
+  value: number,
+  label: string
+}
+
 const Settings: NextPage = () => {
 
   const [swInstalled, setSwInstalled] = useState(false)
@@ -91,7 +96,6 @@ const Settings: NextPage = () => {
           <Card>
             <div className="text-headline-5 pb-10">Default account</div>
             <div className="pb-10">
-              <Selector></Selector>
             </div>
           </Card>
           <div className="pb-10"></div>

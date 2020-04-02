@@ -27,7 +27,7 @@ export const createTestApp = (): TestAppContainer => {
   })
   const serverPlugin = new MockPlugin()
   const streamService = new StreamService({
-    key: '',
+    key: '716343aed8ac20ef1853e04c11ed9a0e',
     logger: logger,
     plugin: serverPlugin as any
   })
@@ -38,6 +38,8 @@ export const createTestApp = (): TestAppContainer => {
   const app = new App(logger, {} as TokenService, streamService)
 
   Model.knex(knex)
+
+  streamService.listen()
 
   app.listen(0)
 

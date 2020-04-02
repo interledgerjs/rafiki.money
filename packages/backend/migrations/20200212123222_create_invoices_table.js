@@ -8,7 +8,7 @@ exports.up = function (knex) {
       table.text('description')
       table.string('assetCode').notNullable()
       table.integer('assetScale').notNullable()
-      table.bigInteger('amount').notNullable()
+      table.bigInteger('amount')
       table.bigInteger('balance').notNullable()
       table.dateTime('createdAt').notNullable()
       table.dateTime('updatedAt').notNullable()
