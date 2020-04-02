@@ -65,9 +65,9 @@ const createReceiverInvoice = async (paymentPointer: string, description = '') =
   }).json()
 }
 
-export async function store (ctx: AppContext): Promise<void> {
-  const { streamService, logger } = ctx
-  const { body } = ctx.request
+export async function store(ctx: AppContext): Promise<void> {
+  const {streamService, logger} = ctx
+  const {body} = ctx.request
   const account = await Account.query().findById(body.accountId)
 
   if (!account) {
@@ -107,7 +107,7 @@ export async function store (ctx: AppContext): Promise<void> {
     return
   }
 
-  let paymentDetails: {ilpAddress: string, sharedSecret: string}
+  let paymentDetails: { ilpAddress: string, sharedSecret: string }
   if (body.type === 'open-payments') {
     // Create Invoice at Receiver
     const invoice: any = await createReceiverInvoice(body.receiverPaymentPointer)
@@ -146,7 +146,7 @@ export async function store (ctx: AppContext): Promise<void> {
     const sent = await streamService.sendMoney(paymentDetails.ilpAddress, paymentDetails.sharedSecret, amount.toString())
 
     if (sent !== amount) {
-      logger.error('Failed to send full amount', { amount: amount.toString(), sent })
+      logger.error('Failed to send full amount', {amount: amount.toString(), sent})
       const amountNotSent = amount - sent
       await modifyBalance(account.id, amountNotSent, `Refund for amount not sent to ${body.receiverPaymentPointer}`)
     }
