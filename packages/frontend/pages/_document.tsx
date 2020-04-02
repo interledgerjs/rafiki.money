@@ -17,7 +17,7 @@ class MyDocument extends Document {
           <link rel="manifest" href="manifest.json"/>
           <link rel="icon" href="/favicon.ico"/>
         </Head>
-        <body style={{backgroundColor: '#F0F2F5'}}>
+        <body style={{backgroundColor: 'var(--color-background)'}}>
           <Main />
           <NextScript />
         </body>

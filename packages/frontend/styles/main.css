@@ -15,6 +15,7 @@
   --color-on-surface-trans: #00000099;
   --color-border: rgba(0, 0, 0 , 0.12);
   --color-surface: #FFFFFF;
+  --color-background: #E5E5E5;
   --color-error: #B00020;
   --color-red: #EB5757;
   --color-orange: #F2994A;
@@ -42,6 +43,7 @@
     --color-on-surface-disabled: #6C6C6C;
     --color-on-surface-trans: #FFFFFF99;
     --color-surface: #121212;
+    --color-background: #121212;
     --color-surface-elevation-1: #1E1E1E;
     --color-surface-elevation-2: #232323;
     --color-surface-elevation-3: #252525;
