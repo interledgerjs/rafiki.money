@@ -19,15 +19,18 @@ const Home: NextPage = () => {
     <div className="flex w-full h-screen">
       <div className="mx-auto my-auto text-center">
         <div className="flex justify-center">
-          <Logo height={250}/>
+          <Logo height={200}/>
         </div>
-        <div className="text-on-surface headline-3">
-          Welcome to Rafiki money!
+        <div className="text-on-surface headline-4 max-w-xs">
+          Welcome to
+        </div>
+        <div className="text-on-surface headline-3 max-w-xs">
+          Rafiki Money!
         </div>
         <div className="text-on-surface body-1 max-w-xs mx-auto mt-6">
           Sign up to create an account, or login if you’re returning
         </div>
-        <div className="flex flex-row justify-center mt-8">
+        <div className="flex flex-row justify-center my-10">
           <Button type="text" className="mr-4" onClick={() => router.push('/login')}>
             Login
           </Button>
@@ -63,7 +66,6 @@ Home.getInitialProps = async (ctx) => {
   //   //
   //   // window.location.href = '/login'
   // }
-  ctx.res.setHeader('link', "<http://localhost:3000/payment-manifest.json>; rel=\"payment-method-manifest\"")
 
   return {}
 }
