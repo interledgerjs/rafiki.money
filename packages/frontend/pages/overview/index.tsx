@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { NextPage } from "next"
-import { Button, Card, Content, Navigation } from '../components'
-import { checkUser, formatCurrency } from '../utils'
-import {AccountsService} from '../services/accounts'
+import { Button, Card, Content, Navigation } from '../../components'
+import { checkUser, formatCurrency } from '../../utils'
+import {AccountsService} from '../../services/accounts'
 import Link from 'next/link'
-import { UsersService } from '../services/users'
+import { UsersService } from '../../services/users'
 import Clipboard from 'react-clipboard.js'
+import { useRouter } from 'next/router'
 
 const accountService = AccountsService()
 const usersService = UsersService()
@@ -86,7 +87,7 @@ const sideBar = (account: Account, token, refreshAccounts) => {
                         {formatDate(transaction.createdAt)}
                       </div>
                     </div>
-                    <div className={`flex-1 text-right my-auto text-headline-6 ${transaction.amount < 0 ? 'text-red' : 'text-green'}`}>
+                    <div className={`flex-1 self-center text-right my-auto text-headline-6 ${transaction.amount < 0 ? 'text-red' : 'text-green'}`}>
                       $ {formatCurrency(transaction.amount, 6)}
                     </div>
                   </div>
@@ -101,6 +102,7 @@ const sideBar = (account: Account, token, refreshAccounts) => {
 }
 
 const Overview: NextPage<Props> = ({user, accounts, token, balance, paymentPointer}) => {
+  const router = useRouter()
 
   const [localAccounts, setLocalAccounts] = useState<Array<Account>>(accounts)
   const [localBalance, setLocalBalance] = useState<number>(balance)
@@ -116,12 +118,12 @@ const Overview: NextPage<Props> = ({user, accounts, token, balance, paymentPoint
   }
 
   return (
-    <div className="flex">
+    <div>
       <Navigation active="overview"></Navigation>
       <Content navigation>
-        <div className="flex flex-row h-full">
-          <div className="flex flex-col w-2/3">
-            <div className="flex justify-between w-full">
+        <div className="flex flex-col sm:flex-row h-full justify-center">
+          <div className="flex flex-col w-full sm:w-2/3">
+            <div className="flex flex-col sm:flex-row justify-between w-full">
               <Card>
                 <div className="text-headline-5">
                   Total Balance
@@ -130,7 +132,7 @@ const Overview: NextPage<Props> = ({user, accounts, token, balance, paymentPoint
                   $ {formatCurrency(localBalance, 6)}
                 </div>
               </Card>
-              <Card>
+              <Card className="mt-4 sm:mt-0">
                 <div className="text-headline-5">
                   Payment Pointer
                 </div>
@@ -158,12 +160,30 @@ const Overview: NextPage<Props> = ({user, accounts, token, balance, paymentPoint
                 </Link>
               </div>
             </div>
-            <div className="flex flex-wrap justify-between mt-8">
+            <div className="flex sm:hidden flex-col sm:flex-row justify-between w-full flex-wrap mt-8">
+              {
+                localAccounts.map(account => {
+                  return (
+                    <div key={account.id} onClick={() => router.push(`/overview/${account.id}`)}>
+                      <Card className="mb-4 h-32 cursor-pointer">
+                        <div className="text-headline-5">
+                          {account.name}
+                        </div>
+                        <div className="text-headline-6">
+                          $ {formatCurrency(Number(account.balance), 6)}
+                        </div>
+                      </Card>
+                    </div>
+                  )
+                })
+              }
+            </div>
+            <div className="hidden sm:flex flex-col sm:flex-row justify-between w-full flex-wrap mt-8">
               {
                 localAccounts.map(account => {
                   return (
                     <div key={account.id} onClick={() => setSelectedAccountId(account.id)}>
-                      <Card className="my-4 h-32 cursor-pointer">
+                      <Card className="mb-4 h-32 cursor-pointer">
                         <div className="text-headline-5">
                           {account.name}
                         </div>
@@ -177,7 +197,7 @@ const Overview: NextPage<Props> = ({user, accounts, token, balance, paymentPoint
               }
             </div>
           </div>
-          <div className="flex h-full w-1/3 ml-12">
+          <div className="hidden sm:flex h-full w-1/3 ml-12">
             {selectedAccountId ? sideBar(localAccounts.filter(acc => acc.id === selectedAccountId)[0], token, refreshAccounts.bind(this)) : null}
           </div>
         </div>
