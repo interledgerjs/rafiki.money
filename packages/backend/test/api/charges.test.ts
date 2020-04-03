@@ -107,9 +107,11 @@ describe('Charges API', () => {
     const chargeInfo = { invoice: '//acquirer.wallet/invoices/123' }
     axios.options = jest.fn().mockResolvedValue({ data: { sharedSecret: 'secret', ilpAddress: 'test.rafiki.wallet.123' } })
     axios.get = jest.fn().mockResolvedValue({ data: { assetCode: 'USD', assetScale: 2, amount: '1000' } })
-    appContainer.streamService.sendMoney = jest.fn().mockResolvedValue('1000')
+    appContainer.streamService.sendMoney = jest.fn().mockResolvedValue(1000n)
+    const charge = await Charge.query().insert({ mandateId: mandate.id, invoice: chargeInfo.invoice })
     await mandate.$relatedQuery<Charge>('charges').insert({ invoice: chargeInfo.invoice })
     await account.$relatedQuery<Transaction>('transactions').insert({ amount: 1000n, description: 'Payment for ' + chargeInfo.invoice })
+    await mandate.$relatedQuery<MandateTransaction>('transactions').insert({ accountId: account.id, chargeId: charge.id, amount: -1000n})
     await mandate.$query().patch({ balance: 9000n })
     await account.$query().patch({ balance: 19000n })
 

@@ -27,6 +27,7 @@ export async function store (ctx: AppContext): Promise<void> {
   }
 
   const existingCharge = await mandate.$relatedQuery<Charge>('charges').where('invoice', ctx.request.body.invoice).first()
+  // TODO: what if charge is only partially paid?
   if (existingCharge) {
     ctx.status = 201
     ctx.body = existingCharge.toJSON()
@@ -38,11 +39,12 @@ export async function store (ctx: AppContext): Promise<void> {
   const { data } = await axios.get(invoiceURL)
   const amount = BigInt(data.amount) // TODO: currency and scale conversion
 
+  let charge: Charge
   try {
     // lock liquidity for mandate and account
     const description = data.description || 'Payment for ' + ctx.request.body.invoice
-    
     await Model.transaction(async (trx) => {
+      charge = await mandate.$relatedQuery<Charge>('charges').insertAndFetch({ invoice: ctx.request.body.invoice })
       await modifyAccountBalance(mandate.accountId, -amount, trx, description)
       await modifyMandateBalance(mandate, -amount, trx, description)
     })
@@ -54,7 +56,6 @@ export async function store (ctx: AppContext): Promise<void> {
   }
 
   try {
-    const charge = await mandate.$relatedQuery<Charge>('charges').insertAndFetch({ invoice: ctx.request.body.invoice })
     const amountSent = await ctx.streamService.sendMoney(ilpAddress, sharedSecret, data.amount)
     if (amountSent < amount) {
       const difference = amount - amountSent
@@ -103,7 +104,7 @@ const modifyAccountBalance = async (accountId: number, amount: bigint, trx: Knex
   })
 }
 
-const modifyMandateBalance = async (mandate: Mandate, amount: bigint, trx: KnexTransaction, description = ''): Promise<void> => {
+const modifyMandateBalance = async (mandate: Mandate, amount: bigint, trx: KnexTransaction, description = '', chargeId?: string): Promise<void> => {
   const balance = BigInt(mandate.balance)
   const newBalance = balance + amount
 
@@ -118,6 +119,7 @@ const modifyMandateBalance = async (mandate: Mandate, amount: bigint, trx: KnexT
   await mandate.$relatedQuery<MandateTransaction>('transactions', trx).insert({
     accountId: mandate.accountId,
     amount,
+    chargeId,
     description
   })
 }

@@ -1,6 +1,7 @@
 import { Model } from 'objection'
 import { v4 } from 'uuid'
 import { Mandate } from './mandate'
+import { MandateTransaction } from './mandateTransaction'
 
 const OpenPaymentsIssuer = 'localhost' || process.env.OPEN_PAYMENTS_ISSUER
 
@@ -25,6 +26,14 @@ export class Charge extends Model {
         from: 'charges.mandateId',
         to: 'mandates.id'
       }
+    },
+    mandateTransactions: {
+      relation: Model.HasManyRelation,
+      modelClass: MandateTransaction,
+      join: {
+        from: 'charges.id',
+        to: 'mandateTransactions.chargeId'
+      }
     }
   }
 
@@ -33,6 +42,7 @@ export class Charge extends Model {
   invoice!: string
   createdAt !: string
   updatedAt !: string
+  mandateTransactions?: MandateTransaction[]
 
   $beforeInsert (): void {
     this.id = v4()

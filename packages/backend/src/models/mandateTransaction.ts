@@ -9,6 +9,7 @@ export type MandateTransactionInfo = {
   createdAt: string;
   updatedAt: string;
   mandateId: string;
+  chargeId: string;
 }
 
 export class MandateTransaction extends Model {
@@ -29,6 +30,7 @@ export class MandateTransaction extends Model {
 
   id: number;
   accountId: number;
+  chargeId: string;
   amount: bigint;
   description !: string;
   createdAt: string;
