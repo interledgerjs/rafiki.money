@@ -1,6 +1,7 @@
 import { Model } from 'objection'
 import { v4 } from 'uuid'
 import { Charge, ChargeInfo } from './charge'
+import { MandateTransaction } from './mandateTransaction'
 
 const OpenPaymentsIssuer = 'localhost' || process.env.OPEN_PAYMENTS_ISSUER
 
@@ -55,6 +56,14 @@ export class Mandate extends Model {
       join: {
         from: 'mandates.id',
         to: 'charges.mandateId'
+      }
+    },
+    transactions: {
+      relation: Model.HasManyRelation,
+      modelClass: MandateTransaction,
+      join: {
+        from: 'mandates.id',
+        to: 'mandateTransactions.mandateId'
       }
     }
   }

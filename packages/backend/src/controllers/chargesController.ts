@@ -1,8 +1,9 @@
 import axios from 'axios'
-import { Transaction as KnexTransaction, ref, raw } from 'objection'
+import { Transaction as KnexTransaction, ref, raw, Model } from 'objection'
 import { AppContext } from '../app'
 import { Mandate, Transaction, Account } from '../models'
 import { Charge } from '../models/charge'
+import { MandateTransaction } from '../models/mandateTransaction'
 
 const INVOICE_URL_PROTOCOL = process.env.INVOICE_PROTOCOL || 'http'
 
@@ -35,18 +36,88 @@ export async function store (ctx: AppContext): Promise<void> {
   const invoiceURL = `${INVOICE_URL_PROTOCOL}:${ctx.request.body.invoice}`
   const { data: { sharedSecret, ilpAddress } } = await axios.options<{ sharedSecret: string, ilpAddress: string }>(invoiceURL)
   const { data } = await axios.get(invoiceURL)
+  const amount = BigInt(data.amount) // TODO: currency and scale conversion
 
-  let charge: Charge
-  // TODO: currency and scale conversion
-  const amountSent = await ctx.streamService.sendMoney(ilpAddress, sharedSecret, data.amount)
-  await Transaction.transaction(async (trx: KnexTransaction) => {
-    charge = await mandate.$relatedQuery<Charge>('charges', trx).insertAndFetch({ invoice: ctx.request.body.invoice })
-    await Account.query(trx).where('id', mandate.accountId).patch({ balance: raw('? - ?', [ ref('accounts.balance'), amountSent ]) })
-    await Transaction.query(trx).insert({ accountId: mandate.accountId, amount: BigInt(amountSent), description: data.description || 'Payment for ' + ctx.request.body.invoice })
-    await mandate.$query(trx).patch({ balance: raw('? - ?', [ ref('mandates.balance'), amountSent ]) })
+  try {
+    // lock liquidity for mandate and account
+    const description = data.description || 'Payment for ' + ctx.request.body.invoice
+    
+    await Model.transaction(async (trx) => {
+      await modifyAccountBalance(mandate.accountId, -amount, trx, description)
+      await modifyMandateBalance(mandate, -amount, trx, description)
+    })
+
+  } catch (error) {
+    ctx.status = 500
+    ctx.message = 'Insufficient Balance'
+    return
+  }
+
+  try {
+    const charge = await mandate.$relatedQuery<Charge>('charges').insertAndFetch({ invoice: ctx.request.body.invoice })
+    const amountSent = await ctx.streamService.sendMoney(ilpAddress, sharedSecret, data.amount)
+    if (amountSent < amount) {
+      const difference = amount - amountSent
+      const reversalDescription = 'Reversal of amount not sent for ' + ctx.request.body.invoice
+      await Model.transaction(async (trx) => {
+        await modifyAccountBalance(mandate.accountId, difference, trx, reversalDescription)
+        await modifyMandateBalance(mandate, difference, trx, reversalDescription)
+      })
+    }
+
+    if (amountSent > amountSent) {
+      // What to do here?
+      console.log('Over payment occured.')
+    }
+
+    ctx.status = 201
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    ctx.body = charge!.toJSON()
+  } catch (error) {
+    ctx.status = 500
+  }  
+}
+
+const modifyAccountBalance = async (accountId: number, amount: bigint, trx: KnexTransaction, description = ''): Promise<void> => {
+  const trxAccount = await Account.query(trx).findById(accountId).forUpdate()
+
+  if (!trxAccount) {
+    throw new Error('Account not found')
+  }
+
+  const balance = BigInt(trxAccount.balance)
+  const limit = trxAccount.limit
+  const newBalance = balance + amount
+
+  if (newBalance < limit) {
+    throw new Error('Insufficient Funds')
+  }
+
+  await Account.query(trx).findById(trxAccount.id).patch({
+    balance: newBalance
   })
 
-  ctx.status = 201
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  ctx.body = charge!.toJSON()
+  await trxAccount.$relatedQuery('transactions', trx).insert({
+    amount,
+    description
+  })
+}
+
+const modifyMandateBalance = async (mandate: Mandate, amount: bigint, trx: KnexTransaction, description = ''): Promise<void> => {
+  const balance = BigInt(mandate.balance)
+  const newBalance = balance + amount
+
+  if (newBalance < 0n) {
+    throw new Error('Insufficient mandate balance')
+  }
+
+  await mandate.$query(trx).patch({
+    balance: newBalance
+  })
+
+  await mandate.$relatedQuery<MandateTransaction>('transactions', trx).insert({
+    accountId: mandate.accountId,
+    amount,
+    description
+  })
 }

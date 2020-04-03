@@ -5,6 +5,7 @@ import { v4 } from 'uuid'
 import { TestAppContainer, createTestApp } from '../helpers/app'
 import { mockAuth } from '../helpers/auth'
 import { User, Account, Charge, Mandate, Transaction } from '../../src/models'
+import { MandateTransaction } from '../../src/models/mandateTransaction'
 
 describe('Charges API', () => {
   let appContainer: TestAppContainer
@@ -22,7 +23,7 @@ describe('Charges API', () => {
     trx = await appContainer.knex.transaction()
     Model.knex(trx)
     user = await User.query().insert({ username: 'alice' })
-    account = await user.$relatedQuery<Account>('accounts').insertAndFetch({ name: 'test', assetCode: 'USD', assetScale: 2, limit: 20000n, balance: 20000n })
+    account = await user.$relatedQuery<Account>('accounts').insertAndFetch({ name: 'test', assetCode: 'USD', assetScale: 2, limit: 0n, balance: 20000n })
     mandate = await Mandate.query().insertAndFetch({ userId: user.id, accountId: account.id, amount: 10000n, assetCode: 'USD', assetScale: 2 })
     await mandate.$query().patch({ balance: 10000n })
   })
@@ -50,7 +51,7 @@ describe('Charges API', () => {
     }])
     axios.options = jest.fn().mockResolvedValue({ data: { sharedSecret: 'secret', ilpAddress: 'test.rafiki.wallet.123' } })
     axios.get = jest.fn().mockResolvedValue({ data: { assetCode: 'USD', assetScale: 2, amount: '1000' } })
-    appContainer.streamService.sendMoney = jest.fn().mockResolvedValue('1000')
+    appContainer.streamService.sendMoney = jest.fn().mockResolvedValue(1000n)
     const chargeInfo = { invoice: '//acquirer.wallet/invoices/123' }
 
     const { status } = await axios.post(`http://localhost:${appContainer.port}/mandates/${mandate.id}/charges`, chargeInfo, {
@@ -77,7 +78,7 @@ describe('Charges API', () => {
     }])
     axios.options = jest.fn().mockResolvedValue({ data: { sharedSecret: 'secret', ilpAddress: 'test.rafiki.wallet.123' } })
     axios.get = jest.fn().mockResolvedValue({ data: { assetCode: 'USD', assetScale: 2, amount: '1000' } })
-    appContainer.streamService.sendMoney = jest.fn().mockResolvedValue('1000')
+    appContainer.streamService.sendMoney = jest.fn().mockResolvedValue(1000n)
     const chargeInfo = { invoice: '//acquirer.wallet/invoices/123' }
 
     const { status } = await axios.post(`http://localhost:${appContainer.port}/mandates/${mandate.id}/charges`, chargeInfo, {
@@ -90,7 +91,7 @@ describe('Charges API', () => {
     expect(appContainer.streamService.sendMoney).toHaveBeenCalledWith('test.rafiki.wallet.123', 'secret', '1000')
     expect((await account.$query()).balance.toString()).toBe('19000')
     expect((await mandate.$query()).balance.toString()).toBe('9000')
-    expect(await account.$relatedQuery<Transaction>('transactions').first()).toMatchObject({ amount: 1000n })
+    expect(await account.$relatedQuery<Transaction>('transactions').first()).toMatchObject({ amount: -1000n })
   })
 
   test('does not process charge if a charge with the same invoice already exists', async () => {
@@ -201,6 +202,98 @@ describe('Charges API', () => {
     }).catch(error => error.response.status)
 
     await expect(status).resolves.toBe(404)
+  })
+
+  test('returns 500 if account does not have sufficient liquidity', async () => {
+    const account = await user.$relatedQuery<Account>('accounts').insertAndFetch({ name: 'insufficient balance', assetCode: 'USD', assetScale: 2, limit: 20000n, balance: 0n })
+    const mandate = await Mandate.query().insertAndFetch({ userId: user.id, accountId: account.id, amount: 10000n, assetCode: 'USD', assetScale: 2 })
+    await mandate.$query().patch({ balance: 10000n })
+    axios.options = jest.fn().mockResolvedValue({ data: { sharedSecret: 'secret', ilpAddress: 'test.rafiki.wallet.123' } })
+    axios.get = jest.fn().mockResolvedValue({ data: { assetCode: 'USD', assetScale: 2, amount: '1000' } })
+    mockAuth([{
+      type: 'open_payments_mandate',
+      locations: [
+        mandate.toJSON().name
+      ],
+      actions: [
+        'read', 'charge'
+      ]
+    }])
+    const chargeInfo = { invoice: '//acquirer.wallet/invoices/123' }
+
+    const { status } = await axios.post(`http://localhost:${appContainer.port}/mandates/${mandate.id}/charges`, chargeInfo, {
+      headers: {
+        authorization: `Bearer user_${user.id}`
+      }
+    }).catch(error => error.response)
+
+    expect(status).toBe(500)
+    expect((await mandate.$relatedQuery<Charge>('charges')).length).toBe(0)
+    expect((await mandate.$relatedQuery<MandateTransaction>('transactions')).length).toBe(0)
+    expect((await account.$relatedQuery<Transaction>('transactions')).length).toBe(0)
+    expect((await mandate.$query()).balance).toBe(10000n)
+    expect((await account.$query()).balance).toBe(0n)
+  })
+
+  test('returns 500 if mandate does not have sufficient liquidity', async () => {
+    const mandate = await Mandate.query().insertAndFetch({ userId: user.id, accountId: account.id, amount: 10000n, assetCode: 'USD', assetScale: 2 })
+    await mandate.$query().patch({ balance: 0n })
+    axios.options = jest.fn().mockResolvedValue({ data: { sharedSecret: 'secret', ilpAddress: 'test.rafiki.wallet.123' } })
+    axios.get = jest.fn().mockResolvedValue({ data: { assetCode: 'USD', assetScale: 2, amount: '1000' } })
+    mockAuth([{
+      type: 'open_payments_mandate',
+      locations: [
+        mandate.toJSON().name
+      ],
+      actions: [
+        'read', 'charge'
+      ]
+    }])
+    const chargeInfo = { invoice: '//acquirer.wallet/invoices/123' }
+
+    const { status } = await axios.post(`http://localhost:${appContainer.port}/mandates/${mandate.id}/charges`, chargeInfo, {
+      headers: {
+        authorization: `Bearer user_${user.id}`
+      }
+    }).catch(error => error.response)
+
+    expect(status).toBe(500)
+    expect((await mandate.$relatedQuery<Charge>('charges')).length).toBe(0)
+    expect((await mandate.$relatedQuery<MandateTransaction>('transactions')).length).toBe(0)
+    expect((await account.$relatedQuery<Transaction>('transactions')).length).toBe(0)
+    expect((await mandate.$query()).balance).toBe(0n)
+    expect((await account.$query()).balance).toBe(20000n)
+  })
+
+  test('reverses difference if amount sent is less than that of invoice', async () => {
+    const mandate = await Mandate.query().insertAndFetch({ userId: user.id, accountId: account.id, amount: 10000n, assetCode: 'USD', assetScale: 2 })
+    await mandate.$query().patch({ balance: 0n })
+    axios.options = jest.fn().mockResolvedValue({ data: { sharedSecret: 'secret', ilpAddress: 'test.rafiki.wallet.123' } })
+    axios.get = jest.fn().mockResolvedValue({ data: { assetCode: 'USD', assetScale: 2, amount: '1000' } })
+    appContainer.streamService.sendMoney = jest.fn().mockResolvedValue(499n)
+    mockAuth([{
+      type: 'open_payments_mandate',
+      locations: [
+        mandate.toJSON().name
+      ],
+      actions: [
+        'read', 'charge'
+      ]
+    }])
+    const chargeInfo = { invoice: '//acquirer.wallet/invoices/123' }
+
+    const { status } = await axios.post(`http://localhost:${appContainer.port}/mandates/${mandate.id}/charges`, chargeInfo, {
+      headers: {
+        authorization: `Bearer user_${user.id}`
+      }
+    }).catch(error => error.response)
+
+    expect(status).toBe(500)
+    expect((await mandate.$relatedQuery<Charge>('charges')).length).toBe(0)
+    expect((await mandate.$relatedQuery<MandateTransaction>('transactions')).length).toBe(0)
+    expect((await account.$relatedQuery<Transaction>('transactions')).length).toBe(0)
+    expect((await mandate.$query()).balance).toBe(0n)
+    expect((await account.$query()).balance).toBe(20000n)
   })
 
   test.todo('converts between asset scale of mandate and invoice')
