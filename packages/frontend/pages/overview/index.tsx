@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { UsersService } from '../../services/users'
 import Clipboard from 'react-clipboard.js'
 import { useRouter } from 'next/router'
+import { useInterval } from '../../hooks'
 
 const accountService = AccountsService()
 const usersService = UsersService()
@@ -30,13 +31,22 @@ type Props = {
 }
 
 const MonetizationSidebar: React.FC<{token: string}> = ({token}) => {
+  const [balance, setBalance] = useState<number>(0)
+
+  useInterval(() => {
+    usersService.getMonetizationBalance(token).then(balance => {
+      setBalance(balance.balance)
+    })
+  }, 5000)
+
+
   return (
     <Card width="w-full" className="flex flex-col">
       <div className="text-headline-6">
         Monetization
       </div>
       <div className="text-headline-3 my-10">
-        $ {formatCurrency(0, 6)}
+        $ {formatCurrency(balance, 6)}
       </div>
       <div className="body-2">
         Monetization allows you to receive funds through real-time streaming applications, such as Web Monetization.
