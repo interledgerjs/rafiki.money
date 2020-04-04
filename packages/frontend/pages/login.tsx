@@ -89,7 +89,8 @@ const Login: NextPage<Props> = ({login_challenge}) => {
 }
 
 Login.getInitialProps = async ({query, res}) => {
-  const { login_challenge, signupSessionId } = query
+  const login_challenge = query?.login_challenge
+  const signupSessionId = query.signupSessionId
 
   if(!login_challenge) {
     const url = signupSessionId ? HYDRA_LOGIN_GRANT_URL + `&signupSessionId=${signupSessionId}` : HYDRA_LOGIN_GRANT_URL
@@ -101,7 +102,11 @@ Login.getInitialProps = async ({query, res}) => {
       return
     }
 
-    window.location.href = url
+    location.href = url
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    return {
+      login_challenge: ''
+    }
   }
 
   // Check loginChallenge to see if it can be skipped.
