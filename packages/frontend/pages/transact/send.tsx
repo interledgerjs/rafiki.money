@@ -38,7 +38,7 @@ const PaymentPointerCard = (props: PaymentPointerCardProps) => {
   const onSubmit = async data => {
     const {paymentPointer} = data
 
-    const url = new URL('/paymentpointers/validate', USERS_API_URL)
+    const url = new URL(`${USERS_API_URL}/paymentpointers/validate`)
     url.searchParams.append('pp', paymentPointer)
 
     try {
