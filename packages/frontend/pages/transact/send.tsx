@@ -82,6 +82,7 @@ const PaymentPointerCard = (props: PaymentPointerCardProps) => {
 
 type PaymentCardProps = {
   paymentPointer: string
+  type: string,
   token: string,
   userId: string
   setPaymentDetails: (any) => void
@@ -115,7 +116,7 @@ const PaymentCard = (props: PaymentCardProps) => {
     if (selectedAccount) {
       if(!isSending) {
         setIsSending(true)
-        await pay(props.paymentPointer, data.amount, selectedAccount.value, props.token).then(async (response) => {
+        await pay(props.paymentPointer, data.amount, selectedAccount.value, props.type, props.token).then(async (response) => {
           const body = await response.json()
           setPaymentStatus({
             success: true,
@@ -244,6 +245,7 @@ const Transact: NextPage<Props> = ({user}) => {
               <PaymentCard paymentPointer={paymentDetails.paymentPointer}
                            token={user.token}
                            userId={user.id}
+                           type={paymentDetails.type}
                            setPaymentDetails={setPaymentDetails}
               />
               :
