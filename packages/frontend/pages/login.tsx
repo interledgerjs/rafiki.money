@@ -3,10 +3,13 @@ import { NextPage } from "next"
 import useForm from 'react-hook-form'
 import { UsersService } from '../services/users'
 import { Button, TextInput } from '../components'
+import getConfig from 'next/config'
+
+const { publicRuntimeConfig } = getConfig()
 
 const usersService = UsersService()
 
-const HYDRA_LOGIN_GRANT_URL = process.env.REACT_APP_LOGIN_GRANT_URL || 'http://localhost:9000/oauth2/auth?client_id=frontend-client&state=loginflow&response_type=code&redirect_uri=http://localhost:3000/callback'
+const HYDRA_LOGIN_GRANT_URL = publicRuntimeConfig.REACT_APP_LOGIN_GRANT_URL
 
 type Props = {
   login_challenge: string

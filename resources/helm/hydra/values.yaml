@@ -103,7 +103,7 @@ hydra:
         self:
           issuer: http://auth.rafiki.money
 
-    autoMigrate: true
+    autoMigrate: false
     dangerousForceHttp: true
     dangerousAllowInsecureRedirectUrls: false
 

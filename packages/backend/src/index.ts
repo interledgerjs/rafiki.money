@@ -16,15 +16,11 @@ const logger = createLogger({
 logger.level = process.env.LOG_LEVEL || 'info'
 
 const PORT = process.env.PORT || 3001
+const POSTGRES_CONNECTION = process.env.POSTGRES_CONNECTION || 'postgresql://postgres:password@localhost:5432/development'
 
 const knex = Knex({
   client: 'postgresql',
-  connection: {
-    user: 'postgres',
-    password: 'password',
-    database: 'development',
-    statement_timeout: 5000
-  },
+  connection: POSTGRES_CONNECTION,
   pool: {
     min: 2,
     max: 10
