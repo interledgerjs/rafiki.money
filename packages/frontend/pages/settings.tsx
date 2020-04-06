@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from "react"
 import { NextPage } from "next"
 import { Card, Content, Navigation, Button, Selector, ToggleSwitch } from "../components"
+import { checkUser } from '../utils'
+import Overview from './overview'
+import Router from 'next/router'
 
 interface Options{
   value: number,
   label: string
 }
 
-const Settings: NextPage = () => {
+type Props = {
+  user: any
+}
+
+const Settings: NextPage<Props> = ({user}) => {
 
   const [swInstalled, setSwInstalled] = useState(false)
   const [swSupported, setSwSupported] = useState(true)
@@ -79,15 +86,19 @@ const Settings: NextPage = () => {
     checkSwStatus()
   })
 
+  const logout = () => {
+    window.location.href = '/logout'
+  }
+
   return (
     <div>
       <Navigation active="settings"></Navigation>
       <Content navigation>
         <div className="flex h-full flex-col items-center justify-center">
           <Card>
-            cairin@coil.com
+            {user.username}
             <div className="flex justify-end">
-              <Button textColour="error" type="text" buttonType="submit">
+              <Button onClick={logout} textColour="error" type="text" buttonType="submit">
                 LOGOUT
               </Button>
             </div>
@@ -117,4 +128,13 @@ const Settings: NextPage = () => {
   )
 }
 
+Settings.getInitialProps = async (ctx) => {
+  const user = await checkUser(ctx)
+
+  return {
+    user
+  }
+}
+
 export default Settings
+

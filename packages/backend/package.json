@@ -26,6 +26,7 @@
     "bcrypt": "^3.0.6",
     "faker": "^4.1.0",
     "got": "^10.7.0",
+    "ilp-plugin-btp": "^1.4.2",
     "ilp-protocol-stream": "^2.0.2",
     "knex": "^0.20.12",
     "koa": "^2.8.1",

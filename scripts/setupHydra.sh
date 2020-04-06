@@ -7,6 +7,7 @@ export DSN=memory
 export URLS_CONSENT=http://localhost:3000/consent
 export URLS_LOGIN=http://localhost:3000/login
 export URLS_LOGOUT=http://localhost:3000/logout
+export URLS_POST_LOGOUT_REDIRECT=http://localhost:3000/
 
 docker run -d \
   --name oauth-hydra \
@@ -19,6 +20,7 @@ docker run -d \
   -e URLS_CONSENT=$URLS_CONSENT \
   -e URLS_LOGIN=$URLS_LOGIN \
   -e URLS_LOGOUT=$URLS_LOGOUT \
+  -e URLS_POST_LOGOUT_REDIRECT=$URLS_POST_LOGOUT_REDIRECT \
   oryd/hydra:latest serve all --dangerous-force-http
 
 docker run --rm -it \
