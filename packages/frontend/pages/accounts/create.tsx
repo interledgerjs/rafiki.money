@@ -32,22 +32,21 @@ const CreateAccount: NextPage<Props> = ({token}) => {
   }
 
   return (
-    <div className="flex">
-      <Content>
-        <form ref={formRef} className="flex w-full h-full" onSubmit={handleSubmit(onSubmit)}>
-          <div className="max-w-md mt-32 flex mx-auto flex-col">
-            <div className="text-headline-4 text-center max-w-xs">
+    <div className='w-full h-full bg-surface'>
+      <div className='w-full h-screen max-w-xs mx-auto bg-surface flex items-center'>
+        <form ref={formRef} className="flex w-full" onSubmit={handleSubmit(onSubmit)}>
+          <div className="max-w-md flex mx-auto flex-col">
+            <div className="text-headline-4 text-center text-on-surface max-w-xs">
               Give your new account a name
             </div>
             <div className="w-full mt-4">
               <TextInput
                 className="mx-auto"
-                // errorState={errors.password != undefined}
                 inputType='text'
                 inputRef={(register({required: true}))}
                 name='name'
                 label='Account Name'
-                // hint={ errors.password ? errors.password.type === 'required' ? 'Password required' : (errors.password.message) as string: null }
+                bgColour='surface'
               />
             </div>
             <div className="flex mx-auto mt-8">
@@ -64,7 +63,7 @@ const CreateAccount: NextPage<Props> = ({token}) => {
             </div>
           </div>
         </form>
-      </Content>
+      </div>
     </div>
   )
 }

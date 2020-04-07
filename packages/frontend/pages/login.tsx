@@ -50,7 +50,7 @@ const Login: NextPage<Props> = ({login_challenge}) => {
   }
 
   return (
-    <div className = 'w-full h-full bg-surface'>
+    <div className='w-full h-full bg-surface'>
       <div className='w-full h-screen max-w-xs mx-auto bg-surface flex items-center'>
         <form ref={formRef} className='w-full max-w-xs' onSubmit={handleSubmit(onSubmit)}>
           <h2 className={`headline-4 text-on-surface text-center my-12`}>Login</h2>
