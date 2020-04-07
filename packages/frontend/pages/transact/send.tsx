@@ -227,7 +227,7 @@ const Transact: NextPage<Props> = ({user}) => {
   const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>()
 
   return (
-    <div className="flex">
+    <div>
       <Navigation active="transact"/>
       <Content navigation>
         <div className="flex justify-center">

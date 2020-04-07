@@ -147,7 +147,7 @@ const Overview: NextPage<Props> = ({user, accounts, token, balance, paymentPoint
               </Card>
             </div>
             <div className="flex mt-8 justify-between">
-              <div className="text-headline-6 my-auto">
+              <div className="text-headline-6 my-auto text-on-surface">
                 Accounts
               </div>
               <div>

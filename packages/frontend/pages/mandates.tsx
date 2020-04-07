@@ -158,7 +158,7 @@ const Mandates: NextPage<Props> = ({mandates, token}) => {
   }
 
   return (
-    <div className="flex">
+    <div>
       <Navigation active="mandates"></Navigation>
       <Content>
         <div className="w-full flex flex-row h-full">
