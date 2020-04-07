@@ -98,7 +98,6 @@ export class App {
     this._publicRouter.post('/logout', LogoutController.store)
 
     this._publicRouter.get('/p/:username', MonetizationController.show)
-    this._publicRouter.get('/p/:username/.well-known/pay', MonetizationController.show)
     this._publicRouter.get('/.well-known/open-payments', OpenPaymentsMetadataController.show)
 
     this._publicRouter.get('/paymentpointers/validate', ValidatePaymentPointerController.show)

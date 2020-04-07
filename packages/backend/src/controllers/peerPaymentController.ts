@@ -120,7 +120,6 @@ export async function store (ctx: AppContext): Promise<void> {
     }).json()
   } else if (body.type === 'spsp') {
     const url = new URL(paymentPointerToURL(body.receiverPaymentPointer))
-    url.pathname += '/.well-known/pay'
     const spspUrl = url.toString()
     const response = await got.get(spspUrl, {
       headers: {

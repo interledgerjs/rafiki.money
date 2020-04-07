@@ -26,7 +26,7 @@ describe('Validate Payment Pointer', function () {
       .defaultReplyHeaders({
         'Content-Type': 'application/spsp4+json'
       })
-      .get('/alice/.well-known/pay')
+      .get('/alice')
       .reply(200, {
         destination_account: 'example.ilpdemo.red.alice',
         shared_secret: '6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs='
