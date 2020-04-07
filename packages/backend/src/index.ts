@@ -5,6 +5,7 @@ import { TokenService } from './services/token-service'
 import { StreamService } from './services/stream'
 import BtpPlugin from 'ilp-plugin-btp'
 import { randomBytes } from 'crypto'
+import { run } from './jobs/claimInvoicesJob'
 import Knex = require('knex')
 const logger = createLogger({
   prettyPrint: {
@@ -15,15 +16,11 @@ const logger = createLogger({
 logger.level = process.env.LOG_LEVEL || 'info'
 
 const PORT = process.env.PORT || 3001
+const POSTGRES_CONNECTION = process.env.POSTGRES_CONNECTION || 'postgresql://postgres:password@localhost:5432/development'
 
 const knex = Knex({
   client: 'postgresql',
-  connection: {
-    user: 'postgres',
-    password: 'password',
-    database: 'development',
-    statement_timeout: 2500
-  },
+  connection: POSTGRES_CONNECTION,
   pool: {
     min: 2,
     max: 10
@@ -48,10 +45,13 @@ const tokenService = new TokenService({
   tokenRefreshTime: 0
 })
 
+let claimInvoiceInterval: NodeJS.Timeout
+
 const app = new App(logger, tokenService, streamService)
 
 export const gracefulShutdown = async (): Promise<void> => {
   logger.info('shutting down.')
+  clearInterval(claimInvoiceInterval)
   app.shutdown()
   await knex.destroy()
   await streamService.close()
@@ -84,6 +84,7 @@ export const start = async (): Promise<void> => {
   Model.knex(knex)
 
   await streamService.listen()
+  claimInvoiceInterval = run()
   app.listen(PORT)
   logger.info(`Listening on ${PORT}`)
 }

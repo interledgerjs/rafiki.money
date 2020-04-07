@@ -17,14 +17,12 @@ const isOpenPaymentsUrl = async (paymentPointer: string): Promise<boolean> => {
 const isSPSPUrl = async (paymentPointer: string): Promise<boolean> => {
   try {
     const url = new URL(paymentPointerToURL(paymentPointer))
-    url.pathname += '/.well-known/pay'
     const spspUrl = url.toString()
     const { body } = await got.get(spspUrl, {
       headers: {
         'Accept': 'application/spsp4+json'
       }
     })
-    console.log(body)
     const jsonBody = JSON.parse(body)
     return !!jsonBody.destination_account
   } catch (error) {
@@ -38,13 +36,14 @@ export async function show (ctx: AppContext): Promise<void> {
   const paymentPointer = queryParams.pp
 
   if (!paymentPointer) {
-
+    return
   }
 
   if (await isOpenPaymentsUrl(paymentPointer)) {
     ctx.body = {
       type: 'open-payments'
     }
+    return
   }
   if (await isSPSPUrl(paymentPointer)) {
     ctx.body = {

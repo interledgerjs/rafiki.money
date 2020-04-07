@@ -6,7 +6,7 @@ exports.up = function(knex) {
     t.string('identifier').unique().notNullable()
     t.integer('userId').notNullable()
     t.integer('accountId')
-    t.integer('currentMonetizationInvoiceId')
+    t.string('currentMonetizationInvoiceId')
     t.timestamp('createdAt').defaultTo(knex.fn.now());
     t.timestamp('updatedAt').defaultTo(knex.fn.now());
   })

@@ -7,7 +7,7 @@ hydra:
     # ORY Hydra image
     repository: oryd/hydra
     # ORY Hydra version
-    tag: v1.0.0
+    tag: v1.3.2
     # Image pull policy
     pullPolicy: IfNotPresent
 
@@ -57,7 +57,7 @@ hydra:
          kubernetes.io/ingress.class: nginx
       #     kubernetes.io/tls-acme: "true"
       hosts:
-        - host: auth.rafiki.local
+        - host: auth.rafiki.money
           paths: ["/"]
     #    tls: []
     #        hosts:
@@ -66,12 +66,12 @@ hydra:
 
     admin:
       # En-/Disable the api ingress.
-      enabled: true
+      enabled: false
 
       annotations:
             kubernetes.io/ingress.class: nginx
       hosts:
-        - host: auth.rafiki.local
+        - host: auth.rafiki.money
           paths: ["/admin"]
   #    tls: []
   #      hosts:
@@ -97,11 +97,11 @@ hydra:
             - 192.168.0.0/16
       secrets: {}
       urls:
-        login: http://rafiki.local/login
-        consent: http://rafiki.local/consent
-        logout: http://rafiki.local/logout
+        login: https://rafiki.money/login
+        consent: https://rafiki.money/consent
+        logout: https://rafiki.money/logout
         self:
-          issuer: http://auth.rafiki.local
+          issuer: http://auth.rafiki.money
 
     autoMigrate: false
     dangerousForceHttp: true

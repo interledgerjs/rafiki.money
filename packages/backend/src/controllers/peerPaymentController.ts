@@ -60,7 +60,8 @@ const createReceiverInvoice = async (paymentPointer: string, description = '') =
   return got.post(url, {
     json: {
       subject: paymentPointer,
-      description: description
+      description: description,
+      expiresAt: new Date(Date.now() + 30 * 1000).toISOString()
     }
   }).json()
 }
@@ -107,7 +108,7 @@ export async function store (ctx: AppContext): Promise<void> {
     return
   }
 
-  let paymentDetails: {ilpAddress: string, sharedSecret: string}
+  let paymentDetails: { ilpAddress: string, sharedSecret: string }
   if (body.type === 'open-payments') {
     // Create Invoice at Receiver
     const invoice: any = await createReceiverInvoice(body.receiverPaymentPointer)
@@ -119,7 +120,6 @@ export async function store (ctx: AppContext): Promise<void> {
     }).json()
   } else if (body.type === 'spsp') {
     const url = new URL(paymentPointerToURL(body.receiverPaymentPointer))
-    url.pathname += '/.well-known/pay'
     const spspUrl = url.toString()
     const response = await got.get(spspUrl, {
       headers: {
