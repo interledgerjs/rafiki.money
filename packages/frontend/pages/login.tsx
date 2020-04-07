@@ -50,7 +50,7 @@ const Login: NextPage<Props> = ({login_challenge}) => {
   }
 
   return (
-    <div className = 'w-full h-full bg-surface'>
+    <div className='w-full h-full bg-surface'>
       <div className='w-full h-screen max-w-xs mx-auto bg-surface flex items-center'>
         <form ref={formRef} className='w-full max-w-xs' onSubmit={handleSubmit(onSubmit)}>
           <h2 className={`headline-4 text-on-surface text-center my-12`}>Login</h2>
@@ -62,6 +62,7 @@ const Login: NextPage<Props> = ({login_challenge}) => {
               inputRef={(register({required: true}))}
               name='username'
               label='Email'
+              bgColour='surface'
               hint={errors.username ? errors.username.type==='required' ? 'Email required' : (errors.username.message) as string : undefined}
             />
           </div>
@@ -73,6 +74,7 @@ const Login: NextPage<Props> = ({login_challenge}) => {
               inputRef={(register({required: true}))}
               name='password'
               label='Password'
+              bgColour='surface'
               hint={ errors.password ? errors.password.type === 'required' ? 'Password required' : (errors.password.message) as string: null }
             />
           </div>

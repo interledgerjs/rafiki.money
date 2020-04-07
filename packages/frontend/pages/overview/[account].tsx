@@ -52,7 +52,7 @@ const Overview: NextPage<Props> = ({user, account, token}) => {
 
   const formatDate = (date: string) => {
     const jsDate = new Date(date)
-    return jsDate.getDay() + '-' + jsDate.getMonth() + '-' + jsDate.getUTCFullYear()
+    return jsDate.getDate() + '-' + jsDate.getMonth() + '-' + jsDate.getUTCFullYear()
   }
 
   return (
@@ -79,7 +79,7 @@ const Overview: NextPage<Props> = ({user, account, token}) => {
               </Card>
             </div>
             <div className="flex mt-8 justify-between">
-              <div className="text-headline-6 my-auto">
+              <div className="text-headline-6 my-auto text-on-surface">
                 Transactions
               </div>
             </div>

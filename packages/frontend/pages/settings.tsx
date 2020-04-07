@@ -94,8 +94,8 @@ const Settings: NextPage<Props> = ({user}) => {
     <div>
       <Navigation active="settings"></Navigation>
       <Content navigation>
-        <div className="flex h-full flex-col items-center justify-center">
-          <Card>
+        <div className="flex w-full h-full flex-col items-center justify-center">
+          <Card className="w-full">
             {user.username}
             <div className="flex justify-end">
               <Button onClick={logout} textColour="error" type="text" buttonType="submit">
@@ -104,13 +104,13 @@ const Settings: NextPage<Props> = ({user}) => {
             </div>
           </Card>
           <div className="pb-10"></div>
-          <Card>
+          <Card className="w-full">
             <div className="text-headline-5 pb-10">Default account</div>
             <div className="pb-10">
             </div>
           </Card>
           <div className="pb-10"></div>
-          <Card>
+          <Card className="w-full">
             <div className="text-headline-5 pb-10">Payment Handler</div>
             <div className={swInstalled||!swSupported?'hidden':''}>
             <Button onClick={ installSw } bgColour="primary" type='text' >Install SW</Button>

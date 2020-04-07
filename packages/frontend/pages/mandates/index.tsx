@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { NextPage } from "next"
-import { Button, Card, Content, Navigation, Selector } from '../components'
-import { checkUser, formatCurrency } from '../utils'
-import { AccountsService } from '../services/accounts'
-import { DonutChart } from '../components/donutChart'
+import { Button, Card, Content, Navigation, Selector } from '../../components'
+import { checkUser, formatCurrency } from '../../utils'
+import { DonutChart } from '../../components/donutChart'
 import Modal from 'react-modal'
-import { MandatesService } from '../services/mandates'
+import { MandatesService } from '../../services/mandates'
+import { useRouter } from 'next/router'
 
 type Mandate = {
   id: string
@@ -56,7 +56,7 @@ const sideBar = (mandate: Mandate, token, openModal) => {
 
   const formatDate = (date: string) => {
     const jsDate = new Date(date)
-    return jsDate.getDay() + '-' + jsDate.getMonth() + '-' + jsDate.getUTCFullYear()
+    return jsDate.getDate() + '-' + jsDate.getMonth() + '-' + jsDate.getUTCFullYear()
   }
 
   if(mandate) {
@@ -118,6 +118,7 @@ const sideBar = (mandate: Mandate, token, openModal) => {
 }
 
 const Mandates: NextPage<Props> = ({mandates, token}) => {
+  const router = useRouter()
 
   const [localMandates, setLocalMandates] = useState<Array<Mandate>>(mandates)
   const [selectedMandateId, setSelectedMandateId] = useState<string>()
@@ -158,17 +159,51 @@ const Mandates: NextPage<Props> = ({mandates, token}) => {
   }
 
   return (
-    <div className="flex">
-      <Navigation active="mandates"></Navigation>
-      <Content>
-        <div className="w-full flex flex-row h-full">
-          <div className="w-2/3 flex flex-col">
+    <div>
+      <Navigation active="mandates"/>
+      <Content navigation>
+        <div className="flex flex-col sm:flex-row h-full w-full sm:w-full">
+          <div className="w-full sm:w-2/3 flex flex-col">
             <div className="flex justify-end">
               <div className="w-48">
                 <Selector options={mandateStates} defaultValue={mandateStates[0]} onChange={setMandatesState}/>
               </div>
             </div>
-            <Card width="w-full" className="mt-8 px-0 pt-0 pb-0">
+            <div className="flex sm:hidden mb-8 justify-between">
+              <div className="text-headline-6 my-auto text-on-surface">
+                Mandates
+              </div>
+            </div>
+            <div className="flex flex-col sm:hidden w-full">
+              {localMandates ? localMandates.map(mandate => {
+                  return (
+                    <div onClick={() => console.log(`Route to mandates page: ${mandate.id}`)}>
+                    {/* <div onClick={() => router.push(`/mandates/${mandate.id}`)}> */}
+                      <Card key={mandate.id}  className="flex flex-row flex-wrap cursor-pointer mb-8">
+                        <div className="w-full px-4 py-2 text-headline-5">
+                          {mandate.description}
+                        </div>
+                        <div className="px-4 py-2 w-1/3 text-headline-6">
+                          {mandate.assetCode}
+                        </div>
+                        <div className="px-4 py-2 w-2/3 leading-tight">
+                          <div className="text-headline-5 text-right">
+                            {formatCurrency(mandate.balance, mandate.assetScale)}
+                          </div>
+                          <div className="text-overline text-right text-on-surface-disabled">
+                            /{formatCurrency(mandate.amount, mandate.assetScale)}
+                          </div>
+                        </div>
+                        <div className="px-4 py-2 text-body-2 w-full text-right">
+                          {mandate.interval}
+                        </div>
+                        
+                      </Card>
+                    </div>
+                  )
+                }) : null}
+            </div>
+            <Card width="w-full" className="mt-8 px-0 pt-0 pb-0 hidden sm:flex">
               <table className="w-full">
                 <thead>
                 <tr>
@@ -206,7 +241,7 @@ const Mandates: NextPage<Props> = ({mandates, token}) => {
               </table>
             </Card>
           </div>
-          <div className="flex h-full w-1/3 ml-12">
+          <div className="hidden sm:flex h-full w-1/3 ml-12">
             {sideBar(mandates.filter(mandate => mandate.id === selectedMandateId)[0],token, openModal)}
           </div>
         </div>
@@ -216,7 +251,12 @@ const Mandates: NextPage<Props> = ({mandates, token}) => {
         onRequestClose={closeModal}
         contentLabel="Example Modal"
         style={{
+          overlay: {
+            backgroundColor: 'var(--color-modal-background)'
+          },
           content : {
+            backgroundColor       : 'var(--color-surface-elevation-24)',
+            border                : 'none',
             top                   : '50%',
             left                  : '50%',
             right                 : 'auto',
@@ -226,7 +266,7 @@ const Mandates: NextPage<Props> = ({mandates, token}) => {
           }
         }}
       >
-        <div className="max-w-xs w-full flex flex-col">
+        <div className="max-w-xs w-full text-on-surface flex flex-col">
           <div className="headline-6">
             Cancel Mandate?
           </div>

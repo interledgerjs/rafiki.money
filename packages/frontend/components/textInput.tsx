@@ -23,7 +23,7 @@ const TextInput: React.FC<props> = (props) => {
   const textColour = props.textColour? props.textColour : 'on-surface'
   let blurColour = props.blurColour? props.blurColour : 'on-surface-trans'
   let focusColour = 'primary'
-  const bgColour = props.bgColour? props.bgColour : 'surface'
+  const bgColour = props.bgColour? props.bgColour : 'surface-elevation-1'
   const maxWidth = props.maxWidth? props.maxWidth : 'xs'
   const inputType = props.inputType? props.inputType: 'text'
   if (props.errorState) {
@@ -42,7 +42,7 @@ const TextInput: React.FC<props> = (props) => {
       </div>
 
       <label 
-        className={props.label? `${focussed? (value==''?'toLabel inputLabel':'inputLabel'): (value==''?'toPlaceHolder inputText':'inputLabel')} text-${focussed? focusColour: blurColour} border-l-2 border-r-2 border-${bgColour} bg-${bgColour}`: `invisible `}>
+        className={props.label? `${focussed? (value==''?'toLabel inputLabel':'inputLabel'): (value==''?'toPlaceHolder inputText':'inputLabel')} text-${focussed? focusColour: blurColour} border-l-2 border-r-2 border-transparent bg-${bgColour}`: `invisible `}>
         {props.label? props.label: ''}
       </label>
 
