@@ -36,13 +36,14 @@ export async function show (ctx: AppContext): Promise<void> {
   const paymentPointer = queryParams.pp
 
   if (!paymentPointer) {
-
+    return
   }
 
   if (await isOpenPaymentsUrl(paymentPointer)) {
     ctx.body = {
       type: 'open-payments'
     }
+    return
   }
   if (await isSPSPUrl(paymentPointer)) {
     ctx.body = {
