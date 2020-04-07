@@ -54,6 +54,7 @@ const Signup: NextPage = () => {
               inputRef={(register({required: true}))}
               name='username'
               label='Email'
+              bgColour='surface'
               hint={errors.username ? errors.username.type==='required' ? 'Email required' : (errors.username.message) as string : undefined}
             />
           </div>
@@ -65,6 +66,7 @@ const Signup: NextPage = () => {
               inputRef={(register({required: true}))}
               name='password'
               label='Password'
+              bgColour='surface'
               hint={ errors.password ? errors.password.type === 'required' ? 'Password required' : null: null }
             />
           </div>

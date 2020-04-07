@@ -62,6 +62,7 @@ const Login: NextPage<Props> = ({login_challenge}) => {
               inputRef={(register({required: true}))}
               name='username'
               label='Email'
+              bgColour='surface'
               hint={errors.username ? errors.username.type==='required' ? 'Email required' : (errors.username.message) as string : undefined}
             />
           </div>
@@ -73,6 +74,7 @@ const Login: NextPage<Props> = ({login_challenge}) => {
               inputRef={(register({required: true}))}
               name='password'
               label='Password'
+              bgColour='surface'
               hint={ errors.password ? errors.password.type === 'required' ? 'Password required' : (errors.password.message) as string: null }
             />
           </div>
