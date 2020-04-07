@@ -11,7 +11,7 @@ export const MandatesService = (authErrorCallback?: () => void) => {
       url.searchParams.append('state', state)
       return ky.get(url.toString(), { headers: { authorization: `Bearer ${token}` } }).then(resp => resp.json())
     },
-    getMandatesByMandateId: async (token: string, mandateId: string) => {
+    getTransactionsByMandateId: async (token: string, mandateId: string) => {
       const url = new URL(`${USERS_API_URL}/mandates/${mandateId}/transactions`)
       const resp = await ky.get(url.toString(),
         { headers: { authorization: `Bearer ${token}` } })
