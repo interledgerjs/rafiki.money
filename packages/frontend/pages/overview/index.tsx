@@ -91,7 +91,7 @@ const Sidebar: React.FC<SideBarProps> = ({account, token, refreshAccounts}) => {
 
   const formatDate = (date: string) => {
     const jsDate = new Date(date)
-    return jsDate.getDay() + '-' + jsDate.getMonth() + '-' + jsDate.getUTCFullYear()
+    return jsDate.getDate() + '-' + jsDate.getMonth() + '-' + jsDate.getUTCFullYear()
   }
 
   if(account) {

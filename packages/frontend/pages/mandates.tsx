@@ -56,7 +56,7 @@ const sideBar = (mandate: Mandate, token, openModal) => {
 
   const formatDate = (date: string) => {
     const jsDate = new Date(date)
-    return jsDate.getDay() + '-' + jsDate.getMonth() + '-' + jsDate.getUTCFullYear()
+    return jsDate.getDate() + '-' + jsDate.getMonth() + '-' + jsDate.getUTCFullYear()
   }
 
   if(mandate) {
