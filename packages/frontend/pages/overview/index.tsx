@@ -260,16 +260,18 @@ const Overview: NextPage<Props> = ({user, accounts, token, balance, paymentPoint
 
 Overview.getInitialProps = async (ctx) => {
   const user = await checkUser(ctx)
-  const accounts = await accountService.getUserAccounts(user.id, user.token)
-  const balance = await usersService.getBalance(user.token)
-  const paymentPointer = await usersService.getPaymentPointer(user.token)
+  const accountsPromise = accountService.getUserAccounts(user.id, user.token)
+  const balancePromise = usersService.getBalance(user.token)
+  const paymentPointerPromise = usersService.getPaymentPointer(user.token)
+
+  const value = await Promise.all([accountsPromise, balancePromise, paymentPointerPromise])
 
   return {
     user,
-    accounts,
+    accounts: value[0],
     token: user.token,
-    balance: balance.balance,
-    paymentPointer: paymentPointer.paymentPointer
+    balance: value[1].balance,
+    paymentPointer: value[2].paymentPointer
   }
 }
 
