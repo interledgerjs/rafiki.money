@@ -15,7 +15,13 @@ export type TestAppContainer = {
 }
 
 export const createTestApp = (): TestAppContainer => {
-  const logger = createLogger()
+  const logger = createLogger({
+    prettyPrint: {
+      translateTime: true,
+      ignore: 'pid,hostname'
+    },
+    level: 'error'
+  })
   const knex = Knex({
     ...knexConfig.testing
   })

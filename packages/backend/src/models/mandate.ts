@@ -1,5 +1,7 @@
 import { Model } from 'objection'
 import { v4 } from 'uuid'
+import { Charge, ChargeInfo } from './charge'
+import { MandateTransaction } from './mandateTransaction'
 
 const OpenPaymentsIssuer = 'localhost' || process.env.OPEN_PAYMENTS_ISSUER
 
@@ -21,6 +23,7 @@ export type MandateInfo = {
   createdAt: string;
   updatedAt: string;
   cancelledAt: string;
+  charges: Partial<ChargeInfo>[]
 }
 
 export class Mandate extends Model {
@@ -44,6 +47,26 @@ export class Mandate extends Model {
   createdAt !: string;
   updatedAt !: string;
   cancelledAt !: string;
+  charges !: Charge[];
+
+  static relationMappings = {
+    charges: {
+      relation: Model.HasManyRelation,
+      modelClass: Charge,
+      join: {
+        from: 'mandates.id',
+        to: 'charges.mandateId'
+      }
+    },
+    transactions: {
+      relation: Model.HasManyRelation,
+      modelClass: MandateTransaction,
+      join: {
+        from: 'mandates.id',
+        to: 'mandateTransactions.mandateId'
+      }
+    }
+  }
 
   $beforeInsert (): void {
     this.id = v4()

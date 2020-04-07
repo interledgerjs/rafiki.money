@@ -23,6 +23,7 @@ import * as MandatesTransactionController from './controllers/mandateTransaction
 import * as InvoicesController from './controllers/invoicesController'
 import * as PeerPaymentController from './controllers/peerPaymentController'
 import * as CancelMandatesController from './controllers/cancelMandatesController'
+import * as ChargesController from './controllers/chargesController'
 import * as TransactionsController from './controllers/transactionsController'
 import { createAuthMiddleware } from './middleware/auth'
 import { TokenService } from './services/token-service'
@@ -120,6 +121,7 @@ export class App {
     this._privateRouter.get('/mandates', MandatesController.index)
     this._privateRouter.get('/mandates/:id', MandatesController.show)
     this._privateRouter.put('/mandates/:id/cancel', CancelMandatesController.store)
+    this._privateRouter.post('/mandates/:id/charges', ChargesController.store)
     this._privateRouter.get('/mandates/:id/transactions', MandatesTransactionController.index)
 
     this._publicRouter.post('/invoices', InvoicesController.store)

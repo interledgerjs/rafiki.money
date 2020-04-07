@@ -3,6 +3,7 @@ exports.up = function (knex) {
   return knex.schema.createTable('mandateTransactions', (t) => {
     t.increments('id').unsigned().primary()
     t.integer('accountId').notNullable()
+    t.string('chargeId').nullable()
     t.bigInteger('amount').notNullable()
     t.text('description')
     t.timestamp('createdAt').defaultTo(knex.fn.now());
