@@ -9,7 +9,16 @@ import Card from './card'
 import Logo from './logo'
 import Selector from './selector'
 import Button from './button'
-import { AccountInfo } from 'models'
+
+export type AccountInfo = {
+  id: number;
+  userId: number;
+  name: string;
+  assetCode: string;
+  assetScale: number;
+  balance: string;
+  limit: string;
+}
 
 const FX_API_URL = process.env.FX_API_URL || 'https://min-api.cryptocompare.com'
 

@@ -35,6 +35,7 @@ export class Invoice extends Model {
   received: bigint;
   balance: bigint;
   expiresAt!: string;
+  finalizedAt!: string;
   createdAt: string;
   updatedAt: string;
   subject: string;

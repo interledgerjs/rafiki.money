@@ -4,7 +4,7 @@ import { NextPage } from "next"
 import { UsersService } from '../services/users'
 
 import { NormalConsent, AgreementConsent } from '../components'
-import { AccountInfo } from 'models'
+import { AccountInfo } from '../components/agreement-consent'
 
 const usersService = UsersService()
 

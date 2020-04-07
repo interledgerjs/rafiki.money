@@ -21,7 +21,7 @@ export const getOpenPaymentsInvoiceURL = async (paymentPointer: string): Promise
   return jsonBody.invoices_endpoint
 }
 
-const PAYMENT_POINTER_ROOT = '$localhost:3001/p/'
+const PAYMENT_POINTER_ROOT = process.env.PAYMENT_POINTER_ROOT || '$localhost:3001/p/'
 
 export const paymentPointerToIdentifier = (paymentPointer: string): string => {
   return paymentPointer.replace(PAYMENT_POINTER_ROOT, '')

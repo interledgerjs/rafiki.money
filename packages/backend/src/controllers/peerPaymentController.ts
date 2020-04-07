@@ -60,14 +60,15 @@ const createReceiverInvoice = async (paymentPointer: string, description = '') =
   return got.post(url, {
     json: {
       subject: paymentPointer,
-      description: description
+      description: description,
+      expiresAt: new Date(Date.now() + 30 * 1000).toISOString()
     }
   }).json()
 }
 
-export async function store(ctx: AppContext): Promise<void> {
-  const {streamService, logger} = ctx
-  const {body} = ctx.request
+export async function store (ctx: AppContext): Promise<void> {
+  const { streamService, logger } = ctx
+  const { body } = ctx.request
   const account = await Account.query().findById(body.accountId)
 
   if (!account) {
@@ -119,7 +120,6 @@ export async function store(ctx: AppContext): Promise<void> {
     }).json()
   } else if (body.type === 'spsp') {
     const url = new URL(paymentPointerToURL(body.receiverPaymentPointer))
-    url.pathname += '/.well-known/pay'
     const spspUrl = url.toString()
     const response = await got.get(spspUrl, {
       headers: {
@@ -146,7 +146,7 @@ export async function store(ctx: AppContext): Promise<void> {
     const sent = await streamService.sendMoney(paymentDetails.ilpAddress, paymentDetails.sharedSecret, amount.toString())
 
     if (sent !== amount) {
-      logger.error('Failed to send full amount', {amount: amount.toString(), sent})
+      logger.error('Failed to send full amount', { amount: amount.toString(), sent })
       const amountNotSent = amount - sent
       await modifyBalance(account.id, amountNotSent, `Refund for amount not sent to ${body.receiverPaymentPointer}`)
     }

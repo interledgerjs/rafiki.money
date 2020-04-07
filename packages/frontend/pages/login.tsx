@@ -3,10 +3,13 @@ import { NextPage } from "next"
 import useForm from 'react-hook-form'
 import { UsersService } from '../services/users'
 import { Button, TextInput } from '../components'
+import getConfig from 'next/config'
+
+const { publicRuntimeConfig } = getConfig()
 
 const usersService = UsersService()
 
-const HYDRA_LOGIN_GRANT_URL = process.env.REACT_APP_LOGIN_GRANT_URL || 'http://localhost:9000/oauth2/auth?client_id=frontend-client&state=loginflow&response_type=code&redirect_uri=http://localhost:3000/callback'
+const HYDRA_LOGIN_GRANT_URL = publicRuntimeConfig.REACT_APP_LOGIN_GRANT_URL
 
 type Props = {
   login_challenge: string
@@ -89,7 +92,8 @@ const Login: NextPage<Props> = ({login_challenge}) => {
 }
 
 Login.getInitialProps = async ({query, res}) => {
-  const { login_challenge, signupSessionId } = query
+  const login_challenge = query?.login_challenge
+  const signupSessionId = query.signupSessionId
 
   if(!login_challenge) {
     const url = signupSessionId ? HYDRA_LOGIN_GRANT_URL + `&signupSessionId=${signupSessionId}` : HYDRA_LOGIN_GRANT_URL
@@ -101,7 +105,11 @@ Login.getInitialProps = async ({query, res}) => {
       return
     }
 
-    window.location.href = url
+    location.href = url
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    return {
+      login_challenge: ''
+    }
   }
 
   // Check loginChallenge to see if it can be skipped.

@@ -84,7 +84,7 @@ describe('Monetization', function () {
       const { data, status } = await axios.get(`http://localhost:${appContainer.port}/p/${user.username}`)
 
       const refreshedPaymentPointer = await paymentPointer.$query()
-      // expect(refreshedPaymentPointer.currentMonetizationInvoiceId).not
+      expect(refreshedPaymentPointer.currentMonetizationInvoiceId).not.toEqual(invoice.id)
       expect(status).toEqual(200)
       expect(data.ilpAddress).toBeDefined()
       expect(data.sharedSecret).toBeDefined()

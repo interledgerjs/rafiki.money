@@ -7,12 +7,14 @@ const USERS_API_URL = publicRuntimeConfig.REACT_APP_USERS_API_URL
 export const AccountsService = (authErrorCallback?: () => void) => {
   return {
     getUserAccounts: async (userId: string, token: string) => {
-      const url = new URL('/accounts', USERS_API_URL)
+      const url = new URL(`${USERS_API_URL}/accounts`)
       url.searchParams.append('userId', userId)
-      return ky.get(url.toString(), { headers: { authorization: `Bearer ${token}` } }).then(resp => resp.json())
+      return ky.get(url.toString(), {
+        headers: { authorization: `Bearer ${token}` }
+      }).then(resp => resp.json())
     },
     create: async (name: string, token: string) => {
-      const url = new URL('/accounts', USERS_API_URL)
+      const url = new URL(`${USERS_API_URL}/accounts`)
       return ky.post(url.toString(), {
         json: {
           name
@@ -20,7 +22,7 @@ export const AccountsService = (authErrorCallback?: () => void) => {
         headers: { authorization: `Bearer ${token}` } }).then(resp => resp.json())
     },
     faucet: async (accountId: number, token: string) => {
-      const url = new URL('/faucet', USERS_API_URL)
+      const url = new URL(`${USERS_API_URL}/faucet`)
       return ky.post(url.toString(), {
         json: {
           accountId
@@ -28,7 +30,7 @@ export const AccountsService = (authErrorCallback?: () => void) => {
         headers: { authorization: `Bearer ${token}` } })
     },
     transactions: async (accountId: string, token: string) => {
-      const url = new URL(`/accounts/${accountId}/transactions`, USERS_API_URL)
+      const url = new URL(`${USERS_API_URL}/accounts/${accountId}/transactions`)
       return ky.get(url.toString(), { headers: { authorization: `Bearer ${token}` } }).then(resp => resp.json())
     },
   }

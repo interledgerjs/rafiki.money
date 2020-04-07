@@ -13,7 +13,7 @@ const connector = Connector.createApp({
       receiveRoutes: false,
       plugin: 'ilp-plugin-btp',
       assetCode: 'XRP',
-      assetScale: 9,
+      assetScale: 6,
       options: {
         server: UPLINK_SERVER
       }

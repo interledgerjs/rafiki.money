@@ -111,7 +111,7 @@ describe('User Peer Payment API Test', () => {
         .defaultReplyHeaders({
           'Content-Type': 'application/spsp4+json'
         })
-        .get('/alice/.well-known/pay')
+        .get('/alice')
         .reply(200, {
           destination_account: 'example.ilpdemo.red.spsp.alice',
           shared_secret: '6jR5iNIVRvqeasJeCty6C+YB5X9F1212hSOUPCL/5nha5Vs='

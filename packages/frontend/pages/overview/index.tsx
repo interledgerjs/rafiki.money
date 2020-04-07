@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { UsersService } from '../../services/users'
 import Clipboard from 'react-clipboard.js'
 import { useRouter } from 'next/router'
+import { useInterval } from '../../hooks'
 
 const accountService = AccountsService()
 const usersService = UsersService()
@@ -29,7 +30,46 @@ type Props = {
   paymentPointer: string
 }
 
-const sideBar = (account: Account, token, refreshAccounts) => {
+const MonetizationSidebar: React.FC<{token: string}> = ({token}) => {
+  const [balance, setBalance] = useState<number>(0)
+
+  useInterval(() => {
+    usersService.getMonetizationBalance(token).then(balance => {
+      setBalance(balance.balance)
+    })
+  }, 5000)
+
+
+  return (
+    <Card width="w-full" className="flex flex-col">
+      <div className="text-headline-6">
+        Monetization
+      </div>
+      <div className="text-headline-3 my-10">
+        $ {formatCurrency(balance, 6)}
+      </div>
+      <div className="body-2">
+        Monetization allows you to receive funds through real-time streaming applications, such as Web Monetization.
+        These funds are auto-claimed into your account every hour.
+        {/*However if you wish to claim at any time you can choose to claim*/}
+        {/*them now.*/}
+      </div>
+      {/*<div className="flex justify-end mt-6">*/}
+      {/*  <Button type="solid">*/}
+      {/*    CLAIM*/}
+      {/*  </Button>*/}
+      {/*</div>*/}
+    </Card>
+  )
+}
+
+type SideBarProps = {
+  account: Account,
+  token: string,
+  refreshAccounts: () => void
+}
+
+const Sidebar: React.FC<SideBarProps> = ({account, token, refreshAccounts}) => {
 
   const [transactions, setTransactions] = useState([])
 
@@ -101,12 +141,20 @@ const sideBar = (account: Account, token, refreshAccounts) => {
   }
 }
 
+type SidebarState = {
+  type: 'account' | 'monetization'
+  id?: number
+}
+
 const Overview: NextPage<Props> = ({user, accounts, token, balance, paymentPointer}) => {
   const router = useRouter()
 
   const [localAccounts, setLocalAccounts] = useState<Array<Account>>(accounts)
   const [localBalance, setLocalBalance] = useState<number>(balance)
-  const [selectedAccountId, setSelectedAccountId] = useState<number>(accounts[0].id)
+  const [sidebarState, setSidebarState] = useState<SidebarState>({
+    type: 'monetization',
+    id: accounts[0].id
+  })
 
   const refreshAccounts = () => {
     accountService.getUserAccounts(user.id, token).then(accounts => {
@@ -116,6 +164,7 @@ const Overview: NextPage<Props> = ({user, accounts, token, balance, paymentPoint
       setLocalBalance(balance.balance)
     })
   }
+
 
   return (
     <div>
@@ -132,19 +181,21 @@ const Overview: NextPage<Props> = ({user, accounts, token, balance, paymentPoint
                   $ {formatCurrency(localBalance, 6)}
                 </div>
               </Card>
-              <Card className="mt-4 sm:mt-0">
-                <div className="text-headline-5">
-                  Payment Pointer
-                </div>
-                <div>
-                  { paymentPointer }
-                </div>
-                <div className="flex justify-end">
-                  <Clipboard className="button min-w-64 py-2 px-4 rounded focus:outline-none text-primary hover:bg-primary-100 active:bg-primary-200" data-clipboard-text={paymentPointer}>
-                    Copy
-                  </Clipboard>
-                </div>
-              </Card>
+              <div onClick={() => setSidebarState({type: 'monetization'})}>
+                <Card className="mt-4 sm:mt-0">
+                  <div className="text-headline-5">
+                    Payment Pointer
+                  </div>
+                  <div>
+                    { paymentPointer }
+                  </div>
+                  <div className="flex justify-end">
+                    <Clipboard className="button min-w-64 py-2 px-4 rounded focus:outline-none text-primary hover:bg-primary-100 active:bg-primary-200" data-clipboard-text={paymentPointer}>
+                      Copy
+                    </Clipboard>
+                  </div>
+                </Card>
+              </div>
             </div>
             <div className="flex mt-8 justify-between">
               <div className="text-headline-6 my-auto text-on-surface">
@@ -182,7 +233,7 @@ const Overview: NextPage<Props> = ({user, accounts, token, balance, paymentPoint
               {
                 localAccounts.map(account => {
                   return (
-                    <div key={account.id} onClick={() => setSelectedAccountId(account.id)}>
+                    <div key={account.id} onClick={() => setSidebarState({type: 'account', id: account.id})}>
                       <Card className="mb-4 h-32 cursor-pointer">
                         <div className="text-headline-5">
                           {account.name}
@@ -198,7 +249,8 @@ const Overview: NextPage<Props> = ({user, accounts, token, balance, paymentPoint
             </div>
           </div>
           <div className="hidden sm:flex h-full w-1/3 ml-12">
-            {selectedAccountId ? sideBar(localAccounts.filter(acc => acc.id === selectedAccountId)[0], token, refreshAccounts.bind(this)) : null}
+            {sidebarState.type === 'monetization' ? <MonetizationSidebar token={token}/> : null}
+            {sidebarState.type === 'account' ? <Sidebar account={localAccounts.filter(acc => acc.id === sidebarState.id)[0]} refreshAccounts={refreshAccounts.bind(this)} token={token} />: null}
           </div>
         </div>
       </Content>
@@ -208,16 +260,18 @@ const Overview: NextPage<Props> = ({user, accounts, token, balance, paymentPoint
 
 Overview.getInitialProps = async (ctx) => {
   const user = await checkUser(ctx)
-  const accounts = await accountService.getUserAccounts(user.id, user.token)
-  const balance = await usersService.getBalance(user.token)
-  const paymentPointer = await usersService.getPaymentPointer(user.token)
+  const accountsPromise = accountService.getUserAccounts(user.id, user.token)
+  const balancePromise = usersService.getBalance(user.token)
+  const paymentPointerPromise = usersService.getPaymentPointer(user.token)
+
+  const value = await Promise.all([accountsPromise, balancePromise, paymentPointerPromise])
 
   return {
     user,
-    accounts,
+    accounts: value[0],
     token: user.token,
-    balance: balance.balance,
-    paymentPointer: paymentPointer.paymentPointer
+    balance: value[1].balance,
+    paymentPointer: value[2].paymentPointer
   }
 }
 

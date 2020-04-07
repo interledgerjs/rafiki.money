@@ -7,46 +7,46 @@ const USERS_API_URL = publicRuntimeConfig.REACT_APP_USERS_API_URL
 export const UsersService = (authErrorCallback?: () => void) => {
   return {
     signup: async (username: string, password: string) => {
-      const url = new URL('users', USERS_API_URL)
+      const url = new URL(`${USERS_API_URL}/users`)
       return ky.post(url.toString(), {
         json: { username, password }
       }).then(resp => resp.json())
     },
     getLogin: async (challenge: string) => {
-      const url = new URL('login', USERS_API_URL)
+      const url = new URL(`${USERS_API_URL}/login`)
       url.searchParams.set('login_challenge', challenge)
       return ky.get(url.toString()).then(resp => resp.json())
     },
     login: async (username: string, password: string, challenge: string) => {
-      const url = new URL('login', USERS_API_URL)
+      const url = new URL(`${USERS_API_URL}/login`)
       url.searchParams.set('login_challenge', challenge)
       return ky.post(url.toString(), {
         json: { username, password }
       }).then(resp => resp.json())
     },
     getConsent: async (challenge: string) => {
-      const url = new URL('consent', USERS_API_URL)
+      const url = new URL(`${USERS_API_URL}/consent`)
       url.searchParams.set('consent_challenge', challenge)
       return ky.get(url.toString()).then(resp => resp.json())
     },
     handleConsent: async (challenge: string, body: object) => {
-      const url = new URL('consent', USERS_API_URL)
+      const url = new URL(`${USERS_API_URL}/consent`)
       url.searchParams.set('consent_challenge', challenge)
       return ky.post(url.toString(), {
         json: body
       }).then(resp => resp.json())
     },
     handleLogout: async (challenge: string) => {
-      const url = new URL('logout', USERS_API_URL)
+      const url = new URL(`${USERS_API_URL}/logout`)
       url.searchParams.set('logout_challenge', challenge)
       return ky.post(url.toString()).then(resp => resp.json())
     },
     getUser: async (token: string) => {
-      const url = new URL('users/me', USERS_API_URL)
+      const url = new URL(`${USERS_API_URL}/users/me`)
       return ky.get(url.toString(), { headers: { authorization: `Bearer ${token}` } }).then(resp => resp.json())
     },
     update: async (id: number, body: any, token: string) => {
-      const url = new URL(`users/${id}`, USERS_API_URL)
+      const url = new URL(`${USERS_API_URL}/users/${id}`)
       return ky.patch(url.toString(), {
         headers: { authorization: `Bearer ${token}` },
         json: body
@@ -61,24 +61,28 @@ export const UsersService = (authErrorCallback?: () => void) => {
       }).then(resp => resp.json())
     },
     getAccounts: async (token: string, userId: string) => {
-      const url = new URL('accounts/', USERS_API_URL)
+      const url = new URL(`${USERS_API_URL}/accounts`)
       url.searchParams.set('userId', userId)
       return ky.get(url.toString(), {
         headers: { authorization: `Bearer ${token}` }
       }).then(resp => resp.json())
     },
     getAccount: async (token: string, id: number) => {
-      const url = new URL(`accounts/${id}`, USERS_API_URL)
+      const url = new URL(`${USERS_API_URL}/accounts/${id}`)
       return ky.get(url.toString(), {
         headers: { authorization: `Bearer ${token}` }
       }).then(resp => resp.json())
     },
     getBalance: async (token: string) => {
-      const url = new URL('users/me/balance', USERS_API_URL)
+      const url = new URL(`${USERS_API_URL}/users/me/balance`)
       return ky.get(url.toString(), { headers: { authorization: `Bearer ${token}` } }).then(resp => resp.json())
     },
     getPaymentPointer: async (token: string) => {
-      const url = new URL('users/me/paymentpointer', USERS_API_URL)
+      const url = new URL(`${USERS_API_URL}/users/me/paymentpointer`)
+      return ky.get(url.toString(), { headers: { authorization: `Bearer ${token}` } }).then(resp => resp.json())
+    },
+    getMonetizationBalance: async (token: string) => {
+      const url = new URL(`${USERS_API_URL}/users/me/monetizationbalance`)
       return ky.get(url.toString(), { headers: { authorization: `Bearer ${token}` } }).then(resp => resp.json())
     }
   }

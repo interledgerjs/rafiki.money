@@ -7,18 +7,18 @@ const USERS_API_URL = publicRuntimeConfig.REACT_APP_USERS_API_URL
 export const MandatesService = (authErrorCallback?: () => void) => {
   return {
     getUserMandates: async (state: string, token: string) => {
-      const url = new URL('/mandates', USERS_API_URL)
+      const url = new URL(`${USERS_API_URL}/mandates`)
       url.searchParams.append('state', state)
       return ky.get(url.toString(), { headers: { authorization: `Bearer ${token}` } }).then(resp => resp.json())
     },
     getMandatesByMandateId: async (token: string, mandateId: string) => {
-      const url = new URL(`mandates/${mandateId}/transactions`, USERS_API_URL)
+      const url = new URL(`${USERS_API_URL}/mandates/${mandateId}/transactions`)
       const resp = await ky.get(url.toString(),
         { headers: { authorization: `Bearer ${token}` } })
       return await resp.json()
     },
     cancelMandate: async (mandateId: string, token: string) => {
-      const url = new URL(`/mandates/${mandateId}/cancel`, USERS_API_URL)
+      const url = new URL(`${USERS_API_URL}/mandates/${mandateId}/cancel`)
       return ky.put(url.toString(),{
         headers: { authorization: `Bearer ${token}` } })
     },
