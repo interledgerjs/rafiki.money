@@ -49,7 +49,7 @@ const Navigation: React.FC<props> = (props) => {
               routeTo(element.url)
             }} key={element.name}
                  className={`cursor-pointer flex flex-wrap w-20 h-full md:w-full md:h-32 content-center text-center justify-center hover:bg-primary-100 text-${props.active === element.name ? 'primary' : 'on-surface'} hover:text-surface`}>
-              <i className={`material-icons w-full`}>{element.icon}</i>
+              <i className={`material-icons w-full my-auto`}>{element.icon}</i>
               <p className="hidden md:flex button pt-3">{props.active === element.name ? element.name : ''}</p>
             </div>)
         })}
