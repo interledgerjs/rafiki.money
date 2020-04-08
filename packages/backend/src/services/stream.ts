@@ -66,22 +66,25 @@ export class StreamService {
   }
 
   setupStream () {
-    this.streamServer.on('connection', async (conn: Connection) => {
+    this.streamServer.on('connection', (conn: Connection) => {
       this.logger.trace('Got connection')
-      if (!conn.connectionTag) {
-        await conn.end()
-        return
-      }
-      const data = JSON.parse(this.decodeConnectionTag(conn.connectionTag))
-
-      const invoice = await Invoice.query().findById(data.invoiceId)
-
-      if (!invoice) {
-        await conn.end()
-        return
-      }
 
       conn.on('stream', async (stream: DataAndMoneyStream) => {
+        if (!conn.connectionTag) {
+          await conn.end()
+          return
+        }
+        const data = JSON.parse(this.decodeConnectionTag(conn.connectionTag))
+        this.logger.info('Received connection tag', { data, tag: conn.connectionTag })
+
+        const invoice = await Invoice.query().findById(data.invoiceId)
+
+        if (!invoice) {
+          await stream.end()
+          await conn.end()
+          return
+        }
+
         // Todo, potentially limit this to the amount still needed for the Invoice.
         //  This would mean only a singular Invoice can be paid at once
         stream.setReceiveMax(String(2 ** 56))
