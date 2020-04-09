@@ -70,6 +70,10 @@ export class StreamService {
       this.logger.trace('Got connection')
 
       conn.on('stream', async (stream: DataAndMoneyStream) => {
+        // Todo, potentially limit this to the amount still needed for the Invoice.
+        //  This would mean only a singular Invoice can be paid at once
+        stream.setReceiveMax(String(2 ** 56))
+
         if (!conn.connectionTag) {
           await conn.end()
           return
@@ -84,10 +88,6 @@ export class StreamService {
           await conn.end()
           return
         }
-
-        // Todo, potentially limit this to the amount still needed for the Invoice.
-        //  This would mean only a singular Invoice can be paid at once
-        stream.setReceiveMax(String(2 ** 56))
 
         stream.on('money', async amount => {
           await Invoice.transaction(async (trx: Transaction) => {
