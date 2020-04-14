@@ -6,6 +6,7 @@ import { Logger } from 'pino'
 import { Invoice } from '../models/invoice'
 import { InvoiceTransaction } from '../models/invoiceTransaction'
 import { Transaction } from 'objection'
+import { Account } from '../models'
 
 const BTP_UPLINK = process.env.BTP_UPLINK || 'btp+ws://localhost:8000'
 
@@ -72,7 +73,7 @@ export class StreamService {
       conn.on('stream', async (stream: DataAndMoneyStream) => {
         // Todo, potentially limit this to the amount still needed for the Invoice.
         //  This would mean only a singular Invoice can be paid at once
-        stream.setReceiveMax(String(2 ** 56))
+        stream.setReceiveMax(String(0))
 
         if (!conn.connectionTag) {
           await conn.end()
@@ -89,8 +90,8 @@ export class StreamService {
           return
         }
 
-        stream.on('money', async amount => {
-          await Invoice.transaction(async (trx: Transaction) => {
+        stream.on('money', amount => {
+          Invoice.transaction(async (trx: Transaction) => {
             const inv = await Invoice.query(trx).findById(invoice.id).forUpdate()
             await Invoice.query(trx).where('id', inv.id).patch({
               received: (BigInt(inv.received) + BigInt(amount))
@@ -102,9 +103,16 @@ export class StreamService {
           })
         })
 
+        stream.on('end', async () => {
+          this.logger.debug('STREAM ended', { invoiceId: invoice.id })
+        })
+
         stream.on('error', (err) => {
           this.logger.warn('stream error', { err: err })
         })
+
+        const maxReceivable = invoice.amount ? invoice.amount.toString() : String(2 ** 56)
+        stream.setReceiveMax(maxReceivable)
       })
 
       conn.on('error', (err: Error) => {
@@ -135,7 +143,11 @@ export class StreamService {
     this.logger.trace('STREAM stream created')
 
     this.logger.trace('Sending funds')
-    await stream.sendTotal(amount)
+    await stream.sendTotal(amount, {
+      timeout: 5000
+    }).catch(() => {
+      this.logger.error('Send total did not manage to send full amount', { toSend: amount, sent: stream.totalSent })
+    })
 
     this.logger.trace('Funds sent, closing STREAM')
     await stream.end()

@@ -16,9 +16,15 @@ const ToggleSwitch: React.FC<props> = props => {
 
   const minWidth = longest * 16
 
-  let clicked = `button py-2 px-4 focus:outline-none bg-primary text-on-surface hover:elevation-3 active:elevation-6`
-  let defaultButton = `button py-2 px-4 focus:outline-none text-on-surface active:bg-primary hover:elevation-3 active:elevation-6`
+  let clicked = `button py-2 px-4 focus:outline-none bg-primary text-on-surface hover:elevation-3 active:elevation-6 cursor-pointer`
+  let defaultButton = `button py-2 px-4 focus:outline-none text-on-surface active:bg-primary hover:elevation-3 active:elevation-6 cursor-pointer`
   let rounding = ""
+
+  const toggleSelected = (selected: string) => {
+    if(props.onClick) {
+      props.onClick(selected)
+    }
+  }
 
   let arr = []
   for (let x = 0; x < textLength; x++) {
@@ -29,34 +35,32 @@ const ToggleSwitch: React.FC<props> = props => {
     } else rounding = ""
     if (props.active === props.text[x])
       arr.push(
-        <button
+        <div
           key={props.text[x]}
           style={{ width: minWidth }}
-          type={"submit"}
-          onClick={!props.onClick ? () => {} : props.onClick}
+          onClick={() => toggleSelected(props.text[x])}
           className={clicked + ` ${rounding}`}
         >
           {props.text[x]}
-        </button>
+        </div>
       )
     else
       arr.push(
-        <button
+        <div
           key={props.text[x]}
           style={{ width: minWidth }}
-          type={"submit"}
-          onClick={!props.onClick ? () => {} : props.onClick}
+          onClick={() => toggleSelected(props.text[x])}
           className={defaultButton + ` ${rounding}`}
         >
           {props.text[x]}
-        </button>
+        </div>
       )
     if (x != textLength - 1)
       arr.push(<div key={x} className="border border-on-surface opacity-12"></div>)
   }
 
   return (
-    <div className="bg-surface-elevation-2 elevation-2">
+    <div className="bg-surface-elevation-2 elevation-2 rounded">
       <div className="flex justify-center">{arr}</div>
     </div>
   )

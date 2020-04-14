@@ -5,6 +5,7 @@ import { createTestApp, TestAppContainer } from '../helpers/app'
 import { createConnection } from 'ilp-protocol-stream'
 import { Invoice } from '../../src/models/invoice'
 import { InvoiceTransaction } from '../../src/models/invoiceTransaction'
+import { Account, User } from '../../src/models'
 
 describe('STREAM Service Test', () => {
   let streamService: StreamService
@@ -46,12 +47,25 @@ describe('STREAM Service Test', () => {
   })
 
   describe('Stream Receiving Test', () => {
-    test('Received STREAM has connection allocated to Invoice', async (done) => {
+    test('Received STREAM has connection allocated to Invoice and finalized', async () => {
+      const user = await User.query().insert({
+        username: 'alice'
+      })
+      const account = await Account.query().insertAndFetch({
+        userId: user.id,
+        name: 'Test',
+        assetCode: 'USD',
+        assetScale: 6,
+        limit: 0n,
+        balance: 0n
+      })
       const invoice = await Invoice.query().insert({
         assetCode: 'USD',
         assetScale: 6,
         amount: 1000000n,
-        subject: '$rafiki.money/p/don'
+        subject: '$rafiki.money/p/don',
+        accountId: account.id,
+        userId: user.id
       })
 
       const credentials = streamService.generateStreamCredentials(invoice.id)
@@ -63,20 +77,14 @@ describe('STREAM Service Test', () => {
       })
 
       const stream = await streamClient.createStream()
-      stream.setSendMax(1000000)
-      let total = 0
-      stream.on('outgoing_money', async (amount) => {
-        total += Number(amount)
-        if (total === 1000000) {
-          // We have sent it but other side hasn't receive it yet
-          await new Promise(resolve => setTimeout(resolve, 150))
-          const totalReceived = await InvoiceTransaction.query().where('invoiceId', invoice.id).sum('amount').then(data => {
-            return Number(data[0]['sum'])
-          })
-          expect(totalReceived).toEqual(1000000)
-          done()
-        }
+      await stream.sendTotal(1000000)
+      await stream.end()
+
+      await new Promise(resolve => setTimeout(resolve, 200))
+      const totalReceived = await InvoiceTransaction.query().where('invoiceId', invoice.id).sum('amount').then(data => {
+        return Number(data[0]['sum'])
       })
+      expect(totalReceived).toEqual(1000000)
     })
   })
 })

@@ -3,7 +3,7 @@ import { NextPage } from "next"
 import { Card, Content, Navigation, Button, TextInput, Selector, ToggleSwitch } from "./../../components"
 import useForm from 'react-hook-form'
 import { UsersService } from '../../services/users'
-import { pay } from '../../services/pay'
+import { payInvoice } from '../../services/pay'
 import { checkUser, formatCurrency } from '../../utils'
 import ky from 'ky-universal'
 import getConfig from 'next/config'
@@ -30,42 +30,41 @@ type PaymentDetails = {
 const usersService = UsersService()
 
 type PaymentPointerCardProps = {
-  setPaymentDetails: (any) => void
+  setInvoiceDetails: (any) => void
 }
 
-const PaymentPointerCard = (props: PaymentPointerCardProps) => {
+const InvoiceCard = (props: PaymentPointerCardProps) => {
   const {register, handleSubmit, errors, setError, clearError} = useForm()
 
   const onSubmit = async data => {
-    const {paymentPointer} = data
+    const { invoice } = data
 
-    const url = new URL(`${USERS_API_URL}/paymentpointers/validate`)
-    url.searchParams.append('pp', paymentPointer)
+    const url = new URL(`${USERS_API_URL}/validate/invoices`)
+    url.searchParams.append('q', invoice)
 
     try {
       const response = await ky.get(url.toString()).json<Partial<PaymentDetails>>()
-      props.setPaymentDetails({
-        type: response.type,
-        paymentPointer
+      props.setInvoiceDetails({
+        invoice
       })
     } catch (error) {
-      setError("sendPayment", "invalidPaymentPointer", "Invalid payment pointer")
+      setError("sendPayment", "invalidInvoice", "Invalid Invoice")
     }
   }
 
   return (
     <Card>
       <div className="flex text-center m-8 text-headline-4">
-        Send a payment to
+        Pay to an Invoice
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <TextInput
           errorState={errors.sendPayment != undefined}
           inputRef={(register({required: true}))}
-          name='paymentPointer'
-          label="Payment Pointer"
+          name='invoice'
+          label="Invoice"
           inputType="text"
-          hint={errors.sendPayment ? errors.sendPayment.type === 'required' ? 'Payment pointer required' : (errors.sendPayment.message) as string : undefined}
+          hint={errors.sendPayment ? errors.sendPayment.type === 'required' ? 'Invoice required' : (errors.sendPayment.message) as string : undefined}
         />
         <div className="flex justify-center pt-4 pb-6">
           <Button
@@ -81,9 +80,15 @@ const PaymentPointerCard = (props: PaymentPointerCardProps) => {
 
 }
 
+type Invoice = {
+  name: string,
+  amount: string,
+  assetCode: string,
+  assetScale: number
+}
+
 type PaymentCardProps = {
-  paymentPointer: string
-  type: string,
+  invoice: Invoice,
   token: string,
   userId: string
   setPaymentDetails: (any) => void
@@ -117,7 +122,7 @@ const PaymentCard = (props: PaymentCardProps) => {
     if (selectedAccount) {
       if(!isSending) {
         setIsSending(true)
-        await pay(props.paymentPointer, data.amount, selectedAccount.value, props.type, props.token).then(async (response) => {
+        await payInvoice(props.invoice.name, Number(props.invoice.amount), selectedAccount.value, props.token).then(async (response) => {
           const body = await response.json()
           setPaymentStatus({
             success: true,
@@ -151,26 +156,42 @@ const PaymentCard = (props: PaymentCardProps) => {
 
   const RenderPaymentDetails = () => {
     return (
-      <form onSubmit={handleSubmit(onSend)}>
-        <TextInput
-          inputType="text"
-          errorState={errors.amount != undefined}
-          inputRef={(register({required: true, pattern: /^[0-9]+(\.[0-9]{1,6})?$/}))}
-          name="amount"
-          label="Amount"
-          hint={errors.amount ? errors.amount.type === 'required' ? 'Amount required' : (errors.amount.message) as string : undefined}
-        />
-        <Selector
-          options={accounts}
-          onChange={(e) => setSelectedAccount(e)}
-          hint={errors.selectAccount ? (errors.selectAccount.message) as string : undefined}
-        />
-        <div className="flex justify-center pt-2 pb-6">
-          <Button type="solid" buttonType="submit">
-            SEND
-          </Button>
+      <div>
+        <div className="my-2">
+          <div className="overline text-on-surface-disabled">
+            Amount
+          </div>
+          <div className="headline-6">
+            {formatCurrency(Number(props.invoice.amount), props.invoice.assetScale)} {props.invoice.assetCode}
+          </div>
         </div>
-      </form>
+        <div className="my-2">
+          <div className="overline text-on-surface-disabled">
+            Description
+          </div>
+          <div className="headline-6">
+            {}
+          </div>
+        </div>
+        <form onSubmit={handleSubmit(onSend)}>
+          <Selector
+            options={accounts}
+            onChange={(e) => setSelectedAccount(e)}
+            hint={errors.selectAccount ? (errors.selectAccount.message) as string : undefined}
+          />
+          <div className="-mt-2 mb-6 px-2 py-2 bg-primary-100 rounded overline text-black font-bold">
+            ≈ {formatCurrency(Number(props.invoice.amount), props.invoice.assetScale)} {props.invoice.assetCode}
+          </div>
+          <div className="flex justify-end pt-2 pb-2">
+            <Button type="text" buttonType="reset">
+              Cancel
+            </Button>
+            <Button disabled={!selectedAccount} type="solid" buttonType="submit" className="ml-4">
+              Pay
+            </Button>
+          </div>
+        </form>
+      </div>
     )
   }
 
@@ -213,10 +234,8 @@ const PaymentCard = (props: PaymentCardProps) => {
 
   return (
     <Card>
-      <div className="flex justify-center pt-10 pb-8">
-        <div className="flex content-center flex-wrap text-headline-5 truncate">
-          {props.paymentPointer}
-        </div>
+      <div className="text-headline-5 justify-center pb-4">
+        Payment
       </div>
       {!(isSending || paymentStatus) ? RenderPaymentDetails() : null}
       {isSending ? RenderLoading() : null}
@@ -226,7 +245,7 @@ const PaymentCard = (props: PaymentCardProps) => {
 }
 
 const Transact: NextPage<Props> = ({user}) => {
-  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>()
+  const [paymentDetails, setPaymentDetails] = useState<Invoice>({"id":"b5031e30-736b-4d1a-9d5c-c983eeee5dec","name":"//localhost:3001/invoices/b5031e30-736b-4d1a-9d5c-c983eeee5dec","description":"send a payment","assetCode":"USD","assetScale":6,"amount":"12000000","balance":"0","expiresAt":null,"subject":"http://localhost:3001/p/matt","received":"0"} as any)
 
   return (
     <div>
@@ -234,11 +253,11 @@ const Transact: NextPage<Props> = ({user}) => {
       <Content navigation>
         <div className="flex justify-center">
           <ToggleSwitch
-            active="SEND"
+            active="PAY"
             text={["SEND", "PAY"]}
             onClick={(changed) => {
-              if(changed === 'PAY') {
-                Router.push('/transact/pay')
+              if(changed === 'SEND') {
+                Router.push('/transact/send')
               }
             }}
           />
@@ -246,14 +265,13 @@ const Transact: NextPage<Props> = ({user}) => {
         <div className="flex justify-center mt-10">
           {
             paymentDetails ?
-              <PaymentCard paymentPointer={paymentDetails.paymentPointer}
+              <PaymentCard invoice={paymentDetails}
                            token={user.token}
                            userId={user.id}
-                           type={paymentDetails.type}
                            setPaymentDetails={setPaymentDetails}
               />
               :
-              <PaymentPointerCard setPaymentDetails={setPaymentDetails}/>
+              <InvoiceCard setInvoiceDetails={setPaymentDetails}/>
           }
         </div>
       </Content>

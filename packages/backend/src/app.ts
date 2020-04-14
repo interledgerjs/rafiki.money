@@ -15,6 +15,7 @@ import * as ConsentController from './controllers/consentController'
 import * as MonetizationController from './controllers/monetizationController'
 import * as OpenPaymentsMetadataController from './controllers/openPaymentsMetadataController'
 import * as ValidatePaymentPointerController from './controllers/validatePaymentPointerController'
+import * as ValidateInvoicesController from './controllers/validateInvoicesController'
 import * as Oauth2ClientController from './controllers/oauth2ClientController'
 import * as AccountsController from './controllers/accounts'
 import * as AccountTransactionsController from './controllers/accountTransactionController'
@@ -22,6 +23,7 @@ import * as MandatesController from './controllers/mandatesController'
 import * as MandatesTransactionController from './controllers/mandateTransactionsController'
 import * as InvoicesController from './controllers/invoicesController'
 import * as PeerPaymentController from './controllers/peerPaymentController'
+import * as InvoicePaymentController from './controllers/invoicePaymentController'
 import * as CancelMandatesController from './controllers/cancelMandatesController'
 import * as ChargesController from './controllers/chargesController'
 import * as TransactionsController from './controllers/transactionsController'
@@ -102,6 +104,7 @@ export class App {
     this._publicRouter.get('/.well-known/open-payments', OpenPaymentsMetadataController.show)
 
     this._publicRouter.get('/paymentpointers/validate', ValidatePaymentPointerController.show)
+    this._publicRouter.get('/validate/invoices', ValidateInvoicesController.show)
 
     this._privateRouter.post('/oauth2/clients', Oauth2ClientController.store)
 
@@ -129,5 +132,6 @@ export class App {
     this._publicRouter.options('/invoices/:id', InvoicesController.options)
 
     this._privateRouter.post('/payments/peer', PeerPaymentController.store)
+    this._privateRouter.post('/payments/invoice', InvoicePaymentController.store)
   }
 }

@@ -20,3 +20,17 @@ export async function pay(paymentPointer: string, amount: number, accountId: num
         {authorization: `Bearer ${token}`}
     })
 }
+
+export async function payInvoice(invoice: string, amount: number, accountId: number, token: string) {
+  const url = new URL(`${USERS_API_URL}/payments/invoice`)
+  return ky.post(url.toString(),
+    {
+      json: {
+        accountId,
+        invoice,
+        amount
+      },
+      headers:
+        {authorization: `Bearer ${token}`}
+    })
+}

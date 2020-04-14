@@ -16,7 +16,7 @@ const connector = Connector.createApp({
       options: {
         port: 8000
       },
-      maxPacketAmount: '100000'
+      maxPacketAmount: '1000000'
     },
   }
 })

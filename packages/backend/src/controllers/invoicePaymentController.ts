@@ -55,15 +55,24 @@ const modifyBalance = async (accountId: number, amount: bigint, description = ''
   })
 }
 
-const createReceiverInvoice = async (paymentPointer: string, description = '') => {
-  const url = await getOpenPaymentsInvoiceURL(paymentPointer)
-  return got.post(url, {
-    json: {
-      subject: paymentPointer,
-      description: description,
-      expiresAt: new Date(Date.now() + 30 * 1000).toISOString()
+const getInvoicePaymentDetails = async (invoiceName: string): Promise<any> => {
+  let url = ''
+  if (invoiceName.startsWith('http') || invoiceName.startsWith('https')) {
+    url = invoiceName
+  } else if (invoiceName.startsWith('//')) {
+    url = `${HTTP_PROTOCOL}:${invoiceName}`
+  }
+
+  return got(url, {
+    method: 'OPTIONS'
+  }).then(async response => {
+    const body = await response.body
+    const json = JSON.parse(body)
+    if (!json.ilpAddress) {
+      throw new Error('Invalid invoice')
     }
-  }).json()
+    return json
+  })
 }
 
 export async function store (ctx: AppContext): Promise<void> {
@@ -108,47 +117,18 @@ export async function store (ctx: AppContext): Promise<void> {
     return
   }
 
-  let paymentDetails: { ilpAddress: string, sharedSecret: string }
-  if (body.type === 'open-payments') {
-    // Create Invoice at Receiver
-    const invoice: any = await createReceiverInvoice(body.receiverPaymentPointer)
-
-    // Get Payment details for invoice
-    const invoiceUrl = `${HTTP_PROTOCOL}:${invoice.name}`
-    paymentDetails = await got(invoiceUrl, {
-      method: 'OPTIONS'
-    }).json()
-  } else if (body.type === 'spsp') {
-    const url = new URL(paymentPointerToURL(body.receiverPaymentPointer))
-    const spspUrl = url.toString()
-    const response = await got.get(spspUrl, {
-      headers: {
-        'Accept': 'application/spsp4+json'
-      }
-    })
-    const jsonBody = JSON.parse(response.body)
-    paymentDetails = {
-      ilpAddress: jsonBody.destination_account,
-      sharedSecret: jsonBody.shared_secret
-    }
-  } else {
-    ctx.status = 422
-    ctx.body = {
-      message: 'Payment Type Required'
-    }
-    return
-  }
+  const paymentDetails: { ilpAddress: string, sharedSecret: string } = await getInvoicePaymentDetails(body.invoice)
 
   // TODO this code needs to be made more resilient
   try {
-    await modifyBalance(account.id, -amount, `Payment to ${body.receiverPaymentPointer}`)
+    await modifyBalance(account.id, -amount, `Paying Invoice ${body.receiverPaymentPointer}`)
 
     const sent = await streamService.sendMoney(paymentDetails.ilpAddress, paymentDetails.sharedSecret, amount.toString())
 
     if (sent !== amount) {
       logger.error('Failed to send full amount', { amount: amount.toString(), sent: sent.toString() })
       const amountNotSent = amount - sent
-      await modifyBalance(account.id, amountNotSent, `Refund for amount not sent to ${body.receiverPaymentPointer}`)
+      await modifyBalance(account.id, amountNotSent, `Refund for Paying Invoice ${body.receiverPaymentPointer}`)
     }
 
     ctx.body = {

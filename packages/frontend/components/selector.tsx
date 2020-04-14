@@ -40,7 +40,7 @@ type props = {
 const Selector: React.FC<props> = props => {
 
   return (
-    <div className="max-w-xs undefined relative h-18 my-5">
+    <div className="max-w-xs relative h-18 my-5">
       <Select
         options={props.options}
         styles={customStyles}
