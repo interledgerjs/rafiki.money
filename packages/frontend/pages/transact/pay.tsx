@@ -44,9 +44,7 @@ const InvoiceCard = (props: PaymentPointerCardProps) => {
 
     try {
       const response = await ky.get(url.toString()).json<Partial<PaymentDetails>>()
-      props.setInvoiceDetails({
-        invoice
-      })
+      props.setInvoiceDetails(response)
     } catch (error) {
       setError("sendPayment", "invalidInvoice", "Invalid Invoice")
     }
@@ -245,7 +243,7 @@ const PaymentCard = (props: PaymentCardProps) => {
 }
 
 const Transact: NextPage<Props> = ({user}) => {
-  const [paymentDetails, setPaymentDetails] = useState<Invoice>({"id":"b5031e30-736b-4d1a-9d5c-c983eeee5dec","name":"//localhost:3001/invoices/b5031e30-736b-4d1a-9d5c-c983eeee5dec","description":"send a payment","assetCode":"USD","assetScale":6,"amount":"12000000","balance":"0","expiresAt":null,"subject":"http://localhost:3001/p/matt","received":"0"} as any)
+  const [paymentDetails, setPaymentDetails] = useState<Invoice>()
 
   return (
     <div>
