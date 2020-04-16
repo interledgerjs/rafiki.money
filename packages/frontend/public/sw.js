@@ -1,19 +1,19 @@
-let methodName = 'https://rafiki.money'
+let methodName = 'https://openpayments.dev'
 let checkoutURL = ''
 let resolver
 let payment_request_event
-let minimalUI = true
+let minimalUI = false
 
 self.addEventListener('canmakepayment', e => {
   console.log('canMakePayment event: ', e)
-  if (e.respondWithMinimalUI && e.currency) { 
+  if (e.respondWithMinimalUI && e.currency) {
+    minimalUI = true
     return e.respondWithMinimalUI({
       canMakePayment: true,
       readyForMinimalUI: e.currency === 'USD',
       accountBalance: '15.00',
     })
   } else {
-    minimalUI = false
     console.log('Minimal UI feature is not enabled. Is ' + 'chrome://flags/#enable-web-payments-minimal-ui flag enabled?')
     e.respondWith(true)
   }
