@@ -23,10 +23,10 @@ const Settings: NextPage<Props> = ({user}) => {
     registration.paymentManager.userHint = "Registration user hint";
     return Promise.all([
       registration.paymentManager.instruments.set(
-        'http://localhost:3000/',
+        'Rafiki Money',
         {
-          name: 'http://localhost:3000/',
-          method: 'http://localhost:3000/'
+          name: 'Rafiki Money',
+          method: 'https://openpayments.dev'
         }
       )
     ])

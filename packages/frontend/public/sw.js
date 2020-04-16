@@ -1,4 +1,4 @@
-let methodName = 'http://localhost:3000/'
+let methodName = 'https://rafiki.money'
 let checkoutURL = ''
 let resolver
 let payment_request_event
