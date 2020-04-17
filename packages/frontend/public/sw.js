@@ -70,6 +70,11 @@ self.addEventListener('message', e => {
   }
 })
 
+// Force the SW to be activated immediately
+self.addEventListener('install', function(event) {
+  self.skipWaiting();
+});
+
 const sendPaymentRequest = () => {
   if (!payment_request_event) return
   clients.matchAll({
