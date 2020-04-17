@@ -26,7 +26,7 @@ const Settings: NextPage<Props> = ({user}) => {
         'Rafiki Money',
         {
           name: 'Rafiki Money',
-          method: 'https://openpayments.dev'
+          method: 'https://openpayments.dev/pay'
         }
       )
     ])

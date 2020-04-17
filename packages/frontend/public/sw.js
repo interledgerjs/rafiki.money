@@ -1,5 +1,5 @@
-let methodName = 'https://openpayments.dev'
-let checkoutURL = ''
+let methodName = 'https://openpayments.dev/pay'
+let checkoutURL = 'https://rafiki.money/checkout'
 let resolver
 let payment_request_event
 let minimalUI = false
@@ -31,7 +31,7 @@ self.addEventListener('paymentrequest', e => {
     payment_request_event = e
     console.log('A->', e)
     console.log('B->', getMethodData( e, methodName))
-    checkoutURL = `${methodName}checkout?name=${e.methodData[0].data.invoice.name}`
+    checkoutURL = `${checkoutURL}?name=${e.methodData[0].data.invoice.name}`
 
     resolver = new PromiseResolver()
 
