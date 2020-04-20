@@ -7,12 +7,7 @@ import BtpPlugin from 'ilp-plugin-btp'
 import { randomBytes } from 'crypto'
 import { run } from './jobs/claimInvoicesJob'
 import Knex = require('knex')
-const logger = createLogger({
-  prettyPrint: {
-    translateTime: true,
-    ignore: 'pid,hostname'
-  }
-})
+const logger = createLogger()
 logger.level = process.env.LOG_LEVEL || 'info'
 
 const PORT = process.env.PORT || 3001
