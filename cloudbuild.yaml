@@ -1,0 +1,9 @@
+steps:
+  - id: 'build backend'
+    name: 'gcr.io/cloud-builders/gcloud'
+    args: ['builds', 'submit', '--config=cloudbuild.backend.yaml', '--substitutions=SHORT_SHA=$SHORT_SHA']
+    waitFor: ['-'] #start in parallel
+  - id: 'build frontend'
+    name: 'gcr.io/cloud-builders/gcloud'
+    args: ['builds', 'submit', '--config=cloudbuild.frontend.yaml', '--substitutions=SHORT_SHA=$SHORT_SHA']
+    waitFor: ['-'] # start in parallel
