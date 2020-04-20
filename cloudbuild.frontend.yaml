@@ -5,6 +5,7 @@ steps:
     args: ["push", "gcr.io/coil-sa/rafiki-money-frontend:$SHORT_SHA"]
   - name: 'gcr.io/cloud-builders/kubectl'
     args:
+      - --namespace rafiki-money
       - set
       - image
       - deployment
