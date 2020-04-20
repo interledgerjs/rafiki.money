@@ -5,12 +5,12 @@ steps:
     args: ["push", "gcr.io/coil-sa/rafiki-money-backend:$SHORT_SHA"]
   - name: 'gcr.io/cloud-builders/kubectl'
     args:
-      - --namespace rafiki-money
       - set
       - image
       - deployment
       - backend
       - 'rafiki-money-backend-sha256-1=gcr.io/coil-sa/rafiki-money-backend:$SHORT_SHA'
+      - --namespace=rafiki-money
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
       - 'CLOUDSDK_CONTAINER_CLUSTER=rafiki-cluster'
