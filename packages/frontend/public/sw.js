@@ -9,7 +9,7 @@ const USERS_API_URL = 'https://rafiki.money/api/'
 const getBalance = async () => {
   let token = await cookieStore.get('token')
   console.log('token', token)
-  const request = new Request(`${USERS_API_URL}/users/me/balance`, { method: 'GET', headers: new Headers({ 'authorization': `Bearer ${token}` }) })
+  const request = new Request(`${USERS_API_URL}users/me/balance`, { method: 'GET', headers: new Headers({ 'authorization': `Bearer ${token.value}` }) })
   self.fetch(request).then(response => {
     console.log(response)
     if (response.status === 200) {
@@ -26,11 +26,11 @@ const getBalance = async () => {
 
 const payInvoice  = async (invoice) => {
   let token = await cookieStore.get('token')
-  let body = FormData()
+  let body = new FormData()
   body.append('invoice', invoice.id)
   body.append('accountId', invoice.accountId)
   body.append('amount', invoice.amount)
-  const request = new Request(`${USERS_API_URL}/payments/invoice`, { method: 'POST', body: body, headers: new Headers({ 'authorization': `Bearer ${token}` }) })
+  const request = new Request(`${USERS_API_URL}payments/invoice`, { method: 'POST', body: body, headers: new Headers({ 'authorization': `Bearer ${token.value}` }) })
   self.fetch(request).then(response => {
     console.log(response)
     if (response.status === 200) {
