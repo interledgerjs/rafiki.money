@@ -1,4 +1,4 @@
 {
-  "default_applications": ["http://localhost:3000/", "https://b59655a7.ngrok.io/"],
-  "supported_origins": ["http://localhost:3000/", "https://b59655a7.ngrok.io/"]
+  "default_applications": ["http://localhost:3000/", "https://openpayments.dev/pay"],
+  "supported_origins": ["http://localhost:3000/", "https://openpayments.dev/pay"]
 }
