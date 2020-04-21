@@ -73,7 +73,7 @@ export class StreamService {
       conn.on('stream', async (stream: DataAndMoneyStream) => {
         // Todo, potentially limit this to the amount still needed for the Invoice.
         //  This would mean only a singular Invoice can be paid at once
-        stream.setReceiveMax(String(0))
+        stream.setReceiveMax(String(2 ** 56))
 
         if (!conn.connectionTag) {
           await conn.end()
@@ -111,8 +111,8 @@ export class StreamService {
           this.logger.warn('stream error', { err: err })
         })
 
-        const maxReceivable = invoice.amount ? invoice.amount.toString() : String(2 ** 56)
-        stream.setReceiveMax(maxReceivable)
+        // const maxReceivable = invoice.amount ? invoice.amount.toString() : String(2 ** 56)
+        // stream.setReceiveMax(maxReceivable)
       })
 
       conn.on('error', (err: Error) => {
