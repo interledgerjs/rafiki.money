@@ -4,14 +4,58 @@ let resolver
 let payment_request_event
 let minimalUI = false
 
-self.addEventListener('canmakepayment', e => {
+const USERS_API_URL = 'https://rafiki.money/api/'
+
+const getBalance = async () => {
+  let token = await cookieStore.get('token')
+  console.log('token', token)
+  const request = new Request(`${USERS_API_URL}users/me/balance`, { method: 'GET', headers: new Headers({ 'authorization': `Bearer ${token.value}` }) })
+  self.fetch(request).then(response => {
+    console.log(response)
+    if (response.status === 200) {
+      return response.json()
+    } else {
+      throw new Error('Something went wrong on api server!');
+    }
+  }).then(response => {
+    return response.balance
+  }).catch(error => {
+    console.error(error)
+  })
+}
+
+const payInvoice  = async (invoice) => {
+  let token = await cookieStore.get('token')
+  let body = new FormData()
+  body.append('invoice', invoice.id)
+  body.append('accountId', invoice.accountId)
+  body.append('amount', invoice.amount)
+  const request = new Request(`${USERS_API_URL}payments/invoice`, { method: 'POST', body: body, headers: new Headers({ 'authorization': `Bearer ${token.value}` }) })
+  self.fetch(request).then(response => {
+    console.log(response)
+    if (response.status === 200) {
+      return response.json()
+    } else {
+      throw new Error('Something went wrong on api server!');
+    }
+  }).then(response => {
+    return response
+  }).catch(error => {
+    console.error(error)
+  })
+}
+
+self.addEventListener('canmakepayment', async e => {
   console.log('canMakePayment event: ', e)
-  if (e.respondWithMinimalUI && e.currency) {
+  let balance = await getBalance()
+  if (e.methodData[0].data.invoice.amount > balance) return e.respondWith(false)
+  console.log('balance - invoice.amount', balance, e.methodData[0].data.invoice.amount)
+  if (e.respondWithMinimalUI && e.currency) { 
     minimalUI = true
     return e.respondWithMinimalUI({
       canMakePayment: true,
       readyForMinimalUI: e.currency === 'USD',
-      accountBalance: '15.00',
+      accountBalance: balance,
     })
   } else {
     console.log('Minimal UI feature is not enabled. Is ' + 'chrome://flags/#enable-web-payments-minimal-ui flag enabled?')
@@ -19,14 +63,31 @@ self.addEventListener('canmakepayment', e => {
   }
 })
 
-self.addEventListener('paymentrequest', e => {
+self.addEventListener('paymentrequest', async e => {
   if (minimalUI) {
-    e.respondWith({
-      methodName: methodName,
-      details: {
-        token: '1234567890',
-      },
-    })
+    console.log('Payment request:', e.methodData[0].data.invoice)
+    // e.respondWith({
+    //   methodName: methodName,
+    //   details: {
+    //     success: true,
+    //   },
+    // })
+    let paid = await payInvoice(e.methodData[0].data.invoice)
+    if (paid) {
+      e.respondWith({
+        methodName: methodName,
+        details: {
+          success: true,
+        },
+      })
+    } else {
+      e.respondWith({
+        methodName: methodName,
+        details: {
+          success: false,
+        },
+      })
+    }
   } else {
     payment_request_event = e
     console.log('A->', e)
