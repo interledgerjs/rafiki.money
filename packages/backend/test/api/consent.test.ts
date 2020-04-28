@@ -176,7 +176,7 @@ describe('Consent', function () {
       expect(data).toEqual({ redirectTo: 'http://localhost:9010/callback' })
       expect(hydra.getConsentRequest).toHaveBeenCalled()
       expect(hydra.acceptConsentRequest).toHaveBeenCalledWith('testChallenge', {
-        remember: true,
+        remember: false,
         remember_for: 0,
         grant_scope: ['offline', 'openid'],
         grant_access_token_audience: 'test',

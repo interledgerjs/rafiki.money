@@ -35,7 +35,7 @@ export async function show (ctx: AppContext): Promise<void> {
 
   ctx.logger.debug('Got hydra consent request', { consentRequest })
 
-  if (consentRequest['skip'] || consentRequest['client'].client_id === 'frontend-client' || consentRequest['client'].client_id === 'wallet-gui-service') {
+  if ((consentRequest['skip'] || consentRequest['client'].client_id === 'frontend-client') && authorizationDetails === null) {
     const acceptConsent = await hydra.acceptConsentRequest(challenge, {
       remember: true,
       remember_for: 0,
@@ -122,7 +122,7 @@ export async function store (ctx: AppContext): Promise<void> {
   }
 
   const acceptConsent = await hydra.acceptConsentRequest(challenge, {
-    remember: true,
+    remember: authorizationDetails === null,
     remember_for: 0,
     grant_scope: scopes,
     grant_access_token_audience: consentRequest['requested_access_token_audience'],
