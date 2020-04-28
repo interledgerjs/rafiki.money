@@ -117,6 +117,7 @@ export async function store (ctx: AppContext): Promise<void> {
     }
 
     await Mandate.query().where('id', mandate.id).update({
+      userId: account.userId,
       accountId
     })
   }
