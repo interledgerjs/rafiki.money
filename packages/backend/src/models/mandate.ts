@@ -3,7 +3,7 @@ import { v4 } from 'uuid'
 import { Charge, ChargeInfo } from './charge'
 import { MandateTransaction } from './mandateTransaction'
 
-const OpenPaymentsIssuer = 'localhost' || process.env.OPEN_PAYMENTS_ISSUER
+const OpenPaymentsIssuer = process.env.OPEN_PAYMENTS_ISSUER || 'localhost'
 
 export type MandateInfo = {
   id: string;

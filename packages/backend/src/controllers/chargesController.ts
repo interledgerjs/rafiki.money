@@ -1,8 +1,7 @@
 import axios from 'axios'
-import { Transaction as KnexTransaction, ref, raw, Model } from 'objection'
+import { Transaction as KnexTransaction, Model } from 'objection'
 import { AppContext } from '../app'
-import { Mandate, Transaction, Account } from '../models'
-import { Charge } from '../models/charge'
+import { Mandate, Account, Charge } from '../models'
 import { MandateTransaction } from '../models/mandateTransaction'
 
 const INVOICE_URL_PROTOCOL = process.env.INVOICE_PROTOCOL || 'http'
@@ -76,7 +75,7 @@ export async function store (ctx: AppContext): Promise<void> {
     ctx.body = charge!.toJSON()
   } catch (error) {
     ctx.status = 500
-  }  
+  }
 }
 
 const modifyAccountBalance = async (accountId: number, amount: bigint, trx: KnexTransaction, description = ''): Promise<void> => {
