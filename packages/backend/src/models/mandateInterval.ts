@@ -3,44 +3,37 @@ import { Mandate } from './mandate'
 
 export type MandateTransactionInfo = {
   id: number;
-  accountId: number;
-  amount: string;
-  description: string;
-  createdAt: string;
-  updatedAt: string;
   mandateId: string;
-  mandateIntervalId: number;
-  chargeId: string;
+  used: string;
+  startAt: string
 }
 
-export class MandateTransaction extends Model {
+export class MandateInterval extends Model {
   static get tableName (): string {
-    return 'mandateTransactions'
+    return 'mandateIntervals'
   }
 
   static relationMappings = {
-    account: {
+    mandate: {
       relation: Model.BelongsToOneRelation,
       modelClass: Mandate,
       join: {
-        from: 'mandateTransactions.mandateId',
+        from: 'mandateIntervals.mandateId',
         to: 'mandates.id'
       }
     }
   };
 
   id: number;
-  accountId: number;
-  chargeId: string;
-  amount: bigint;
-  description !: string;
+  mandateId: string;
+  used: bigint;
+  startAt: string;
   createdAt: string;
   updatedAt: string;
-  mandateId: string;
-  mandateIntervalId: number;
 
   $beforeInsert () {
     this.createdAt = new Date().toISOString()
+    this.used = 0n
   }
 
   $beforeUpdate () {
@@ -50,13 +43,9 @@ export class MandateTransaction extends Model {
   $formatJson (): Partial<MandateTransactionInfo> {
     return {
       id: this.id,
-      accountId: this.accountId,
-      description: this.description,
-      amount: this.amount.toString(),
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
       mandateId: this.mandateId,
-      mandateIntervalId: this.mandateIntervalId
+      used: this.used.toString(),
+      startAt: this.createdAt
     }
   }
 }

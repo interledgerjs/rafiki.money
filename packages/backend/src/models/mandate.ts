@@ -1,8 +1,9 @@
-import { Model } from 'objection'
+import { Model, UniqueViolationError } from 'objection'
 import { v4 } from 'uuid'
 import { Charge, ChargeInfo } from './charge'
 import { MandateTransaction } from './mandateTransaction'
-
+import { toSeconds, parse } from 'iso8601-duration'
+import { MandateInterval } from './mandateInterval'
 const OpenPaymentsIssuer = process.env.OPEN_PAYMENTS_ISSUER || 'localhost'
 
 export type MandateInfo = {
@@ -77,6 +78,45 @@ export class Mandate extends Model {
 
   $beforeUpdate (): void {
     this.updatedAt = new Date().toISOString()
+  }
+
+  async currentInterval (): Promise<MandateInterval> {
+    const currentIntervalStartAt = this.currentIntervalStartAt()
+    let interval = await MandateInterval.query().where({
+      mandateId: this.id,
+      startAt: currentIntervalStartAt
+    }).first()
+
+    if (!interval) {
+      try {
+        interval = await MandateInterval.query().insert({
+          mandateId: this.id,
+          startAt: currentIntervalStartAt.toISOString()
+        }).first()
+      } catch (error) {
+        if (error instanceof UniqueViolationError) {
+          interval = await MandateInterval.query().where({
+            mandateId: this.id,
+            startAt: currentIntervalStartAt
+          }).first()
+        }
+      }
+    }
+
+    return interval
+  }
+
+  currentIntervalStartAt () {
+    const startAt = new Date(this.startAt)
+    const now = new Date()
+    const intervalSeconds = this.interval ? toSeconds(parse((this.interval))) : 0
+
+    const intervalNumber = intervalSeconds === 0 ? 1 : Math.floor((now.getTime() / 1000 - startAt.getTime() / 1000) / intervalSeconds)
+
+    const startAtEpoch = startAt.getTime()
+
+    const intervalStartAtEpoch = startAtEpoch + intervalNumber * intervalSeconds * 1000
+    return new Date(intervalStartAtEpoch)
   }
 
   $formatJson (): Partial<MandateInfo> {

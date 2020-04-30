@@ -28,6 +28,7 @@
     "got": "^10.7.0",
     "ilp-plugin-btp": "^1.4.2",
     "ilp-protocol-stream": "^2.0.2",
+    "iso8601-duration": "^1.2.0",
     "knex": "^0.20.12",
     "koa": "^2.8.1",
     "koa-bodyparser": "^4.2.1",
