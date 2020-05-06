@@ -68,6 +68,12 @@ export async function store (ctx: AppContext): Promise<void> {
     return
   }
 
+  if (mandate.cancelledAt !== null) {
+    ctx.status = 422
+    ctx.message = 'Mandate cancelled'
+    return
+  }
+
   const mandateAuthorizationDetails = ctx.state.user.ext.authorization_details.filter((details: AuthorizationDetail) => details.type === 'open_payments_mandate')
   if (!enforce(ctx.state.user.sub, mandateAuthorizationDetails.length > 0 ? mandateAuthorizationDetails[0] : [], mandate)) {
     ctx.status = 401
