@@ -69,50 +69,44 @@ export class StreamService {
   setupStream () {
     this.streamServer.on('connection', (conn: Connection) => {
       this.logger.trace('Got connection')
+      if (!conn.connectionTag) {
+        conn.end()
+        return
+      }
+      const data = JSON.parse(this.decodeConnectionTag(conn.connectionTag))
 
       conn.on('stream', async (stream: DataAndMoneyStream) => {
         // Todo, potentially limit this to the amount still needed for the Invoice.
         //  This would mean only a singular Invoice can be paid at once
-        stream.setReceiveMax(String(2 ** 56))
 
-        if (!conn.connectionTag) {
-          await conn.end()
-          return
-        }
-        const data = JSON.parse(this.decodeConnectionTag(conn.connectionTag))
-        this.logger.info('Received connection tag', { data, tag: conn.connectionTag })
-
-        const invoice = await Invoice.query().findById(data.invoiceId)
-
-        if (!invoice) {
-          await stream.end()
-          await conn.end()
-          return
-        }
+        const invoice = Invoice.query().findById(data.invoiceId)
 
         stream.on('money', amount => {
           Invoice.transaction(async (trx: Transaction) => {
-            const inv = await Invoice.query(trx).findById(invoice.id).forUpdate()
+            const localInv = await invoice
+            const inv = await Invoice.query(trx).findById(localInv.id).forUpdate()
             await Invoice.query(trx).where('id', inv.id).patch({
               received: (BigInt(inv.received) + BigInt(amount))
             })
             await InvoiceTransaction.query(trx).insert({
-              invoiceId: invoice.id,
+              invoiceId: inv.id,
               amount: amount
             })
           })
         })
 
         stream.on('end', async () => {
-          this.logger.debug('STREAM ended', { invoiceId: invoice.id })
+          const localInv = await invoice
+          this.logger.debug('STREAM ended', { invoiceId: localInv.id })
         })
 
         stream.on('error', (err) => {
           this.logger.warn('stream error', { err: err })
         })
 
-        // const maxReceivable = invoice.amount ? invoice.amount.toString() : String(2 ** 56)
-        // stream.setReceiveMax(maxReceivable)
+        stream.setReceiveMax(String(2 ** 56))
+
+        this.logger.info('Received connection tag', { data, tag: conn.connectionTag })
       })
 
       conn.on('error', (err: Error) => {

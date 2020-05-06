@@ -31,6 +31,7 @@ describe('Get mandate', () => {
       startAt: new Date(Date.now()),
       expireAt: null
     })
+    const interval = await mandate.currentInterval()
     await MandateTransaction.query().insertAndFetch({
       // @ts-ignore
       accountId: 1,
@@ -38,7 +39,8 @@ describe('Get mandate', () => {
       description: 'mandateTransaction',
       createdAt: new Date(Date.now()),
       updatedAt: new Date(Date.now()),
-      mandateId: mandate.id
+      mandateId: mandate.id,
+      mandateIntervalId: interval.id
     })
   })
 

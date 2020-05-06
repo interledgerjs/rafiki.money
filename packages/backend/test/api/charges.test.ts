@@ -110,8 +110,9 @@ describe('Charges API', () => {
     appContainer.streamService.sendMoney = jest.fn().mockResolvedValue(1000n)
     const charge = await Charge.query().insert({ mandateId: mandate.id, invoice: chargeInfo.invoice })
     await mandate.$relatedQuery<Charge>('charges').insert({ invoice: chargeInfo.invoice })
+    const interval = await mandate.currentInterval()
     await account.$relatedQuery<Transaction>('transactions').insert({ amount: 1000n, description: 'Payment for ' + chargeInfo.invoice })
-    await mandate.$relatedQuery<MandateTransaction>('transactions').insert({ accountId: account.id, chargeId: charge.id, amount: -1000n})
+    await mandate.$relatedQuery<MandateTransaction>('transactions').insert({ accountId: account.id, chargeId: charge.id, amount: -1000n, mandateIntervalId: interval.id})
     await mandate.$query().patch({ balance: 9000n })
     await account.$query().patch({ balance: 19000n })
 
