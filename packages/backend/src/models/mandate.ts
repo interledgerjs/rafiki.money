@@ -119,6 +119,11 @@ export class Mandate extends Model {
     return new Date(intervalStartAtEpoch)
   }
 
+  async intervalBalance (): Promise<bigint> {
+    const currentInterval = await this.currentInterval()
+    return this.amount - currentInterval.used
+  }
+
   $formatJson (): Partial<MandateInfo> {
     return {
       id: this.id,

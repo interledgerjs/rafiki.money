@@ -36,14 +36,14 @@ const modifyAccountBalance = async (accountId: number, amount: bigint, trx: Knex
   })
 }
 
-const modifyMandateBalance = async (mandate: Mandate, interval: MandateInterval, amount: bigint, trx: KnexTransaction, description = '', chargeId?: string): Promise<void> => {
+const modifyMandateIntervalBalance = async (mandate: Mandate, interval: MandateInterval, amount: bigint, trx: KnexTransaction, description = '', chargeId?: string): Promise<void> => {
   const lockedInterval = await MandateInterval.query().findById(interval.id).forUpdate()
 
   const spent = BigInt(lockedInterval.used)
   const newSpent = spent + amount
 
   if (newSpent > mandate.amount) {
-    throw new Error('Insufficient mandate balance')
+    throw new Error('Insufficient Funds')
   }
 
   await lockedInterval.$query(trx).patch({
@@ -63,7 +63,7 @@ export async function store (ctx: AppContext): Promise<void> {
   ctx.logger.debug(`Charges Controller: Creating charge for mandate ${ctx.params.id}: ${ctx.request.body}`)
   const mandate = await Mandate.query().findById(ctx.params.id)
 
-  if (!mandate) {
+  if (!mandate || !ctx.state.user.ext.authorization_details) {
     ctx.status = 404
     return
   }
@@ -95,11 +95,15 @@ export async function store (ctx: AppContext): Promise<void> {
     await Model.transaction(async (trx) => {
       charge = await mandate.$relatedQuery<Charge>('charges').insertAndFetch({ invoice: ctx.request.body.invoice })
       await modifyAccountBalance(mandate.accountId, -amount, trx, description)
-      await modifyMandateBalance(mandate, mandateInterval, -amount, trx, description)
+      await modifyMandateIntervalBalance(mandate, mandateInterval, amount, trx, description)
     })
   } catch (error) {
+    if (error.message === 'Insufficient Funds') {
+      ctx.status = 422
+      ctx.message = 'Insufficient Balance'
+      return
+    }
     ctx.status = 500
-    ctx.message = 'Insufficient Balance'
     return
   }
 
@@ -110,7 +114,7 @@ export async function store (ctx: AppContext): Promise<void> {
       const reversalDescription = 'Reversal of amount not sent for ' + ctx.request.body.invoice
       await Model.transaction(async (trx) => {
         await modifyAccountBalance(mandate.accountId, difference, trx, reversalDescription)
-        await modifyMandateBalance(mandate, mandateInterval, difference, trx, reversalDescription)
+        await modifyMandateIntervalBalance(mandate, mandateInterval, -difference, trx, reversalDescription)
       })
     }
 
@@ -118,6 +122,8 @@ export async function store (ctx: AppContext): Promise<void> {
       // What to do here?
       console.log('Over payment occured.')
     }
+
+    // TODO add amount sent in the charge
 
     ctx.status = 201
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

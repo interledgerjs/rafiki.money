@@ -66,7 +66,7 @@ describe('Charges API', () => {
 
   test('uses stream service to perform payment and creates transaction against users account', async () => {
     expect((await account.$query()).balance.toString()).toBe('20000')
-    expect((await mandate.$query()).balance.toString()).toBe('10000')
+    expect((await mandate.intervalBalance()).toString()).toBe('10000')
     mockAuth([{
       type: 'open_payments_mandate',
       locations: [
@@ -90,10 +90,11 @@ describe('Charges API', () => {
     expect(status).toBe(201)
     expect(appContainer.streamService.sendMoney).toHaveBeenCalledWith('test.rafiki.wallet.123', 'secret', '1000')
     expect((await account.$query()).balance.toString()).toBe('19000')
-    expect((await mandate.$query()).balance.toString()).toBe('9000')
+    expect((await mandate.intervalBalance()).toString()).toBe('9000')
     expect(await account.$relatedQuery<Transaction>('transactions').first()).toMatchObject({ amount: -1000n })
   })
 
+  // TODO this may be fine. Should probably do with idempotent key on the charge request
   test('does not process charge if a charge with the same invoice already exists', async () => {
     mockAuth([{
       type: 'open_payments_mandate',
@@ -131,7 +132,8 @@ describe('Charges API', () => {
     expect(await account.$relatedQuery<Transaction>('transactions')).toHaveLength(1)
   })
 
-  test('returns 401 if mandate belongs to a different user', async () => {
+  test('returns 404 if mandate belongs to a different user', async () => {
+    mockAuth()
     const chargeInfo = { invoice: '//acquirer.wallet/invoices/123' }
     const otherUser = await User.query().insert({ username: 'bob' })
 
@@ -141,7 +143,7 @@ describe('Charges API', () => {
       }
     }).catch(error => error.response.status)
 
-    await expect(status).resolves.toBe(401)
+    await expect(status).resolves.toBe(404)
   })
 
   test('returns 401 if token is not authorized to charge mandate', async () => {
@@ -207,7 +209,7 @@ describe('Charges API', () => {
     await expect(status).resolves.toBe(404)
   })
 
-  test('returns 500 if account does not have sufficient liquidity', async () => {
+  test('returns 422 if account does not have sufficient liquidity', async () => {
     const account = await user.$relatedQuery<Account>('accounts').insertAndFetch({ name: 'insufficient balance', assetCode: 'USD', assetScale: 2, limit: 20000n, balance: 0n })
     const mandate = await Mandate.query().insertAndFetch({ userId: user.id, accountId: account.id, amount: 10000n, assetCode: 'USD', assetScale: 2 })
     await mandate.$query().patch({ balance: 10000n })
@@ -230,17 +232,16 @@ describe('Charges API', () => {
       }
     }).catch(error => error.response)
 
-    expect(status).toBe(500)
+    expect(status).toBe(422)
     expect((await mandate.$relatedQuery<Charge>('charges')).length).toBe(0)
     expect((await mandate.$relatedQuery<MandateTransaction>('transactions')).length).toBe(0)
     expect((await account.$relatedQuery<Transaction>('transactions')).length).toBe(0)
-    expect((await mandate.$query()).balance).toBe(10000n)
+    expect(await mandate.intervalBalance()).toBe(10000n)
     expect((await account.$query()).balance).toBe(0n)
   })
 
-  test('returns 500 if mandate does not have sufficient liquidity', async () => {
-    const mandate = await Mandate.query().insertAndFetch({ userId: user.id, accountId: account.id, amount: 10000n, assetCode: 'USD', assetScale: 2 })
-    await mandate.$query().patch({ balance: 0n })
+  test('returns 422 if mandate does not have sufficient liquidity', async () => {
+    const mandate = await Mandate.query().insertAndFetch({ userId: user.id, accountId: account.id, amount: 100n, assetCode: 'USD', assetScale: 2 })
     axios.options = jest.fn().mockResolvedValue({ data: { sharedSecret: 'secret', ilpAddress: 'test.rafiki.wallet.123' } })
     axios.get = jest.fn().mockResolvedValue({ data: { assetCode: 'USD', assetScale: 2, amount: '1000' } })
     mockAuth([{
@@ -260,11 +261,11 @@ describe('Charges API', () => {
       }
     }).catch(error => error.response)
 
-    expect(status).toBe(500)
+    expect(status).toBe(422)
     expect((await mandate.$relatedQuery<Charge>('charges')).length).toBe(0)
     expect((await mandate.$relatedQuery<MandateTransaction>('transactions')).length).toBe(0)
     expect((await account.$relatedQuery<Transaction>('transactions')).length).toBe(0)
-    expect((await mandate.$query()).balance).toBe(0n)
+    expect(await mandate.intervalBalance()).toBe(100n)
     expect((await account.$query()).balance).toBe(20000n)
   })
 
@@ -291,12 +292,12 @@ describe('Charges API', () => {
       }
     }).catch(error => error.response)
 
-    expect(status).toBe(500)
-    expect((await mandate.$relatedQuery<Charge>('charges')).length).toBe(0)
-    expect((await mandate.$relatedQuery<MandateTransaction>('transactions')).length).toBe(0)
-    expect((await account.$relatedQuery<Transaction>('transactions')).length).toBe(0)
-    expect((await mandate.$query()).balance).toBe(0n)
-    expect((await account.$query()).balance).toBe(20000n)
+    expect(status).toBe(201)
+    expect((await mandate.$relatedQuery<Charge>('charges')).length).toBe(1)
+    expect((await mandate.$relatedQuery<MandateTransaction>('transactions')).length).toBe(2)
+    expect((await account.$relatedQuery<Transaction>('transactions')).length).toBe(2)
+    expect((await mandate.intervalBalance()).toString()).toBe('9501')
+    expect((await account.$query()).balance.toString()).toBe('19501')
   })
 
   test.todo('converts between asset scale of mandate and invoice')
