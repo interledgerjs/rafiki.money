@@ -13,14 +13,7 @@
     "esModuleInterop": true,
     "baseUrl": ".",
     "paths": {
-      "backend" : ["packages/backend/src"]
+      "backend": ["packages/backend/src"]
     }
-  },
-  "exclude": [
-    "**/node_modules/**/*",
-    "packages/*/dist/**/*"
-  ],
-  "include": [
-    "packages/**/*.ts"
-  ]
+  }
 }

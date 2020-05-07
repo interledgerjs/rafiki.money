@@ -1,15 +1,13 @@
 import React, { useRef } from 'react'
 import { NextPage } from "next"
 import useForm from 'react-hook-form'
-import { TextInput, Button} from '../components'
-import Link from 'next/link'
+import { TextInput, Button } from '../components'
 import { UsersService } from '../services/users'
 import { useRouter } from 'next/router'
 
-
 const Signup: NextPage = () => {
   const router = useRouter()
-  const {register, handleSubmit, errors, setError, clearError} = useForm()
+  const { register, handleSubmit, errors, setError, clearError } = useForm()
   const formRef = useRef<HTMLFormElement>(null)
 
   const usersService = UsersService()
@@ -22,9 +20,9 @@ const Signup: NextPage = () => {
         const body = await error.response.json()
         body.errors.forEach((el) => {
           if (el.field === 'username')
-            setError('username', 'usernameError', el.message)
+          { setError('username', 'usernameError', el.message) }
           else if (el.field === 'password')
-            setError('password', 'passwordError', el.message)
+          { setError('password', 'passwordError', el.message) }
         })
       })
     }
@@ -51,11 +49,11 @@ const Signup: NextPage = () => {
             <TextInput
               errorState={errors.username != undefined}
               validationFunction={validateEmail}
-              inputRef={(register({required: true}))}
+              inputRef={(register({ required: true }))}
               name='username'
               label='Email'
               bgColour='surface'
-              hint={errors.username ? errors.username.type==='required' ? 'Email required' : (errors.username.message) as string : undefined}
+              hint={errors.username ? errors.username.type === 'required' ? 'Email required' : (errors.username.message) : undefined}
             />
           </div>
 
@@ -63,11 +61,11 @@ const Signup: NextPage = () => {
             <TextInput
               errorState={errors.password != undefined}
               inputType='password'
-              inputRef={(register({required: true}))}
+              inputRef={(register({ required: true }))}
               name='password'
               label='Password'
               bgColour='surface'
-              hint={ errors.password ? errors.password.type === 'required' ? 'Password required' : null: null }
+              hint={ errors.password ? errors.password.type === 'required' ? 'Password required' : null : null }
             />
           </div>
 
@@ -80,7 +78,6 @@ const Signup: NextPage = () => {
       </div>
     </div>
   )
-
 }
 
 export default Signup

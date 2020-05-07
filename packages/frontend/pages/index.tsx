@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import { NextPage } from 'next'
 import { parseCookies } from 'nookies'
 import { UsersService } from '../services/users'
@@ -10,7 +10,6 @@ import Head from 'next/head'
 const usersService = UsersService()
 
 const Home: NextPage = () => {
-
   useEffect(() => {
   })
 

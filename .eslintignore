@@ -1,3 +1,5 @@
 packages/backend/src/types/*.d.ts
-node_modules/
-packages/frontend
+node_modules
+dist
+.next
+build
