@@ -11,6 +11,10 @@ export const MandatesService = (authErrorCallback?: () => void) => {
       url.searchParams.append('state', state)
       return ky.get(url.toString(), { headers: { authorization: `Bearer ${token}` } }).then(resp => resp.json())
     },
+    getUserMandateById: async (mandateId: string, token: string) => {
+      const url = new URL(`${USERS_API_URL}/mandates/${mandateId}`)
+      return ky.get(url.toString(), { headers: { authorization: `Bearer ${token}` } }).then(resp => resp.json())
+    },
     getTransactionsByMandateId: async (token: string, mandateId: string) => {
       const url = new URL(`${USERS_API_URL}/mandates/${mandateId}/transactions`)
       const resp = await ky.get(url.toString(),

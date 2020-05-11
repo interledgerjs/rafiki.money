@@ -6,6 +6,8 @@ import { DonutChart } from '../../components/donutChart'
 import Modal from 'react-modal'
 import { MandatesService } from '../../services/mandates'
 import { useRouter } from 'next/router'
+import { parse, toSeconds } from 'iso8601-duration'
+import moment from 'moment'
 
 type Mandate = {
   id: string
@@ -18,6 +20,8 @@ type Mandate = {
   startAt: string,
   expireAt?: string,
   interval?: string,
+  accountName?: string,
+  nextIntervalStartAt?: string,
   scope: string
 }
 
@@ -41,18 +45,59 @@ const mandateStates = [
   }
 ]
 
+const humanizeInterval = (interval: string): string => {
+  let output = ''
+  const parsedInterval = parse(interval)
+
+  if(parsedInterval.weeks !== 0) {
+    return `${parsedInterval.weeks} ${parsedInterval.days === 1 ? 'Week' : 'Weeks'}`
+  }
+  if(parsedInterval.years !== 0) {
+    return `${parsedInterval.years} ${parsedInterval.years === 1 ? 'Year' : 'Years'}`
+  }
+  if(parsedInterval.months !== 0) {
+    return `${parsedInterval.months} ${parsedInterval.months === 1 ? 'Month' : 'Months'}`
+  }
+  if(parsedInterval.days !== 0) {
+    return `${parsedInterval.days} ${parsedInterval.days === 1 ? 'Day' : 'Days'}`
+  }
+  if(parsedInterval.hours !== 0) {
+    return `${parsedInterval.hours} ${parsedInterval.hours === 1 ? 'Hour' : 'Hours'}`
+  }
+  if(parsedInterval.minutes !== 0) {
+    return `${parsedInterval.days} ${parsedInterval.minutes === 1 ? 'Minute' : 'Minutes'}`
+  }
+  if(parsedInterval.seconds !== 0) {
+    return `${parsedInterval.days} ${parsedInterval.seconds === 1 ? 'Second' : 'Seconds'}`
+  }
+
+}
+
 const mandatesService = MandatesService()
 
-const sideBar = (mandate: Mandate, token, openModal) => {
+const sideBar = (mandateId: string, token, openModal) => {
+  const [mandate, setMandate] = useState<Mandate>()
   const [transactions, setTransactions] = useState([])
 
   const getTransactions = () => {
+    mandatesService.getTransactionsByMandateId(token, mandateId).then(transactions => {
+      setTransactions(transactions)
+    })
+  }
 
+  const getMandate = () => {
+    mandatesService.getUserMandateById(mandateId, token).then(mandate => {
+      console.log(mandate)
+      setMandate(mandate)
+    })
   }
 
   useEffect(() => {
-    getTransactions()
-  }, [mandate])
+    if(mandateId) {
+      getMandate()
+      getTransactions()
+    }
+  }, [mandateId])
 
   const formatDate = (date: string) => {
     const jsDate = new Date(date)
@@ -61,7 +106,7 @@ const sideBar = (mandate: Mandate, token, openModal) => {
 
   if(mandate) {
     return (
-      <Card width="w-full" className="flex flex-col">
+      <Card width="w-full" className="flex flex-col overflow-y-auto">
         <div className="flex justify-end">
           <Button onClick={openModal} type="text" textColour="red">
             Cancel
@@ -73,33 +118,57 @@ const sideBar = (mandate: Mandate, token, openModal) => {
             used={Number(formatCurrency(mandate.amount - mandate.balance,mandate.assetScale))}
           />
         </div>
-        <div className="text-headline-5 truncate">
-          $ {formatCurrency(Number(mandate.amount), mandate.assetScale)}
+        <div className="my-8">
+          <div className="flex justify-between">
+            <div className="text-body-2">
+              Created
+            </div>
+            <div className="text-body-2">
+              {moment(mandate.startAt).format('DD MMM YYYY')}
+            </div>
+          </div>
+          {
+            mandate.nextIntervalStartAt ?
+              <div className="flex justify-between">
+                <div className="text-body-2">
+                  Next Interval
+                </div>
+                <div className="text-body-2">
+                  {moment(mandate.nextIntervalStartAt).format('DD MMM YYYY')}
+                </div>
+              </div>
+              : null
+          }
+          <div className="flex justify-between">
+            <div className="text-body-2">
+              Account
+            </div>
+            <div className="text-body-2">
+              {mandate.accountName}
+            </div>
+          </div>
         </div>
-        <div className="mt-4 flex-1 overflow-y-auto">
+        <div className="flex-1">
           <div className="text-headline-6">
             Transactions
           </div>
           <div>
-            {/*{*/}
-            {/*  transactions.map(transaction => {*/}
-            {/*    return (*/}
-            {/*      <div className="flex w-full my-4 py-2 px-2 border rounded">*/}
-            {/*        <div className="leading-tight">*/}
-            {/*          <div className="overline text-purple">*/}
-            {/*            {account.name}*/}
-            {/*          </div>*/}
-            {/*          <div className="text-headline-6">*/}
-            {/*            {formatDate(transaction.createdAt)}*/}
-            {/*          </div>*/}
-            {/*        </div>*/}
-            {/*        <div className={`flex-1 text-right my-auto text-headline-6 ${transaction.amount < 0 ? 'text-red' : 'text-green'}`}>*/}
-            {/*          $ {formatCurrency(transaction.amount, 6)}*/}
-            {/*        </div>*/}
-            {/*      </div>*/}
-            {/*    )*/}
-            {/*  })*/}
-            {/*}*/}
+            {
+              transactions.map(transaction => {
+                return (
+                  <div key={transaction.id} className="flex w-full my-4 py-2 px-2 border border-border rounded">
+                    <div className="leading-tight my-auto">
+                      <div className="text-headline-6">
+                        {formatDate(transaction.createdAt)}
+                      </div>
+                    </div>
+                    <div className={`flex-1 self-center text-right my-auto text-headline-6 ${transaction.amount < 0 ? 'text-red' : 'text-green'}`}>
+                      $ {formatCurrency(transaction.amount, 6)}
+                    </div>
+                  </div>
+                )
+              })
+            }
           </div>
         </div>
       </Card>
@@ -208,7 +277,7 @@ const Mandates: NextPage<Props> = ({mandates, token}) => {
                 <thead>
                 <tr>
                   <th className="px-4 py-4"></th>
-                  <th className="px-4 py-4 text-body-2 text-right">Balance</th>
+                  <th className="px-4 py-4 text-body-2 text-right">Amount</th>
                   <th className="px-4 py-4 text-body-2">Interval</th>
                   <th className="px-4 py-4 text-body-2">Currency</th>
                 </tr>
@@ -222,14 +291,11 @@ const Mandates: NextPage<Props> = ({mandates, token}) => {
                       </td>
                       <td className="px-4 py-2 leading-tight">
                         <div className="text-headline-5 text-right">
-                          {formatCurrency(mandate.balance, mandate.assetScale)}
-                        </div>
-                        <div className="text-overline text-right text-on-surface-disabled">
-                          /{formatCurrency(mandate.amount, mandate.assetScale)}
+                          {formatCurrency(mandate.amount, mandate.assetScale)}
                         </div>
                       </td>
                       <td className="px-4 py-2 text-body-2">
-                        {mandate.interval}
+                        {mandate.interval ? humanizeInterval(mandate.interval) : null}
                       </td>
                       <td className="px-4 py-2 text-body-2">
                         {mandate.assetCode}
@@ -242,7 +308,7 @@ const Mandates: NextPage<Props> = ({mandates, token}) => {
             </Card>
           </div>
           <div className="hidden sm:flex h-full w-1/3 ml-12">
-            {sideBar(mandates.filter(mandate => mandate.id === selectedMandateId)[0],token, openModal)}
+            {sideBar(selectedMandateId, token, openModal)}
           </div>
         </div>
       </Content>

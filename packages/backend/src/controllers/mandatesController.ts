@@ -1,5 +1,6 @@
 import { AppContext } from '../app'
 import { Mandate } from '../models/mandate'
+import { Account } from '../models'
 
 export async function index (ctx: AppContext): Promise<void> {
   const { logger } = ctx
@@ -31,7 +32,6 @@ export async function index (ctx: AppContext): Promise<void> {
   }
 
   const mandates = await query
-
   ctx.body = mandates.map(mandate => {
     return mandate.toJSON()
   })
@@ -56,7 +56,16 @@ export async function show (ctx: AppContext): Promise<void> {
     return
   }
 
-  ctx.body = mandate.toJSON()
+  const balance = await mandate.intervalBalance()
+  const nextIntervalStartAt = mandate.nextIntervalStartAt()
+  const account = await Account.query().where('id', mandate.accountId).first()
+
+  ctx.body = {
+    ...mandate.toJSON(),
+    nextIntervalStartAt: nextIntervalStartAt,
+    balance: balance.toString(),
+    accountName: account ? account.name : null
+  }
 }
 
 export async function store (ctx: AppContext): Promise<void> {

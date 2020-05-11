@@ -14,6 +14,7 @@ export const DonutChart = (props: Props) => {
       options={{
         title: false,
         chart: {
+          backgroundColor: 'transparent',
           plotBackgroundColor: null,
           plotBorderWidth: null,
           plotShadow: false,

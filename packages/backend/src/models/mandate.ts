@@ -100,6 +100,7 @@ export class Mandate extends Model {
             startAt: currentIntervalStartAt
           }).first()
         }
+        throw error
       }
     }
 
@@ -116,6 +117,22 @@ export class Mandate extends Model {
     const startAtEpoch = startAt.getTime()
 
     const intervalStartAtEpoch = startAtEpoch + intervalNumber * intervalSeconds * 1000
+    return new Date(intervalStartAtEpoch)
+  }
+
+  nextIntervalStartAt () {
+    if (!this.interval) {
+      return null
+    }
+    const startAt = new Date(this.startAt)
+    const now = new Date()
+    const intervalSeconds = this.interval ? toSeconds(parse((this.interval))) : 0
+
+    const intervalNumber = intervalSeconds === 0 ? 1 : Math.floor((now.getTime() / 1000 - startAt.getTime() / 1000) / intervalSeconds)
+
+    const startAtEpoch = startAt.getTime()
+
+    const intervalStartAtEpoch = startAtEpoch + (intervalNumber + 1) * intervalSeconds * 1000
     return new Date(intervalStartAtEpoch)
   }
 

@@ -134,7 +134,6 @@ describe('Get mandate', () => {
       assetCode: 'USD',
       assetScale: 2,
       amount: 500n,
-      balance: 0n,
       startAt: new Date(Date.now()),
       expireAt: null
     })
@@ -184,19 +183,6 @@ describe('Get mandate', () => {
     }
 
     fail()
-  })
-
-  test('User can a list of their mandates', async () => {
-    expect(mandate.cancelledAt).toBeNull()
-
-    const { status, data } = await axios.get(`http://localhost:${appContainer.port}/mandates`, {
-      headers: {
-        authorization: `Bearer user_${user.id}`
-      }
-    })
-
-    expect(status).toEqual(200)
-    expect(data.length).toEqual(1)
   })
 
   test('User can a list of their mandates', async () => {
