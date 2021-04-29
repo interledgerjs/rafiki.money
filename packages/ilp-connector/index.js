@@ -1,6 +1,6 @@
 const Connector = require('ilp-connector')
 
-const UPLINK_SERVER = process.env.UPLINK_SERVER || "btp+wss://GsY5wdYWgOvykG2KMlBZVQqdH57aYcAwNFVJ86PXLmU:e42e32b920f92da77f85c9e9b6837e7b@us1.rafikilabs.com/btp"
+const UPLINK_SERVER = process.env.UPLINK_SERVER || "btp+wss://GsY5wdYWgOvykG2KMlBZVQqdH57aYcAwNFVJ86PXLmU:e42e32b920f92da77f85c9e9b6837e7b@us1.rafiki.money/btp"
 
 const connector = Connector.createApp({
   spread: 0,
