@@ -8,7 +8,7 @@ import { MandateInterval } from '../models/mandateInterval'
 const INVOICE_URL_PROTOCOL = process.env.INVOICE_PROTOCOL || 'http'
 
 const enforce = (subject: string, authorizationDetail: AuthorizationDetail, mandate: Mandate): boolean => {
-  return mandate.userId.toString() === subject && authorizationDetail.actions.some(action => action === 'charge') && authorizationDetail.locations[0] === mandate.toJSON().name
+  return mandate.userId.toString() === subject && authorizationDetail.actions.some(action => action === 'charge') && authorizationDetail.locations[0] === mandate.toJSON()['name']
 }
 
 const modifyAccountBalance = async (accountId: number, amount: bigint, trx: KnexTransaction, description = ''): Promise<void> => {

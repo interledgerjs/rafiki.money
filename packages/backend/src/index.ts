@@ -74,11 +74,14 @@ export const start = async (): Promise<void> => {
     }
   })
 
-  // Do migrations
+  logger.info('Migrating')
   await knex.migrate.latest()
+  logger.info('Migration Finished')
   Model.knex(knex)
 
+  logger.info('Listening on STREAM')
   await streamService.listen()
+  logger.info('STREAM Listening')
   claimInvoiceInterval = run()
   app.listen(PORT)
   logger.info(`Listening on ${PORT}`)

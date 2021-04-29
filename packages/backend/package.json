@@ -23,7 +23,7 @@
     "@types/koa__router": "^8.0.2",
     "@types/pino": "^5.8.10",
     "axios": "latest",
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^5.0.1",
     "faker": "^4.1.0",
     "got": "^10.7.0",
     "ilp-plugin-btp": "^1.4.2",
@@ -40,7 +40,7 @@
     "pg": "^7.18.1",
     "pino": "^5.13.3",
     "pino-pretty": "^3.6.1",
-    "sqlite3": "^4.1.0",
+    "sqlite3": "^5.0.2",
     "uuid": "^3.3.3"
   },
   "devDependencies": {
