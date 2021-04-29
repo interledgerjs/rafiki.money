@@ -51,7 +51,7 @@ export async function store (ctx: AppContext): Promise<void> {
 export async function index (ctx: AppContext): Promise<void> {
   const { accountId } = ctx.query
 
-  const account = await Account.query().findById(accountId)
+  const account = await Account.query().findById(accountId as string)
 
   if (!account) {
     return

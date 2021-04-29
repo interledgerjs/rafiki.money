@@ -29,7 +29,7 @@ export async function show (ctx: AppContext): Promise<void> {
   }
 
   try {
-    const invoice = await getInvoice(invoiceName)
+    const invoice = await getInvoice(invoiceName as string)
 
     ctx.status = 200
     ctx.body = invoice

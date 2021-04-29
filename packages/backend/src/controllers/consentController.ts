@@ -23,7 +23,7 @@ export async function show (ctx: AppContext): Promise<void> {
   const challenge = ctx.request.query['consent_challenge']
   ctx.logger.debug('Getting consent request', { challenge })
 
-  const consentRequest = await hydra.getConsentRequest(challenge).catch(error => {
+  const consentRequest = await hydra.getConsentRequest(challenge as string).catch(error => {
     ctx.logger.error(error, 'error in login request')
     throw error
   })
@@ -36,7 +36,7 @@ export async function show (ctx: AppContext): Promise<void> {
   ctx.logger.debug('Got hydra consent request', { consentRequest })
 
   if ((consentRequest['skip'] || consentRequest['client'].client_id === 'frontend-client') && authorizationDetails === null) {
-    const acceptConsent = await hydra.acceptConsentRequest(challenge, {
+    const acceptConsent = await hydra.acceptConsentRequest(challenge as string, {
       remember: true,
       remember_for: 0,
       grant_scope: consentRequest['requested_scope'],
@@ -82,7 +82,7 @@ export async function store (ctx: AppContext): Promise<void> {
 
   // User rejected the consent
   if (!accepts) {
-    const rejectConsent = await hydra.rejectConsentRequest(challenge, {
+    const rejectConsent = await hydra.rejectConsentRequest(challenge as string, {
       error: 'access_denied',
       error_description: 'The resource owner denied the request'
     }).catch(error => {
@@ -96,7 +96,7 @@ export async function store (ctx: AppContext): Promise<void> {
     return
   }
 
-  const consentRequest = await hydra.getConsentRequest(challenge).catch(error => {
+  const consentRequest = await hydra.getConsentRequest(challenge as string).catch(error => {
     ctx.logger.error(error, 'error in login request')
     throw error
   })
@@ -122,7 +122,7 @@ export async function store (ctx: AppContext): Promise<void> {
     })
   }
 
-  const acceptConsent = await hydra.acceptConsentRequest(challenge, {
+  const acceptConsent = await hydra.acceptConsentRequest(challenge as string, {
     remember: authorizationDetails === null,
     remember_for: 0,
     grant_scope: scopes,

@@ -25,7 +25,7 @@ export async function show (ctx: AppContext): Promise<void> {
   }
 
   ctx.logger.debug('Get login request', { challenge })
-  const loginRequest = await hydra.getLoginRequest(challenge).catch(error => {
+  const loginRequest = await hydra.getLoginRequest(challenge as string).catch(error => {
     ctx.logger.error(error, 'error in login request')
     throw error
   })
@@ -39,7 +39,7 @@ export async function show (ctx: AppContext): Promise<void> {
     if (session) {
       const now = Date.now()
       if (session.expiresAt > now) {
-        const acceptLogin = await hydra.acceptLoginRequest(challenge, { subject: session.userId,
+        const acceptLogin = await hydra.acceptLoginRequest(challenge as string, { subject: session.userId,
           remember: true,
           remember_for: 604800 // 1 week
         }).catch(error => {
@@ -54,7 +54,7 @@ export async function show (ctx: AppContext): Promise<void> {
   }
 
   if (loginRequest['skip']) {
-    const acceptLogin = await hydra.acceptLoginRequest(challenge, { subject: loginRequest['subject'],
+    const acceptLogin = await hydra.acceptLoginRequest(challenge as string, { subject: loginRequest['subject'],
       remember: true,
       remember_for: 604800 // 1 week
     }).catch(error => {
@@ -142,7 +142,7 @@ export async function store (ctx: Context): Promise<void> {
     return
   }
 
-  const acceptLogin = await hydra.acceptLoginRequest(challenge, {
+  const acceptLogin = await hydra.acceptLoginRequest(challenge as string, {
     subject: user!.id.toString(),
     remember: true,
     remember_for: 604800 // 1 week

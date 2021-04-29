@@ -23,6 +23,7 @@
     "@types/koa__router": "^8.0.2",
     "@types/pino": "^5.8.10",
     "axios": "latest",
+    "base64url": "^3.0.1",
     "bcrypt": "^5.0.1",
     "faker": "^4.1.0",
     "got": "^10.7.0",

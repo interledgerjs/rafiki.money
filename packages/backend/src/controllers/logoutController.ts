@@ -4,7 +4,7 @@ import { hydra } from '../services/hydra'
 export async function store (ctx: Context): Promise<void> {
   const challenge = ctx.request.query.logout_challenge
 
-  const acceptLogout = await hydra.acceptLogoutRequest(challenge).catch(error => {
+  const acceptLogout = await hydra.acceptLogoutRequest(challenge as string).catch(error => {
     ctx.logger.error(error, 'error in accept login request')
     throw error
   })

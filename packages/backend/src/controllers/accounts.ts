@@ -78,7 +78,7 @@ export async function index (ctx: AppContext): Promise<void> {
 
   ctx.logger.info('Getting an account', { userId })
 
-  if (!enforceGetUserAcccounts(ctx.state.user.sub, userId)) {
+  if (!enforceGetUserAcccounts(ctx.state.user.sub, userId as string)) {
     ctx.status = 403
     return
   }
