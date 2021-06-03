@@ -3,7 +3,9 @@ import App from 'next/app'
 import '../styles/main.css'
 import Head from 'next/head'
 
-const Banner: FC = () => (<div className="fixed flex justify-center items-center bg-error text-white w-full h-8">This site is for demo purposes only.</div>)
+const Banner: FC = () => (<div className="fixed flex justify-center items-center bg-purple text-white w-full p-1">
+    You are using an environment for testing and development purposes only - all money is illustrative and not real.
+</div>)
 
 class MyApp extends App {
   render() {
