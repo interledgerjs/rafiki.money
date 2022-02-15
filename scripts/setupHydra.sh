@@ -1,3 +1,6 @@
+docker rm -f oauth-hydra frontend-client
+docker network rm hydra
+
 docker network create hydra
 
 export SECRETS_SYSTEM=mysupersecretsecret
@@ -21,12 +24,12 @@ docker run -d \
   -e URLS_LOGIN=$URLS_LOGIN \
   -e URLS_LOGOUT=$URLS_LOGOUT \
   -e URLS_POST_LOGOUT_REDIRECT=$URLS_POST_LOGOUT_REDIRECT \
-  oryd/hydra:latest serve all --dangerous-force-http
+  oryd/hydra:v1.8 serve all --dangerous-force-http
 
 docker run --rm -it \
   -e HYDRA_ADMIN_URL=http://oauth-hydra:4445 \
   --network hydra \
-  oryd/hydra:latest \
+  oryd/hydra:v1.8 \
   clients create --skip-tls-verify \
     --id frontend-client \
     --secret secret \
