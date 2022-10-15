@@ -22,11 +22,6 @@ Start the Postgres DB
 ```
 The docker exec commands may fail, just rerun the script again to ensure the databases are created correctly
 
-Start Hydra
-```shell
-./scripts/setupHydra.sh
-```
-
 ## Start Services (in order)
 Its important the services are started in this particular order
 1. `packages/ilp-connector`
