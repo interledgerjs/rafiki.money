@@ -47,4 +47,3 @@ yarn start
 Start Frontend by running this in `packages/frontend`
 ```shell
 yarn dev
-```
