@@ -14,7 +14,7 @@ Run a yarn install in `packages/frontend`
 yarn install
 ```
 
-## Setup Docker dependencies
+## Setup Docker Database
 
 Start the Postgres DB
 ```shell
