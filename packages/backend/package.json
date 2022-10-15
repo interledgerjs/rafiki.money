@@ -38,7 +38,7 @@
     "nookies": "latest",
     "objection": "^2.1.2",
     "openid-client": "latest",
-    "pg": "^7.18.1",
+    "pg": "^8.7.3",
     "pino": "^5.13.3",
     "pino-pretty": "^3.6.1",
     "sqlite3": "^5.0.2",
