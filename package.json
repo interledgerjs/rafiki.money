@@ -38,6 +38,7 @@
     "lint": "eslint --cache --cache-location node_modules/.cache/eslint",
     "lint:all": "yarn lint 'packages/*/src/**/*.ts*'",
     "lint:staged": "lint-staged",
+    "deploy:placeholder": "cd ./packages/frontend && yarn build && yarn start",
     "ngrok": "ngrok start -config ./ngrok.yml --all",
     "guake-serve": "guake -n $(pwd)/packages/backend -e 'yarn start' && guake -n $(pwd)/packages/frontend -e 'yarn dev' && guake -n $(pwd)/packages/ilp-connector -e 'yarn start-local'"
   }

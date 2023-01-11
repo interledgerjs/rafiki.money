@@ -14,7 +14,7 @@ class MyDocument extends Document {
     return (
       <Html>
         <Head>
-          <link rel="manifest" href="manifest.json"/>
+          {/* <link rel="manifest" href="manifest.json"/> */}
           <link rel="icon" href="/favicon.ico"/>
         </Head>
         <body className="bg-background">

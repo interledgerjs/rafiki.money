@@ -70,7 +70,7 @@ const sendMoney = async (invoice, amount) => {
   })
 }
 
-sendMoney('http://localhost:3001/p/matt@rafiki.test', 1000000).then((amount) => {
+sendMoney('http://localhost:3001/p/alex@interledger.org', 1000000).then((amount) => {
   console.log('Sent', amount)
 }).catch(error => {
   console.log(error)
