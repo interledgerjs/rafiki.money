@@ -30,7 +30,7 @@
     "ilp-plugin-btp": "^1.4.2",
     "ilp-protocol-stream": "^2.0.2",
     "iso8601-duration": "^1.2.0",
-    "knex": "^0.20.12",
+    "knex": "^2.4.0",
     "koa": "^2.8.1",
     "koa-bodyparser": "^4.2.1",
     "koa-joi-router": "^6.0.0",
