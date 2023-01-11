@@ -1,4 +1,0 @@
-{
-  "default_applications": ["http://localhost:3000/", "https://openpayments.dev/pay"],
-  "supported_origins": ["http://localhost:3000/", "https://openpayments.dev/pay"]
-}
